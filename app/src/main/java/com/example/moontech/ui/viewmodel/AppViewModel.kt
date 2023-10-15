@@ -16,7 +16,9 @@ class AppViewModel : ViewModel() {
     }
 
     fun loginToRoom(roomCode: String, password: String) {
-        addRoom(roomCode, Room(roomCode, true))
+        val room  = Room(roomCode, true)
+        addRoom(roomCode, room)
+        updateWatchedRoom(room)
     }
 
     private fun addRoom(roomCode: String, room: Room) {
@@ -24,6 +26,12 @@ class AppViewModel : ViewModel() {
             prevState.copy(rooms = prevState.rooms.toMutableMap().apply {
                 put(roomCode, room)
             })
+        }
+    }
+
+    private fun updateWatchedRoom(room: Room) {
+        _uiState.update { prevState ->
+            prevState.copy(watchedRoom = room)
         }
     }
 }

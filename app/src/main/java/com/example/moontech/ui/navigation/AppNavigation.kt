@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.screens.home.HomeScreen
 import com.example.moontech.ui.screens.roomlogin.RoomLoginScreen
+import com.example.moontech.ui.screens.watching.WatchingScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 @Composable
@@ -22,10 +23,22 @@ fun AppNavigation(
                 onCreateRoom = { },
                 onAddCamera = { },
                 onWatchTransmission = { navController.navigate(Screen.RoomLogin.route) },
-                modifier = modifier)
+                modifier = modifier
+            )
         }
         composable(route = Screen.RoomLogin.route) {
-            RoomLoginScreen(modifier = modifier, viewModel = viewModel)
+            RoomLoginScreen(
+                viewModel = viewModel,
+                onRoomLoggedIn = {
+                    navController.navigate(Screen.Watching.route) {
+                        popUpTo(route = Screen.Main.route)
+                    }
+                },
+                modifier = modifier
+            )
+        }
+        composable(route = Screen.Watching.route) {
+            WatchingScreen(modifier = modifier, viewModel = viewModel)
         }
 
     }

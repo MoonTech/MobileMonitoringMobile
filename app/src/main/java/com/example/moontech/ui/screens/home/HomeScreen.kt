@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.moontech.R
 import com.example.moontech.ui.components.CenterColumn
+import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.PrimaryButton
 
 @Composable
@@ -20,25 +21,23 @@ fun HomeScreen(
     onAddCamera: () -> Unit,
     onWatchTransmission: () -> Unit,
     modifier: Modifier = Modifier
-) {
-    CenterColumn(modifier = modifier) {
-        CenterColumn(modifier = Modifier.widthIn(max = 300.dp)) {
-            PrimaryButton(
-                text = stringResource(R.string.create_room),
-                modifier = buttonModifier,
-                onClick = onCreateRoom
-            )
-            PrimaryButton(
-                text = stringResource(R.string.add_camera),
-                modifier = buttonModifier,
-                onClick = onAddCamera
-            )
-            PrimaryButton(
-                text = stringResource(R.string.watch_transmission),
-                modifier = buttonModifier,
-                onClick = onWatchTransmission
-            )
-        }
+) = CenterScreen(modifier = modifier) {
+    CenterColumn(modifier = Modifier.widthIn(max = 300.dp)) {
+        PrimaryButton(
+            text = stringResource(R.string.create_room),
+            modifier = buttonModifier,
+            onClick = onCreateRoom
+        )
+        PrimaryButton(
+            text = stringResource(R.string.add_camera),
+            modifier = buttonModifier,
+            onClick = onAddCamera
+        )
+        PrimaryButton(
+            text = stringResource(R.string.watch_transmission),
+            modifier = buttonModifier,
+            onClick = onWatchTransmission
+        )
     }
 }
 

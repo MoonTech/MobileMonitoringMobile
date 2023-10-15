@@ -21,41 +21,45 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moontech.R
 import com.example.moontech.ui.components.CenterColumn
+import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.PrimaryButton
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.dataclasses.Room
 
 @Composable
-fun RoomLoginScreen(viewModel: AppViewModel, modifier: Modifier = Modifier) {
+fun RoomLoginScreen(
+    viewModel: AppViewModel,
+    onRoomLoggedIn: () -> Unit,
+    modifier: Modifier = Modifier
+) = CenterScreen(modifier = modifier) {
     val uiState by viewModel.uiState.collectAsState()
     var roomCode by rememberSaveable { mutableStateOf("") }
     var roomPassword by rememberSaveable { mutableStateOf("") }
-    var room: Room? = uiState.rooms[roomCode]
+    val room: Room? = uiState.rooms[roomCode]
+    CenterColumn(modifier = Modifier.widthIn(max = 300.dp)) {
+        when {
+            room == null -> {
+                SingleValueAndConfirmComponent(
+                    value = roomCode,
+                    onValueChanged = { roomCode = it },
+                    confirm = { viewModel.loginToRoom(roomCode) },
+                    valueLabel = R.string.room_code,
+                    confirmLabel = R.string.enter
+                )
+            }
 
-    CenterColumn(modifier = modifier) {
-        CenterColumn(modifier = Modifier.widthIn(max = 300.dp)) {
-            when {
-                room == null -> {
-                    SingleValueAndConfirmComponent(
-                        value = roomCode,
-                        onValueChanged = { roomCode = it },
-                        confirm = { viewModel.loginToRoom(roomCode) },
-                        valueLabel = R.string.room_code,
-                        confirmLabel = R.string.enter
-                    )
-                }
-                !room.isLoggedIn -> {
-                    SingleValueAndConfirmComponent(
-                        value = roomPassword,
-                        onValueChanged = { roomPassword = it },
-                        confirm = { viewModel.loginToRoom(roomCode, roomPassword) },
-                        valueLabel = R.string.room_password,
-                        confirmLabel = R.string.enter
-                    )
-                }
-                else -> {
-                    Text(text = "Logged In")
-                }
+            !room.isLoggedIn -> {
+                SingleValueAndConfirmComponent(
+                    value = roomPassword,
+                    onValueChanged = { roomPassword = it },
+                    confirm = { viewModel.loginToRoom(roomCode, roomPassword) },
+                    valueLabel = R.string.room_password,
+                    confirmLabel = R.string.enter
+                )
+            }
+
+            else -> {
+                onRoomLoggedIn()
             }
         }
     }
@@ -87,6 +91,6 @@ fun SingleValueAndConfirmComponent(
 @Composable
 fun Preview() {
     Surface(modifier = Modifier.fillMaxSize()) {
-        RoomLoginScreen(viewModel = viewModel())
+        RoomLoginScreen(onRoomLoggedIn = {}, viewModel = viewModel())
     }
 }
