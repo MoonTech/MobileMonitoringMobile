@@ -1,4 +1,4 @@
-package com.example.moontech.ui.theme.screens.home
+package com.example.moontech.ui.screens.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.moontech.R
-import com.example.moontech.ui.theme.components.CenterColumn
-import com.example.moontech.ui.theme.components.PrimaryButton
+import com.example.moontech.ui.components.CenterColumn
+import com.example.moontech.ui.components.PrimaryButton
 
 @Composable
 fun HomeScreen(

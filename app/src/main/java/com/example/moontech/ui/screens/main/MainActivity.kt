@@ -1,4 +1,4 @@
-package com.example.moontech.ui.theme.main
+package com.example.moontech.ui.screens.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,8 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.moontech.ui.navigation.AppNavigation
 import com.example.moontech.ui.theme.MoontechTheme
-import com.example.moontech.ui.theme.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +24,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold {
-                        AppNavigation(modifier = Modifier
-                            .padding(it)
-                            .fillMaxSize())
+                        AppNavigation(
+                            viewModel = viewModel(),
+                            modifier = Modifier
+                                .padding(it)
+                                .fillMaxSize()
+                        )
                     }
                 }
             }

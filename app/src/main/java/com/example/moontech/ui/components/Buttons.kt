@@ -1,4 +1,4 @@
-package com.example.moontech.ui.theme.components
+package com.example.moontech.ui.components
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text

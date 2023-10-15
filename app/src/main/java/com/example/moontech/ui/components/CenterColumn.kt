@@ -1,4 +1,4 @@
-package com.example.moontech.ui.theme.components
+package com.example.moontech.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
