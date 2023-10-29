@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.screens.home.HomeScreen
 import com.example.moontech.ui.screens.roomlogin.RoomLoginScreen
+import com.example.moontech.ui.screens.transmit.TransmittingScreen
 import com.example.moontech.ui.screens.watching.WatchingScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
@@ -21,7 +22,7 @@ fun AppNavigation(
         composable(route = Screen.Main.route) {
             HomeScreen(
                 onCreateRoom = { },
-                onAddCamera = { },
+                onAddCamera = { navController.navigate(Screen.RoomTransmissionLogin.route) },
                 onWatchTransmission = { navController.navigate(Screen.RoomLogin.route) },
                 modifier = modifier
             )
@@ -34,11 +35,30 @@ fun AppNavigation(
                         popUpTo(route = Screen.Main.route)
                     }
                 },
+                requiredPrivilege = { this.canWatch() },
+                onConfirm = {code, password -> viewModel.loginToRoomForWatching(code, password)},
+
+                modifier = modifier
+            )
+        }
+        composable(route = Screen.RoomTransmissionLogin.route) {
+            RoomLoginScreen(
+                viewModel = viewModel,
+                onRoomLoggedIn = {
+                    navController.navigate(Screen.Transmitting.route) {
+                        popUpTo(route = Screen.Main.route)
+                    }
+                },
+                requiredPrivilege = { this.canTransmit() },
+                onConfirm = {code, password -> viewModel.loginToRoomForTransmitting(code, password)},
                 modifier = modifier
             )
         }
         composable(route = Screen.Watching.route) {
             WatchingScreen(modifier = modifier, viewModel = viewModel)
+        }
+        composable(route = Screen.Transmitting.route) {
+            TransmittingScreen(modifier = modifier, viewModel = viewModel)
         }
 
     }
