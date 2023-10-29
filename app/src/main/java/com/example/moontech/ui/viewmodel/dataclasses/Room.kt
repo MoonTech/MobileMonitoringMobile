@@ -4,7 +4,7 @@ import com.example.moontech.ui.viewmodel.dataclasses.RoomPrivilege.Manage
 import com.example.moontech.ui.viewmodel.dataclasses.RoomPrivilege.Transmit
 
 data class Room(
-    val id: String,
+    val code: String,
     val privileges: Int = 0,
 ) {
 
@@ -22,7 +22,7 @@ data class Room(
 
     fun merge(room: Room): Room {
         return Room(
-            id = this.id,
+            code = this.code,
             privileges = RoomPrivilege.mergePrivileges(
                 this.privileges,
                 room.privileges

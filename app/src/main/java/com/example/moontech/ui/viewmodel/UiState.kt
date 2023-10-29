@@ -4,8 +4,13 @@ import com.example.moontech.ui.viewmodel.dataclasses.Room
 
 data class UiState(
     val rooms: Map<String, Room> = mapOf(),
-    val watchedRoom: String? = null,
-    val transmittingRoom: String? = null
+    private val watchedRoomCode: String? = null,
+    private val transmittingRoomCode: String? = null
 ) {
-    fun isWatching(): Boolean = watchedRoom != null
+    val watchedRoom: Room?
+        get() = rooms[watchedRoomCode]
+
+    val transmittingRoom: Room?
+        get() = rooms[transmittingRoomCode]
+
 }

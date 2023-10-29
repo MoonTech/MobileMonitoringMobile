@@ -43,13 +43,13 @@ class AppViewModel : ViewModel() {
 
     private fun updateWatchedRoom(room: Room) {
         _uiState.update { prevState ->
-            prevState.copy(watchedRoom = room.id)
+            prevState.copy(watchedRoomCode = room.code)
         }
     }
 
     private fun updateTransmittingRoom(room: Room) {
         _uiState.update { prevState ->
-            prevState.copy(transmittingRoom = room.id)
+            prevState.copy(transmittingRoomCode = room.code)
         }
     }
 }
