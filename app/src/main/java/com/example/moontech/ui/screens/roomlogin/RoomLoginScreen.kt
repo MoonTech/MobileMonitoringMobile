@@ -29,6 +29,7 @@ fun RoomLoginScreen(
     requiredPrivilege: Room.() -> Boolean
 ) = CenterScreen(modifier = modifier) {
     val uiState by viewModel.uiState.collectAsState()
+    var tRoomCode by rememberSaveable { mutableStateOf("") }
     var roomCode by rememberSaveable { mutableStateOf("") }
     var roomPassword: String? by rememberSaveable { mutableStateOf(null) }
     val room: Room? = uiState.rooms[roomCode]
@@ -36,9 +37,12 @@ fun RoomLoginScreen(
         when {
             room == null -> {
                 SingleValueAndConfirmComponent(
-                    value = roomCode,
-                    onValueChanged = { roomCode = it },
-                    confirm = { onConfirm(roomCode, roomPassword) },
+                    value = tRoomCode,
+                    onValueChanged = { tRoomCode = it },
+                    confirm = {
+                        onConfirm(tRoomCode, roomPassword)
+                        roomCode = tRoomCode
+                    },
                     valueLabel = R.string.room_code,
                     confirmLabel = R.string.enter
                 )
