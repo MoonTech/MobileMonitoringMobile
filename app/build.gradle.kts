@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -60,6 +61,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.2.0-alpha09")
+    implementation("androidx.compose.material:material-icons-extended")
+
     // test
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -70,4 +73,17 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     // navigation
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    // permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+
+    // lifecycle service
+    implementation("androidx.lifecycle:lifecycle-service:2.6.2")
+    // camera x
+    val cameraxVersion = "1.3.0"
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    implementation("androidx.camera:camera-video:${cameraxVersion}")
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
 }

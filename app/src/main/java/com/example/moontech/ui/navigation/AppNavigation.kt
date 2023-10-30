@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.example.moontech.ui.navigation
 
 import androidx.compose.runtime.Composable
@@ -6,11 +8,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.screens.home.HomeScreen
 import com.example.moontech.ui.screens.roomlogin.RoomLoginScreen
 import com.example.moontech.ui.screens.transmit.TransmittingScreen
 import com.example.moontech.ui.screens.watching.WatchingScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @Composable
 fun AppNavigation(
@@ -58,9 +62,10 @@ fun AppNavigation(
             WatchingScreen(modifier = modifier, viewModel = viewModel)
         }
         composable(route = Screen.Transmitting.route) {
-            TransmittingScreen(modifier = modifier, viewModel = viewModel)
+            PermissionWrapper(permission = android.Manifest.permission.CAMERA, modifier = modifier) {
+                TransmittingScreen(modifier = modifier, viewModel = viewModel)
+            }
         }
-
     }
 
 }
