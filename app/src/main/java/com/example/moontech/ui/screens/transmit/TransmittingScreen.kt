@@ -1,5 +1,6 @@
 package com.example.moontech.ui.screens.transmit
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,14 +13,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -28,6 +32,13 @@ import com.example.moontech.ui.viewmodel.AppViewModel
 fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
     CenterScreen(modifier) {
         val uiState by viewModel.uiState.collectAsState()
+
+        val context = LocalContext.current
+        LaunchedEffect(key1 = true) {
+            val intent = Intent(context, CameraServiceImpl::class.java)
+            context.startForegroundService(intent)
+        }
+
         CenterColumn {
             Box(
                 modifier = Modifier

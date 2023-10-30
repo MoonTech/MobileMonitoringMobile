@@ -20,6 +20,7 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
 
     // called once when service is created
     override fun onCreate() {
+//        ServiceCompat.startForeground()
         preview = Preview.Builder()
             .build()
         super.onCreate()
