@@ -1,7 +1,7 @@
 package com.example.moontech.services
 
-interface CameraService {
-    fun startStream(rtmpUrl: String)
+import com.example.moontech.lib.streamingcamera.StreamingCamera
 
-    fun stopStream()
+interface CameraService: StreamingCamera {
+
 }

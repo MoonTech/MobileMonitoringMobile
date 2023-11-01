@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ fun RoomLoginScreen(
     onConfirm: (roomCode: String, password: String?) -> Unit,
     requiredPrivilege: Room.() -> Boolean
 ) = CenterScreen(modifier = modifier) {
+    val doOnRoomLogin = rememberUpdatedState(onRoomLoggedIn)
     val uiState by viewModel.uiState.collectAsState()
     var tRoomCode by rememberSaveable { mutableStateOf("") }
     var roomCode by rememberSaveable { mutableStateOf("") }
@@ -59,7 +62,9 @@ fun RoomLoginScreen(
             }
 
             else -> {
-                onRoomLoggedIn()
+                LaunchedEffect(true) {
+                    doOnRoomLogin.value.invoke()
+                }
             }
         }
     }
