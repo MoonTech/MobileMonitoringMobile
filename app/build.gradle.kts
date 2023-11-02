@@ -86,4 +86,7 @@ dependencies {
     implementation("androidx.camera:camera-video:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-core:${cameraxVersion}")
+
+    //ffmpeg
+    implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
 }
