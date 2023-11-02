@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -13,11 +14,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-class StreamingCameraImpl(
+class CameraXStreamingCamera(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner
-): StreamingCamera {
-    private var preview: Preview = Preview.Builder().build()
+) : StreamingCamera {
+    private var preview: Preview? = null
     private var imageAnalysis: ImageAnalysis? = null
     private val cameraProvider: LiveData<ProcessCameraProvider> by lazy {
         MutableLiveData<ProcessCameraProvider>().apply {
@@ -30,7 +31,7 @@ class StreamingCameraImpl(
     }
 
     companion object {
-        private const val TAG = "StreamingCameraImpl"
+        private const val TAG = "CameraXStreamingCamera"
     }
 
     override fun startStream(rtmpUrl: String) {
@@ -43,18 +44,28 @@ class StreamingCameraImpl(
         TODO("Not yet implemented")
     }
 
-    override fun startPreview(): Preview {
+    override fun startPreview(surfaceProvider: SurfaceProvider) {
         Log.i(TAG, "startPreview: preview call requested")
         withCameraProvider {
             Log.i(TAG, "startPreview: preview call started")
-            bindToLifecycle(preview)
+            if (preview == null) {
+                preview = Preview.Builder().build().apply {
+                    bindToLifecycle(this)
+                }
+            }
+            preview?.setSurfaceProvider(surfaceProvider)
         }
-        return preview
     }
 
     override fun stopPreview() {
         Log.i(TAG, "stopPreview: ")
-        withCameraProvider { unbind(preview) }
+        withCameraProvider {
+            preview?.also {
+                unbind(it)
+                it.setSurfaceProvider(null)
+                preview = null
+            }
+        }
     }
 
     private fun ProcessCameraProvider.bindToLifecycle(vararg useCase: UseCase) {
@@ -66,7 +77,7 @@ class StreamingCameraImpl(
     }
 
     private fun <T> LiveData<T>.observeOnce(observer: (T) -> Unit) {
-        observeForever(object: Observer<T> {
+        observeForever(object : Observer<T> {
             override fun onChanged(value: T) {
                 removeObserver(this)
                 observer(value)

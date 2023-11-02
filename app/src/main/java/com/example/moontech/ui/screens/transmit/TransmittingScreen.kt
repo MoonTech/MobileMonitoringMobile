@@ -54,18 +54,12 @@ fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
                     value = (service as CameraServiceImpl.LocalBinder).getService()
                     Log.i(TAG, "onServiceConnected: service produced $value")
                 }
-
-                override fun onServiceDisconnected(name: ComponentName?) {
-
-                }
-
+                override fun onServiceDisconnected(name: ComponentName?) { }
             }
             context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
             Log.i(TAG, "TransmittingScreen: service bind")
-        }
-        val preview = produceState<androidx.camera.core.Preview?>(initialValue = null, serviceState.value) {
-            value = serviceState.value?.startPreview().also {
-                Log.i(TAG, "TransmittingScreen: preview useCase generated $it")
+            awaitDispose {
+                context.unbindService(connection)
             }
         }
 
@@ -88,13 +82,13 @@ fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
                             setBackgroundColor(android.graphics.Color.BLACK)
                             implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                             scaleType = PreviewView.ScaleType.FILL_START
-                            preview.value?.setSurfaceProvider(this.surfaceProvider)
+                            serviceState.value?.startPreview(this.surfaceProvider)
                             Log.i(TAG, "TransmittingScreen: PreviewView created")
                         }
                     },
                     update = {
                         Log.i(TAG, "TransmittingScreen: PreviewView updated")
-                        preview.value?.setSurfaceProvider(it.surfaceProvider)
+                        serviceState.value?.startPreview(it.surfaceProvider)
                     }
                 )
                 ElevatedButton(

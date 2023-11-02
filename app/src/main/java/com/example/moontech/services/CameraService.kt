@@ -1,7 +1,13 @@
 package com.example.moontech.services
 
-import com.example.moontech.lib.streamingcamera.StreamingCamera
+import androidx.camera.core.Preview
 
-interface CameraService: StreamingCamera {
+interface CameraService {
+    fun startStream(rtmpUrl: String)
 
+    fun stopStream()
+
+    fun startPreview(surfaceProvider: Preview.SurfaceProvider)
+
+    fun stopPreview()
 }
