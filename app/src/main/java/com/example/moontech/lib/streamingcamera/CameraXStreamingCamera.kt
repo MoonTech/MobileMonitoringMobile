@@ -13,6 +13,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.example.moontech.lib.streamer.Streamer
+import com.example.moontech.lib.streamer.rtmp.RtmpStreamer
 
 class CameraXStreamingCamera(
     private val context: Context,
@@ -20,6 +22,8 @@ class CameraXStreamingCamera(
 ) : StreamingCamera {
     private var preview: Preview? = null
     private var imageAnalysis: ImageAnalysis? = null
+    private var streamer: Streamer = RtmpStreamer(context)
+    private var streamingStrategy: StreamingStrategy = ImageAnalysisRawStreamingStrategy()
     private val cameraProvider: LiveData<ProcessCameraProvider> by lazy {
         MutableLiveData<ProcessCameraProvider>().apply {
             val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -34,9 +38,10 @@ class CameraXStreamingCamera(
         private const val TAG = "CameraXStreamingCamera"
     }
 
-    override fun startStream(rtmpUrl: String) {
+    override fun startStream(url: String) {
         Log.i(TAG, "startStream: ")
-        TODO("Not yet implemented")
+        streamer.startStream(url)
+
     }
 
     override fun stopStream() {
