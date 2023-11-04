@@ -3,7 +3,6 @@ package com.example.moontech.lib.streamingcamera
 import android.content.Context
 import android.util.Log
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.UseCase
@@ -21,7 +20,7 @@ class CameraXStreamingCamera(
     private val lifecycleOwner: LifecycleOwner
 ) : StreamingCamera {
     private var preview: Preview? = null
-    private var imageAnalysis: ImageAnalysis? = null
+    private var streamUseCase: UseCase? = null
     private var streamer: Streamer = RtmpStreamer(context)
     private var streamingStrategy: StreamingStrategy = ImageAnalysisRawStreamingStrategy()
     private val cameraProvider: LiveData<ProcessCameraProvider> by lazy {
@@ -40,7 +39,10 @@ class CameraXStreamingCamera(
 
     override fun startStream(url: String) {
         Log.i(TAG, "startStream: ")
-        streamer.startStream(url)
+//        withCameraProvider {
+//            streamingStrategy.init(this, )
+//        }
+//        streamer.startStream(url)
 
     }
 

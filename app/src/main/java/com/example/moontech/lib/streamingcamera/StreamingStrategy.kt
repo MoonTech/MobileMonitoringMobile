@@ -1,10 +1,12 @@
 package com.example.moontech.lib.streamingcamera
 
+import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
-import com.example.moontech.lib.streamer.rtmp.FFmpegStreamCommand
+import com.example.moontech.lib.streamer.rtmp.StreamCommand
+import java.nio.ByteBuffer
 
 interface StreamingStrategy {
-    fun init(processCameraProvider: ProcessCameraProvider, newFrameCallback: (byteArray: ByteArray) -> Unit)
-    fun supportedFFmpegCommand(): FFmpegStreamCommand
+    fun init(processCameraProvider: ProcessCameraProvider, newFrameCallback: (byteBuffer: ByteBuffer) -> Unit): UseCase
+    fun supportedFFmpegCommand(): StreamCommand
     fun close()
 }

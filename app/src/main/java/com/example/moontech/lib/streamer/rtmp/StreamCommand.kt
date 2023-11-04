@@ -1,15 +1,13 @@
 package com.example.moontech.lib.streamer.rtmp
 
-class FFmpegStreamCommand(
+data class StreamCommand(
     val inputFormat: String,
     val inputPixelFormat: String,
     val inputVideoSize: String,
     val inputFrameRate: Int,
     val inputUrl: String,
     val encoder: String,
-    val encoderSettings: String,
-    val outputFormat: String,
-    val outputUrl: String
+    val encoderSettings: String
 ) {
     override fun toString(): String {
         return """
@@ -19,7 +17,6 @@ class FFmpegStreamCommand(
             -framerate $inputFrameRate 
             -i $inputUrl
             -c:v $encoder $encoderSettings
-            -f $outputFormat $outputUrl
         """.trimIndent()
     }
 }

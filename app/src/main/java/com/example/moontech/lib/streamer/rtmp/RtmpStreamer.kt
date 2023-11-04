@@ -13,9 +13,9 @@ class RtmpStreamer(private val context: Context) : Streamer {
 
     private val pipes = mutableMapOf<String, StreamSession>()
 
-    override fun startStream(url: String): String {
+    override fun startStream(url: String, streamCommand: StreamCommand): String {
         val pipe = FFmpegKitConfig.registerNewFFmpegPipe(context)
-        val command = generateStreamCommand(pipe, url)
+        val command = streamCommand.withOutputInfoToString(pipe, url)
         val session = FFmpegKit.executeAsync(command, { session ->
             Log.i(TAG, "startStream: session completed $session")
         }, { log ->
@@ -39,18 +39,8 @@ class RtmpStreamer(private val context: Context) : Streamer {
         }
     }
 
-    private fun generateStreamCommand(inpurUtl: String, outputUrl: String): String {
-        return FFmpegStreamCommand(
-            inputFormat = "rawvideo",
-            inputPixelFormat = "nv21",
-            inputVideoSize = "640x480",
-            inputFrameRate = 20,
-            inputUrl = inpurUtl,
-            encoder = "libx264",
-            encoderSettings = "-profile baseline -preset veryfast -pix_fmt nv21",
-            outputFormat = "flv",
-            outputUrl = outputUrl
-        ).toString()
+    private fun StreamCommand.withOutputInfoToString(inputUrl: String, outputUrl: String): String {
+        return "${this.copy(inputUrl = inputUrl)} -f flv $outputUrl"
     }
 
 }
