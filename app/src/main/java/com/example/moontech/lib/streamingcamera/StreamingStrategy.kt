@@ -7,6 +7,6 @@ import java.nio.ByteBuffer
 
 interface StreamingStrategy {
     fun init(processCameraProvider: ProcessCameraProvider, newFrameCallback: (byteBuffer: ByteBuffer) -> Unit): UseCase
-    fun supportedFFmpegCommand(): StreamCommand
+    fun supportedStreamCommand(): StreamCommand
     fun close()
 }

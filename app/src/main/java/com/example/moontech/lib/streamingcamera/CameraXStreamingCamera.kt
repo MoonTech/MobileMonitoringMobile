@@ -20,9 +20,12 @@ class CameraXStreamingCamera(
     private val lifecycleOwner: LifecycleOwner
 ) : StreamingCamera {
     private var preview: Preview? = null
+
     private var streamUseCase: UseCase? = null
+    private var streamMediator: FrameMediator? = null
     private var streamer: Streamer = RtmpStreamer(context)
     private var streamingStrategy: StreamingStrategy = ImageAnalysisRawStreamingStrategy()
+
     private val cameraProvider: LiveData<ProcessCameraProvider> by lazy {
         MutableLiveData<ProcessCameraProvider>().apply {
             val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -39,11 +42,13 @@ class CameraXStreamingCamera(
 
     override fun startStream(url: String) {
         Log.i(TAG, "startStream: ")
-//        withCameraProvider {
-//            streamingStrategy.init(this, )
-//        }
-//        streamer.startStream(url)
-
+        withCameraProvider {
+            val pipe = streamer.startStream(url, streamingStrategy.supportedStreamCommand())
+            streamMediator = PipeFrameMediator(pipe)
+            streamUseCase = streamingStrategy.init(this) {
+                    buffer -> streamMediator?.onFrameProduced(buffer)
+            }.also { bindToLifecycle(it) }
+        }
     }
 
     override fun stopStream() {

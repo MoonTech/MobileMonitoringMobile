@@ -10,13 +10,6 @@ data class StreamCommand(
     val encoderSettings: String
 ) {
     override fun toString(): String {
-        return """
-            -f $inputFormat 
-            -pixel_format $inputPixelFormat 
-            -video_size $inputVideoSize 
-            -framerate $inputFrameRate 
-            -i $inputUrl
-            -c:v $encoder $encoderSettings
-        """.trimIndent()
+        return "-f $inputFormat -pixel_format $inputPixelFormat -video_size $inputVideoSize -framerate $inputFrameRate -i $inputUrl -c:v $encoder $encoderSettings".trimIndent()
     }
 }
