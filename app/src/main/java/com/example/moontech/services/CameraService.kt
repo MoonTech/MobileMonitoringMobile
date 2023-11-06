@@ -10,4 +10,6 @@ interface CameraService {
     fun startPreview(surfaceProvider: Preview.SurfaceProvider)
 
     fun stopPreview()
+
+    fun closeServiceIfNotUsed()
 }

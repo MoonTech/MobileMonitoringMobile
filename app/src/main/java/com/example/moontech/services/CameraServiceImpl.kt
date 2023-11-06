@@ -24,25 +24,48 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
 
     private val binder: IBinder = LocalBinder()
     private lateinit var streamingCamera: StreamingCamera
+    private var isStreaming = false
+    private var isPreview = false
 
     override fun startStream(rtmpUrl: String) {
         Log.i(TAG, "startStream: ")
-        streamingCamera.startStream(rtmpUrl)
+        if (!isStreaming) {
+            streamingCamera.startStream(rtmpUrl)
+            isStreaming = true
+        }
     }
 
     override fun stopStream() {
         Log.i(TAG, "stopStream: ")
-        streamingCamera.stopStream()
+        if (isStreaming) {
+            streamingCamera.stopStream()
+            isStreaming = false
+        }
     }
 
     override fun startPreview(surfaceProvider: SurfaceProvider) {
         Log.i(TAG, "startPreview: ")
-        return streamingCamera.startPreview(surfaceProvider)
+        if (!isPreview) {
+            return streamingCamera.startPreview(surfaceProvider).also {
+                isPreview = true
+            }
+        }
     }
 
     override fun stopPreview() {
         Log.i(TAG, "stopPreview: ")
-        streamingCamera.stopPreview()
+        if (isPreview) {
+            streamingCamera.stopPreview()
+            isPreview = false
+        }
+    }
+
+    override fun closeServiceIfNotUsed() {
+        Log.i(TAG, "closeServiceIfNotUsed: ")
+        if (!isPreview && !isStreaming) {
+            Log.i(TAG, "closeServiceIfNotUsed: stopping self")
+            stopSelf()
+        }
     }
 
     // called once when service is created
@@ -64,6 +87,11 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
         Log.i(TAG, "onBind: ")
         super.onBind(intent)
         return binder
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        closeServiceIfNotUsed()
+        return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
