@@ -39,8 +39,8 @@ class RtmpStreamer(private val context: Context) : Streamer {
         }
     }
 
-    private fun StreamCommand.withOutputInfoToString(inputUrl: String, outputUrl: String): String {
-        return "${this.copy(inputUrl = inputUrl)} -f flv $outputUrl"
+    private fun StreamCommand.withOutputInfoToString(inpurUrl: String, outputUrl: String): String {
+        return "${this.copy(inputUrl = inpurUrl)} -f flv -r 30 $outputUrl"
     }
 
 }

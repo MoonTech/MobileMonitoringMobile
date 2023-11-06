@@ -1,8 +1,12 @@
 package com.example.moontech.lib.streamingcamera
 
+import android.hardware.camera2.CaptureRequest
 import android.media.Image
 import android.util.Log
+import android.util.Range
 import androidx.annotation.OptIn
+import androidx.camera.camera2.interop.Camera2Interop
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.UseCase
@@ -13,11 +17,27 @@ import java.nio.ReadOnlyBufferException
 import java.util.concurrent.Executors
 import kotlin.experimental.inv
 
+
 private const val TAG = "ImageAnalysisRawStreamingStrategy"
+@OptIn(ExperimentalCamera2Interop::class)
 class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
 
     private val executor = Executors.newSingleThreadExecutor()
-    private var imageAnalysis: ImageAnalysis = ImageAnalysis.Builder().build()
+    private lateinit var imageAnalysis: ImageAnalysis
+
+    init {
+        val builder = ImageAnalysis.Builder()
+        val ext: Camera2Interop.Extender<*> = Camera2Interop.Extender(builder)
+        ext.setCaptureRequestOption(
+            CaptureRequest.CONTROL_AE_MODE,
+            CaptureRequest.CONTROL_AE_MODE_OFF
+        )
+        ext.setCaptureRequestOption(
+            CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
+            Range<Int>(30, 30)
+        )
+        val imageAnalysis = builder.build()
+    }
 
     @OptIn(ExperimentalGetImage::class) override fun init(
         processCameraProvider: ProcessCameraProvider,
@@ -41,10 +61,10 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
             inputFormat = "rawvideo",
             inputPixelFormat = "nv21",
             inputVideoSize = "640x480",
-            inputFrameRate = 20,
-            inputUrl = "inputUtl",
+            inputFrameRate = 30,
+            inputUrl = "inputUrl",
             encoder = "libx264",
-            encoderSettings = "-profile baseline -preset veryfast -pix_fmt nv21"
+            encoderSettings = "-profile:v baseline -preset ultrafast -pix_fmt nv21"
         )
     }
 

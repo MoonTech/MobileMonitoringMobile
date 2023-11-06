@@ -92,7 +92,7 @@ fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
                     }
                 )
                 ElevatedButton(
-                    onClick = { serviceState.value?.startStream("rtmp://10.0.2.2:1935/live/test-camera") },
+                    onClick = { serviceState.value?.startStream("rtmp://192.168.0.109:1935/live/test-camera") },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 4.dp)
