@@ -1,13 +1,9 @@
 package com.example.moontech.ui.screens.transmit
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,102 +18,83 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moontech.services.CameraService
-import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.viewmodel.AppViewModel
+import com.example.moontech.ui.viewmodel.UiState
 
 private const val TAG = "TransmittingScreen"
-@Composable
-fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
-    CenterScreen(modifier) {
-        val uiState by viewModel.uiState.collectAsState()
-        val context = LocalContext.current
 
-        val serviceState = produceState<CameraService?>(initialValue = null) {
-            val intent = Intent(context, CameraServiceImpl::class.java)
-            context.startForegroundService(intent)
-            val connection: ServiceConnection = object : ServiceConnection {
-                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    value = (service as CameraServiceImpl.LocalBinder).getService()
-                    Log.i(TAG, "onServiceConnected: service produced $value")
+@Composable
+fun TransmittingScreen(
+    modifier: Modifier = Modifier,
+    uiState: UiState,
+    startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
+    startStream: (url: String) -> Unit,
+    stopPreview: () -> Unit,
+    stopStream: () -> Unit
+) = CenterScreen(modifier) {
+    //TODO: utilise stopPreview
+
+    CenterColumn {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.Black)
+                .weight(1f)
+        ) {
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxSize(),
+                factory = { context ->
+                    PreviewView(context).apply {
+                        layoutParams = LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        setBackgroundColor(android.graphics.Color.BLACK)
+                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                        scaleType = PreviewView.ScaleType.FILL_START
+                        startPreview(this.surfaceProvider)
+                        Log.i(TAG, "TransmittingScreen: PreviewView created")
+                    }
                 }
-                override fun onServiceDisconnected(name: ComponentName?) { }
-            }
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-            Log.i(TAG, "TransmittingScreen: service bind")
-            awaitDispose {
-                Log.i(TAG, "Dispossing")
-                value?.stopPreview()
-                context.unbindService(connection)
+            )
+            ElevatedButton(
+                onClick = { startStream("rtmp://192.168.0.109:1935/live/test-camera") },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.FiberManualRecord,
+                    contentDescription = "Record",
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(text = "Start transmission")
             }
         }
-
-        CenterColumn {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.Black)
-                    .weight(1f)
-            ) {
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    factory = { context ->
-                        PreviewView(context).apply {
-                            layoutParams = LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                            setBackgroundColor(android.graphics.Color.BLACK)
-                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                            scaleType = PreviewView.ScaleType.FILL_START
-                            serviceState.value?.startPreview(this.surfaceProvider)
-                            Log.i(TAG, "TransmittingScreen: PreviewView created")
-                        }
-                    },
-                    update = {
-                        Log.i(TAG, "TransmittingScreen: PreviewView updated")
-                        serviceState.value?.startPreview(it.surfaceProvider)
-                    }
-                )
-                ElevatedButton(
-                    onClick = { serviceState.value?.startStream("rtmp://192.168.0.109:1935/live/test-camera") },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.FiberManualRecord,
-                        contentDescription = "Record",
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(text = "Start transmission")
-                }
-            }
-            Row(modifier.weight(0.2f)) {
-                Text("Transmitting ${uiState.transmittingRoom}")
-            }
+        Row(modifier.weight(0.2f)) {
+            Text("Transmitting ${uiState.transmittingRoom}")
         }
     }
+}
 
 
 @Preview
 @Composable
 fun TransmittingScreenPreview() {
     Surface {
-        TransmittingScreen(viewModel = viewModel())
+        TransmittingScreen(
+            uiState = UiState(),
+            startPreview = {},
+            startStream = {},
+            stopPreview = {},
+            stopStream = {})
     }
 }

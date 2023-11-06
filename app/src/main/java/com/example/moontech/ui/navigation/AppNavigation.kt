@@ -3,6 +3,8 @@
 package com.example.moontech.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -63,7 +65,14 @@ fun AppNavigation(
         }
         composable(route = Screen.Transmitting.route) {
             PermissionWrapper(permission = android.Manifest.permission.CAMERA, modifier = modifier) {
-                TransmittingScreen(modifier = modifier, viewModel = viewModel)
+                val uiState by viewModel.uiState.collectAsState()
+                TransmittingScreen(
+                    modifier = modifier,
+                    uiState = uiState,
+                    startStream = viewModel::startStream,
+                    startPreview = viewModel::startPreview,
+                    stopStream = viewModel::stopStream,
+                    stopPreview = viewModel::stopPreview)
             }
         }
     }

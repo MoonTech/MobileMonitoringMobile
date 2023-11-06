@@ -24,8 +24,10 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
 
     private val binder: IBinder = LocalBinder()
     private lateinit var streamingCamera: StreamingCamera
-    private var isStreaming = false
-    private var isPreview = false
+    override var isStreaming = false
+        private set
+    override var isPreview = false
+        private set
 
     override fun startStream(rtmpUrl: String) {
         Log.i(TAG, "startStream: ")

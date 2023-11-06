@@ -3,7 +3,9 @@ package com.example.moontech.services
 import androidx.camera.core.Preview
 
 interface CameraService {
-    fun startStream(rtmpUrl: String)
+    val isStreaming: Boolean
+    val isPreview: Boolean
+    fun startStream(url: String)
 
     fun stopStream()
 

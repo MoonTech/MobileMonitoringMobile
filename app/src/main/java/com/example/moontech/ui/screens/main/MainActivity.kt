@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moontech.ui.navigation.AppNavigation
 import com.example.moontech.ui.theme.MoontechTheme
+import com.example.moontech.ui.viewmodel.AppViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold {
                         AppNavigation(
-                            viewModel = viewModel(),
+                            viewModel = viewModel(factory = AppViewModel.Factory),
                             modifier = Modifier
                                 .padding(it)
                                 .fillMaxSize()
