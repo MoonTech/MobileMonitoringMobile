@@ -105,6 +105,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     override fun onCleared() {
+        Log.i(TAG, "onCleared: clearing")
         cameraService.value?.stopPreview()
         this.getApplication<Application>().unbindService(cameraServiceConnection)
         super.onCleared()
