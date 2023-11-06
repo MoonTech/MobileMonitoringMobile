@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -45,10 +46,11 @@ fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
     CenterScreen(modifier) {
         val uiState by viewModel.uiState.collectAsState()
         val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
 
         val serviceState = produceState<CameraService?>(initialValue = null) {
             val intent = Intent(context, CameraServiceImpl::class.java)
-//            context.startForegroundService(intent)
+            context.startForegroundService(intent)
             val connection: ServiceConnection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                     value = (service as CameraServiceImpl.LocalBinder).getService()
@@ -59,6 +61,8 @@ fun TransmittingScreen(modifier: Modifier = Modifier, viewModel: AppViewModel) =
             context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
             Log.i(TAG, "TransmittingScreen: service bind")
             awaitDispose {
+                Log.i(TAG, "Dispossing")
+                value?.stopPreview()
                 context.unbindService(connection)
             }
         }

@@ -34,7 +34,7 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
         )
         ext.setCaptureRequestOption(
             CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-            Range<Int>(30, 30)
+            Range(25, 35)
         )
         val imageAnalysis = builder.build()
     }
@@ -47,7 +47,6 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
         Log.i(TAG, "init: image analysis created")
         imageAnalysis.setAnalyzer(executor) {
             it.image?.let { image ->
-                Log.i(TAG, "producing frame")
                 val outputConvertedBuffer = ByteBuffer.wrap(YUV_420_888toNV21(image))
                 newFrameCallback.invoke(outputConvertedBuffer)
             }
@@ -59,12 +58,10 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
     override fun supportedStreamCommand(): StreamCommand {
         return StreamCommand(
             inputFormat = "rawvideo",
-            inputPixelFormat = "nv21",
-            inputVideoSize = "640x480",
-            inputFrameRate = 30,
+            additionalInputParameters = "-pixel_format nv21 -video_size 640x480 -framerate 35 -use_wallclock_as_timestamps 1 ",
             inputUrl = "inputUrl",
             encoder = "libx264",
-            encoderSettings = "-profile:v baseline -preset ultrafast -pix_fmt nv21"
+            encoderSettings = "-profile:v baseline -preset veryfast"
         )
     }
 

@@ -73,9 +73,9 @@ class CameraXStreamingCamera(
         Log.i(TAG, "stopPreview: ")
         withCameraProvider {
             preview?.also {
-                unbind(it)
                 it.setSurfaceProvider(null)
-                preview = null
+//                unbind(it)
+//                preview = null
             }
         }
     }
