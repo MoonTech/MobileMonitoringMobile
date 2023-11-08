@@ -92,8 +92,9 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        Log.i(TAG, "onUnbind: ")
         closeServiceIfNotUsed()
-        return super.onUnbind(intent)
+        return true
     }
 
     override fun onDestroy() {
