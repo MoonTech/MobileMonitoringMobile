@@ -39,6 +39,10 @@ class RtmpStreamer(private val context: Context) : Streamer {
         }
     }
 
+    override fun endAllStreams() {
+        pipes.keys.forEach(this::endStream)
+    }
+
     private fun StreamCommand.withOutputInfoToString(inpurUrl: String, outputUrl: String): String {
         return "${this.copy(inputUrl = inpurUrl)} -f flv $outputUrl"
     }

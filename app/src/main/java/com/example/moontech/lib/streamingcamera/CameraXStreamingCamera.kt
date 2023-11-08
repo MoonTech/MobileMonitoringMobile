@@ -40,10 +40,10 @@ class CameraXStreamingCamera(
         private const val TAG = "CameraXStreamingCamera"
     }
 
-    override fun startStream(url: String) {
+    override fun startStream(rtmpUrl: String) {
         Log.i(TAG, "startStream: ")
         withCameraProvider {
-            val pipe = streamer.startStream(url, streamingStrategy.supportedStreamCommand())
+            val pipe = streamer.startStream(rtmpUrl, streamingStrategy.supportedStreamCommand())
             streamMediator = PipeFrameMediator(pipe)
             streamUseCase = streamingStrategy.init(this) {
                     buffer -> streamMediator?.onFrameProduced(buffer)
@@ -53,7 +53,12 @@ class CameraXStreamingCamera(
 
     override fun stopStream() {
         Log.i(TAG, "stopStream: ")
-        TODO("Not yet implemented")
+        withCameraProvider {
+            unbind(streamUseCase)
+            streamMediator?.close()
+            streamer.endAllStreams()
+            streamingStrategy.close()
+        }
     }
 
     override fun startPreview(surfaceProvider: SurfaceProvider) {

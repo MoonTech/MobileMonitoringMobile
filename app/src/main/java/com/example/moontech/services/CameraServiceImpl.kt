@@ -16,6 +16,8 @@ import androidx.lifecycle.LifecycleService
 import com.example.moontech.R
 import com.example.moontech.lib.streamingcamera.CameraXStreamingCamera
 import com.example.moontech.lib.streamingcamera.StreamingCamera
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class CameraServiceImpl() : LifecycleService(), CameraService {
     companion object {
@@ -24,47 +26,45 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
 
     private val binder: IBinder = LocalBinder()
     private lateinit var streamingCamera: StreamingCamera
-    override var isStreaming = false
-        private set
-    override var isPreview = false
-        private set
+
+    private val _isStreaming = MutableStateFlow(false)
+    private val _isPreview = MutableStateFlow(false)
+
+    override val isStreaming = _isStreaming.asStateFlow()
+    override val isPreview = _isPreview.asStateFlow()
 
     override fun startStream(rtmpUrl: String) {
+        // TODO: Add error handling ex. invalid url
         Log.i(TAG, "startStream: ")
-        if (!isStreaming) {
+        if(_isStreaming.compareAndSet(expect = false, update = true)) {
             streamingCamera.startStream(rtmpUrl)
-            isStreaming = true
         }
     }
 
     override fun stopStream() {
         Log.i(TAG, "stopStream: ")
-        if (isStreaming) {
+        if (_isStreaming.compareAndSet(expect = true, update = false)) {
             streamingCamera.stopStream()
-            isStreaming = false
         }
     }
 
     override fun startPreview(surfaceProvider: SurfaceProvider) {
         Log.i(TAG, "startPreview: ")
-        if (!isPreview) {
-            return streamingCamera.startPreview(surfaceProvider).also {
-                isPreview = true
-            }
+        if (_isPreview.compareAndSet(expect = false, update = true)) {
+            return streamingCamera.startPreview(surfaceProvider)
         }
     }
 
     override fun stopPreview() {
         Log.i(TAG, "stopPreview: ")
-        if (isPreview) {
+        if (_isPreview.compareAndSet(expect = true, update = false)) {
             streamingCamera.stopPreview()
-            isPreview = false
         }
     }
 
     override fun closeServiceIfNotUsed() {
         Log.i(TAG, "closeServiceIfNotUsed: ")
-        if (!isPreview && !isStreaming) {
+        if (!isPreview.value && !isStreaming.value) {
             Log.i(TAG, "closeServiceIfNotUsed: stopping self")
             stopSelf()
         }

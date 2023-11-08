@@ -66,9 +66,13 @@ fun AppNavigation(
         composable(route = Screen.Transmitting.route) {
             PermissionWrapper(permission = android.Manifest.permission.CAMERA, modifier = modifier) {
                 val uiState by viewModel.uiState.collectAsState()
+                val isPreview by viewModel.isPreviewState.collectAsState()
+                val isStreaming by viewModel.isStreamingState.collectAsState()
                 TransmittingScreen(
                     modifier = modifier,
                     uiState = uiState,
+                    isStreaming = isStreaming,
+                    isPreview = isPreview,
                     startStream = viewModel::startStream,
                     startPreview = viewModel::startPreview,
                     stopStream = viewModel::stopStream,

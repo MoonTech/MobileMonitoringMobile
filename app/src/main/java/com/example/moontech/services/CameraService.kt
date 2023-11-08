@@ -1,10 +1,11 @@
 package com.example.moontech.services
 
 import androidx.camera.core.Preview
+import kotlinx.coroutines.flow.StateFlow
 
 interface CameraService {
-    val isStreaming: Boolean
-    val isPreview: Boolean
+    val isStreaming: StateFlow<Boolean>
+    val isPreview: StateFlow<Boolean>
     fun startStream(url: String)
 
     fun stopStream()

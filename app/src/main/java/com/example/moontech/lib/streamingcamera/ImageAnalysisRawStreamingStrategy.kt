@@ -66,7 +66,7 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
     }
 
     override fun close() {
-        TODO("Not yet implemented")
+        // Not needed here
     }
 
     private fun YUV_420_888toNV21(image: Image): ByteArray {

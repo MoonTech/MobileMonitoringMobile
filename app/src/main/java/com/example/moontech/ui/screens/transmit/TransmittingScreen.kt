@@ -36,6 +36,8 @@ fun TransmittingScreen(
     uiState: UiState,
     startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
     startStream: (url: String) -> Unit,
+    isPreview: Boolean,
+    isStreaming: Boolean,
     stopPreview: () -> Unit,
     stopStream: () -> Unit
 ) = CenterScreen(modifier) {
@@ -66,7 +68,13 @@ fun TransmittingScreen(
                 }
             )
             ElevatedButton(
-                onClick = { startStream("rtmp://192.168.0.109:1935/live/test-camera") },
+                onClick = {
+                    if (isStreaming) {
+                        stopStream()
+                    } else {
+                        startStream("rtmp://192.168.0.109:1935/live/test-camera")
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 4.dp)
@@ -76,7 +84,7 @@ fun TransmittingScreen(
                     contentDescription = "Record",
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text(text = "Start transmission")
+                Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
             }
         }
         Row(modifier.weight(0.2f)) {
@@ -95,6 +103,9 @@ fun TransmittingScreenPreview() {
             startPreview = {},
             startStream = {},
             stopPreview = {},
-            stopStream = {})
+            stopStream = {},
+            isPreview = false,
+            isStreaming = false
+        )
     }
 }

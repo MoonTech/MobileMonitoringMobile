@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,9 +41,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-    val cameraServiceState: StateFlow<Boolean> =
-        cameraService.filterNotNull().map { service -> service.isStreaming }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    val isStreamingState: StateFlow<Boolean> =
+        cameraService.filterNotNull().flatMapLatest { it.isStreaming }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
+    val isPreviewState: StateFlow<Boolean> =
+        cameraService.filterNotNull().flatMapLatest { it.isPreview }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     companion object {
         private const val TAG = "AppViewModel"

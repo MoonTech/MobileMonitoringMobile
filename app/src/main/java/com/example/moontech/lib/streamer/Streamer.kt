@@ -12,4 +12,6 @@ interface Streamer {
     fun startStream(url: String, streamCommand: StreamCommand): String
 
     fun endStream(url: String)
+
+    fun endAllStreams()
 }
