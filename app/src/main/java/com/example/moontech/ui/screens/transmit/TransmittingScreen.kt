@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +38,18 @@ fun TransmittingScreen(
     uiState: UiState,
     startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
     startStream: (url: String) -> Unit,
-    isPreview: Boolean,
     isStreaming: Boolean,
     stopPreview: () -> Unit,
     stopStream: () -> Unit
 ) = CenterScreen(modifier) {
     //TODO: utilise stopPreview
+    val stopPreviewRemembered = rememberUpdatedState(newValue = stopPreview)
+    DisposableEffect(key1 = true) {
+        onDispose {
+            Log.i(TAG, "TransmittingScreen: Stopping preview")
+            stopPreview()
+        }
+    }
 
     CenterColumn {
         Box(
@@ -104,7 +112,6 @@ fun TransmittingScreenPreview() {
             startStream = {},
             stopPreview = {},
             stopStream = {},
-            isPreview = false,
             isStreaming = false
         )
     }

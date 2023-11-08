@@ -18,6 +18,7 @@ import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.ui.viewmodel.dataclasses.Room
 import com.example.moontech.ui.viewmodel.dataclasses.RoomPrivilege
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,11 +42,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
         cameraService.filterNotNull().flatMapLatest { it.isStreaming }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
-    val isPreviewState: StateFlow<Boolean> =
-        cameraService.filterNotNull().flatMapLatest { it.isPreview }
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     companion object {

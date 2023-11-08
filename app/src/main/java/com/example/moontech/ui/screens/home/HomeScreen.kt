@@ -20,7 +20,8 @@ fun HomeScreen(
     onCreateRoom: () -> Unit,
     onAddCamera: () -> Unit,
     onWatchTransmission: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isStreaming: Boolean = false
 ) = CenterScreen(modifier = modifier) {
     CenterColumn(modifier = Modifier.widthIn(max = 300.dp)) {
         PrimaryButton(

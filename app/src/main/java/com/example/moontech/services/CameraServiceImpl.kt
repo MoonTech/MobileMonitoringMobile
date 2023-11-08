@@ -104,8 +104,8 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
     // TODO: Refactor notification
     private fun startForeground() {
         var channelId = createNotificationChannel("camera_service", "Camera Service")
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-        val notification = notificationBuilder.setOngoing(true)
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
             .setContentTitle("Camera is active")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(JobInfo.PRIORITY_MAX)
