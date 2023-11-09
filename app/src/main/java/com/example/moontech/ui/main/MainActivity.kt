@@ -1,18 +1,14 @@
-package com.example.moontech.ui.screens.main
+package com.example.moontech.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moontech.ui.navigation.AppNavigation
+import com.example.moontech.ui.navigation.ScreenScaffold
 import com.example.moontech.ui.theme.MoontechTheme
-import com.example.moontech.ui.viewmodel.AppViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,14 +20,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Scaffold {
-                        AppNavigation(
-                            viewModel = viewModel(factory = AppViewModel.Factory),
-                            modifier = Modifier
-                                .padding(it)
-                                .fillMaxSize()
-                        )
-                    }
+                    ScreenScaffold()
                 }
             }
         }

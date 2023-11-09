@@ -1,4 +1,4 @@
-package com.example.moontech.ui.screens.watching
+package com.example.moontech.ui.screens.watch
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
