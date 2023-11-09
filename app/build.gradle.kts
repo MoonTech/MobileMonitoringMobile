@@ -71,6 +71,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Preferences DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     // navigation
     implementation("androidx.navigation:navigation-compose:2.7.4")
     // permissions
@@ -86,7 +89,6 @@ dependencies {
     implementation("androidx.camera:camera-video:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-core:${cameraxVersion}")
-
     //ffmpeg
     implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
 }
