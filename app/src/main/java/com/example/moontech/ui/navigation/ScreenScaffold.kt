@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.VideoCameraBack
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,13 +19,16 @@ import com.example.moontech.ui.viewmodel.AppViewModel
 
 @Composable
 fun ScreenScaffold(modifier: Modifier = Modifier) {
+    val viewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
     val navController = rememberNavController()
+
     Scaffold(modifier = modifier,
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val isStreaming by viewModel.isStreamingState.collectAsState()
 
             BottomNavigationBar(
-                navigationItems = navigationItems,
+                navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
                 navigateTo = { screen ->
                     navController.navigate(screen.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -38,7 +42,7 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
             )
         }) { padding ->
         AppNavigation(
-            viewModel = viewModel(factory = AppViewModel.Factory),
+            viewModel = viewModel,
             navController = navController,
             modifier = Modifier
                 .padding(padding)
@@ -47,9 +51,19 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
     }
 }
 
-val navigationItems: List<NavigationItem> =
-    listOf(
-        NavigationItem(screen = Screen.MyRooms, icon = Icons.Filled.Home),
-        NavigationItem(screen = Screen.Watch, icon = Icons.Filled.LiveTv),
-        NavigationItem(screen = Screen.Transmit, icon = Icons.Filled.VideoCameraBack)
-    )
+val myRoomsNavigationItem =
+    NavigationItem(screen = Screen.MyRooms, icon = Icons.Filled.Home, showBadge = false)
+val watchNavigationItem =
+    NavigationItem(screen = Screen.Watch, icon = Icons.Filled.LiveTv, showBadge = false)
+val transmitNavigationItem =
+    NavigationItem(screen = Screen.Transmit, icon = Icons.Filled.VideoCameraBack, showBadge = false)
+
+val defaultNavigationItems: List<NavigationItem> =
+    listOf(myRoomsNavigationItem, watchNavigationItem, transmitNavigationItem)
+
+
+val streamingNavigationItems: List<NavigationItem> = listOf(
+    myRoomsNavigationItem,
+    watchNavigationItem,
+    transmitNavigationItem.copy(showBadge = true)
+)
