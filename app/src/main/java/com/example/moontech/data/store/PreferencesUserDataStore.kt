@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class InMemoryUserDataStore(private val dataStore: DataStore<Preferences>) : UserDataStore {
+class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : UserDataStore {
     companion object {
         private const val TAG = "InMemoryUserDataStore"
         val USER_DATA_KEY = stringPreferencesKey("user_data_key")

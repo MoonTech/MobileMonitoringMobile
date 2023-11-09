@@ -9,11 +9,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.moontech.data.repository.UserRepository
+import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.ui.viewmodel.dataclasses.Room
@@ -30,33 +28,31 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AppViewModel(application: Application) : AndroidViewModel(application) {
+class AppViewModel(
+    application: Application,
+    private val userRepository: UserRepository,
+    private val userDataStore: UserDataStore
+) : AndroidViewModel(application) {
+    companion object {
+        private const val TAG = "AppViewModel"
+    }
+
     private val cameraService: MutableStateFlow<CameraService?> = MutableStateFlow(null)
     private val cameraServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             cameraService.value = (service as CameraServiceImpl.LocalBinder).getService()
             Log.i(TAG, "onServiceConnected: service produced")
         }
-        override fun onServiceDisconnected(name: ComponentName?) { }
+
+        override fun onServiceDisconnected(name: ComponentName?) {}
     }
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
         cameraService.filterNotNull().flatMapLatest { it.isStreaming }
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
-
-    companion object {
-        private const val TAG = "AppViewModel"
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = this[APPLICATION_KEY] as Application
-                AppViewModel(application)
-            }
-        }
-    }
 
     init {
         val context: Context = this.getApplication()

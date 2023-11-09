@@ -16,10 +16,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.viewmodel.AppViewModel
+import com.example.moontech.ui.viewmodel.dataclasses.AppViewModelFactoryProvider
 
 @Composable
 fun ScreenScaffold(modifier: Modifier = Modifier) {
-    val viewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
+    val viewModel: AppViewModel = viewModel(factory = AppViewModelFactoryProvider.Factory)
     val navController = rememberNavController()
 
     Scaffold(modifier = modifier,
