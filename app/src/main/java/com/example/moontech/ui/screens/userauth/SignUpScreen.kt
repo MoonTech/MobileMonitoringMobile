@@ -1,18 +1,21 @@
 package com.example.moontech.ui.screens.userauth
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.components.PrimaryButton
+import com.example.moontech.R
 
 @Composable
 fun SignUpScreen(
-    modifier: Modifier = Modifier,
     signUp: () -> Unit,
-    navigateToLoginScreen: () -> Unit
-) = CenterScreen(modifier) {
-    Text(text = "Sign Up screen")
-    PrimaryButton(text = "Sign Up", onClick = signUp)
-    PrimaryButton(text = "Already have an acccount? Log in", onClick = navigateToLoginScreen)
-}
+    navigateToLoginScreen: () -> Unit,
+    modifier: Modifier = Modifier
+) = AuthScreenBase(
+    firstButtonLabel = R.string.sign_up,
+    secondButtonLabel = R.string.log_into_existing_account,
+    firstTextFieldLabel = R.string.username,
+    secondTextFieldLabel = R.string.password,
+    screenLabel = R.string.sign_up,
+    firstButtonAction = signUp,
+    secondButtonAction = navigateToLoginScreen,
+    modifier = modifier
+)

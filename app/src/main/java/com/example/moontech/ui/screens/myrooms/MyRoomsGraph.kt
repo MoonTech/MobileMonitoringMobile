@@ -9,7 +9,6 @@ import androidx.navigation.navigation
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.screens.myrooms.SplashScreen
-import com.example.moontech.ui.screens.userauth.userAuthorizationGraph
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 fun NavGraphBuilder.myRoomsGraph(
@@ -45,6 +44,5 @@ fun NavGraphBuilder.myRoomsGraph(
                     }
                 })
         }
-        userAuthorizationGraph(navController, viewModel, modifier)
     }
 }

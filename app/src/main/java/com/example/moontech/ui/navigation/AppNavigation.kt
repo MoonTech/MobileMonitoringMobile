@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.moontech.ui.screens.transmit.transmitGraph
+import com.example.moontech.ui.screens.userauth.userAuthorizationGraph
 import com.example.moontech.ui.screens.watch.myRoomsGraph
 import com.example.moontech.ui.screens.watch.watchGraph
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -22,5 +23,6 @@ fun AppNavigation(
         transmitGraph(navController = navController ,viewModel = viewModel, modifier = modifier)
         watchGraph(navController = navController ,viewModel = viewModel, modifier = modifier)
         myRoomsGraph(navController = navController ,viewModel = viewModel, modifier = modifier)
+        userAuthorizationGraph(navController = navController ,viewModel = viewModel, modifier = modifier)
     }
 }
