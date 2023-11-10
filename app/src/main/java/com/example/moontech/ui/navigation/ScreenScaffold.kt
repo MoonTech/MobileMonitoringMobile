@@ -53,7 +53,12 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
 }
 
 val myRoomsNavigationItem =
-    NavigationItem(screen = Screen.MyRooms, icon = Icons.Filled.Home, showBadge = false)
+    NavigationItem(
+        screen = Screen.MyRooms,
+        icon = Icons.Filled.Home,
+        showBadge = false,
+        acceptedScreens = listOf(Screen.UserAuthorization)
+    )
 val watchNavigationItem =
     NavigationItem(screen = Screen.Watch, icon = Icons.Filled.LiveTv, showBadge = false)
 val transmitNavigationItem =

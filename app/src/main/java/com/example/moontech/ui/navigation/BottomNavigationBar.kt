@@ -23,11 +23,13 @@ fun BottomNavigationBar(
 ) {
     NavigationBar(modifier = modifier) {
         navigationItems.forEach {
+            val selected = backStackEntry?.destination?.hierarchy?.any { destination ->
+                destination.route == it.screen.route ||
+                        it.acceptedScreens.any { it.route == destination.route }
+            } ?: false
             NavigationBarItem(
-                selected = backStackEntry?.destination?.hierarchy?.any { destination ->
-                    destination.route == it.screen.route
-                } ?: false,
-                onClick = { navigateTo(it.screen) },
+                selected = selected,
+                onClick = { if (!selected) navigateTo(it.screen) },
                 label = { Text(text = stringResource(it.screen.label)) },
                 icon = {
                     BadgedBox(badge = { if (it.showBadge) Badge() }) {
