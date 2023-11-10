@@ -5,6 +5,7 @@ import com.example.moontech.R
 
 sealed class Screen(val route: String, @StringRes val label: Int) {
     object MyRooms: Screen("my_rooms", R.string.my_rooms) {
+        object Splash: Screen("my_rooms_splash", R.string.my_rooms)
         object Main: Screen("my_rooms_main", R.string.my_rooms)
         object AddRoom: Screen("my_rooms_add_room", R.string.my_rooms)
     }
@@ -19,5 +20,11 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
         object Main: Screen("transmit_main", R.string.transmit)
         object AddRoom: Screen("transmit_add_room", R.string.transmit)
         object Camera: Screen("transmit_camera", R.string.transmit)
+    }
+
+    object UserAuthorization: Screen("user_authorization", R.string.login) {
+        object Login: Screen("user_authorization_login", R.string.login)
+
+        object SignUp: Screen("user_authorization_sign_up", R.string.login)
     }
 }

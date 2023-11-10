@@ -9,4 +9,5 @@
     <string name="my_rooms">My Rooms</string>
     <string name="watch">Watch</string>
     <string name="transmit">Transmit</string>
+    <string name="login">Log in</string>
 </resources>
