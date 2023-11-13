@@ -1,5 +1,6 @@
 package com.example.moontech.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.dataclasses.AppViewModelFactoryProvider
 
+private const val TAG = "ScreenScaffold"
 @Composable
 fun ScreenScaffold(modifier: Modifier = Modifier) {
     val viewModel: AppViewModel = viewModel(factory = AppViewModelFactoryProvider.Factory)
@@ -32,7 +34,8 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                 navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
                 navigateTo = { screen ->
                     navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        Log.i(TAG, "ScreenScaffold: ${navController.graph.findStartDestination().route}")
+                        popUpTo(navController.graph.id) {
                             saveState = true
                         }
                         launchSingleTop = true
