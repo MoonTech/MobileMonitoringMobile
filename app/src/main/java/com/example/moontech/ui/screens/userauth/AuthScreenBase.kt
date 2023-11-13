@@ -32,7 +32,7 @@ fun AuthScreenBase(
     @StringRes firstTextFieldLabel: Int,
     @StringRes secondTextFieldLabel: Int,
     @StringRes screenLabel: Int,
-    firstButtonAction: () -> Unit,
+    firstButtonAction: (username: String, password: String) -> Unit,
     secondButtonAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) = CenterScreen(modifier) {
@@ -71,7 +71,7 @@ fun AuthScreenBase(
         )
         PrimaryButton(
             text = stringResource(firstButtonLabel),
-            onClick = firstButtonAction,
+            onClick = { firstButtonAction(username, password) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 30.dp)

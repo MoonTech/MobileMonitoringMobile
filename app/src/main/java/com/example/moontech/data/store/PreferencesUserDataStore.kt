@@ -34,4 +34,10 @@ class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : 
             preferences[USER_DATA_KEY] = userData.token
         }
     }
+
+    override suspend fun clearUserData() {
+        dataStore.edit { preferences ->
+            preferences.minusAssign(USER_DATA_KEY)
+        }
+    }
 }

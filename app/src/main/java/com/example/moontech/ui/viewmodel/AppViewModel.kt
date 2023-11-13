@@ -10,6 +10,8 @@ import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moontech.data.dataclasses.User
+import com.example.moontech.data.dataclasses.UserData
 import com.example.moontech.data.repository.UserRepository
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
@@ -145,6 +147,34 @@ class AppViewModel(
                 block(it)
                 this.cancel()
             }
+        }
+    }
+
+    fun logInUser(login: String, password: String) {
+        val user = User(login, password)
+        viewModelScope.launch {
+            Log.i(TAG, "logInUser: ")
+            if (userRepository.login(user)) {
+                Log.i(TAG, "logInUser: user logged in")
+                userDataStore.saveUserData(UserData("test_token"))
+            }
+        }
+    }
+
+    fun registerUser(login: String, password: String) {
+        val user = User(login, password)
+        viewModelScope.launch {
+            Log.i(TAG, "registerUser:")
+            if (userRepository.register(user)) {
+                Log.i(TAG, "registerUser: user registered")
+                logInUser(login, password)
+            }
+        }
+    }
+
+    fun logOutUser() {
+        viewModelScope.launch {
+            userDataStore.clearUserData()
         }
     }
 }

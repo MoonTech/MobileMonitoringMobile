@@ -6,7 +6,7 @@ import com.example.moontech.R
 
 @Composable
 fun SignUpScreen(
-    signUp: () -> Unit,
+    signUp: (username: String, password: String) -> Unit,
     navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) = AuthScreenBase(
