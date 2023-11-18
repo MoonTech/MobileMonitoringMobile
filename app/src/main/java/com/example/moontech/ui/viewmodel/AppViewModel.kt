@@ -11,6 +11,7 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.Result
+import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.UserData
@@ -20,8 +21,6 @@ import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
-import com.example.moontech.ui.viewmodel.dataclasses.Room
-import com.example.moontech.ui.viewmodel.dataclasses.RoomPrivilege
 import com.example.moontech.ui.viewmodel.dataclasses.WatchedRoomsController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -81,35 +80,6 @@ class AppViewModel(
         context.bindService(intent, cameraServiceConnection, Context.BIND_AUTO_CREATE)
         fetchMyRooms()
         Log.i(TAG, "service bind")
-    }
-
-    fun loginToRoomForWatching(roomCode: String, password: String? = null) {
-        if (password != null) {
-            val room = Room(roomCode, RoomPrivilege.Watch.code)
-            addOrUpdateARoom(roomCode, room)
-            updateWatchedRoom(room)
-        } else {
-            addOrUpdateARoom(roomCode, Room(roomCode))
-        }
-    }
-
-    fun loginToRoomForTransmitting(roomCode: String, password: String? = null) {
-        if (password != null) {
-            val room = Room(roomCode, RoomPrivilege.Transmit.code)
-            addOrUpdateARoom(roomCode, room)
-            updateTransmittingRoom(room)
-        } else {
-            addOrUpdateARoom(roomCode, Room(roomCode))
-        }
-    }
-
-    private fun addOrUpdateARoom(roomCode: String, room: Room) {
-        _uiState.update { prevState ->
-            prevState.copy(rooms = prevState.rooms.toMutableMap().apply {
-                val roomToPut = get(roomCode)?.merge(room) ?: room
-                put(roomCode, roomToPut)
-            })
-        }
     }
 
     private fun updateWatchedRoom(room: Room) {

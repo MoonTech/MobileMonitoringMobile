@@ -10,12 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.moontech.data.dataclasses.ObjectWithRoomCode
+import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.RoomTile
-import com.example.moontech.ui.viewmodel.dataclasses.Room
 
 @Composable
-fun RoomListBase(rooms: List<Room>, onClick: () -> Unit, modifier: Modifier = Modifier) =
+fun RoomListBase(rooms: List<ObjectWithRoomCode>, onClick: () -> Unit, modifier: Modifier = Modifier) =
     CenterColumn(modifier = modifier, verticalArrangement = Arrangement.Top) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

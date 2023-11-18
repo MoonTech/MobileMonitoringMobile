@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.navigation.Screen
-import com.example.moontech.ui.screens.roomlogin.RoomLoginScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 fun NavGraphBuilder.watchGraph(
@@ -17,20 +16,14 @@ fun NavGraphBuilder.watchGraph(
     val startDestination = Screen.Watch.Main.route
     navigation(startDestination = startDestination, route = Screen.Watch.route) {
         composable(Screen.Watch.Main.route) {
-            RoomLoginScreen(
-                viewModel = viewModel,
-                onRoomLoggedIn = {
-                    navController.navigate(Screen.Watch.Watching.route) {
-                        popUpTo(route = startDestination)
-                    }
-                },
-                requiredPrivilege = { this.canWatch() },
-                onConfirm = { code, password -> viewModel.loginToRoomForWatching(code, password) },
-                modifier = modifier
-            )
+            WatchMainScreen(viewModel = viewModel, modifier = modifier)
         }
         composable(Screen.Watch.AddRoom.route) {
-
+            WatchAddRoomScreen(modifier = modifier,
+                onAddRoom = { code, password ->
+                viewModel.addWatchedRoom(code, password)
+                navController.popBackStack(Screen.Watch.Main.route, inclusive = false)
+            })
         }
         composable(Screen.Watch.Watching.route) {
             WatchingScreen(modifier = modifier, viewModel = viewModel)

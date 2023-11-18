@@ -16,11 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moontech.R
+import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.SingleValueAndConfirmComponent
 import com.example.moontech.ui.viewmodel.AppViewModel
-import com.example.moontech.ui.viewmodel.dataclasses.Room
 
 @Composable
 fun RoomLoginScreen(

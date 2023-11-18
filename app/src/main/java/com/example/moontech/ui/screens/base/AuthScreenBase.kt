@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,6 +37,7 @@ fun AuthScreenBase(
     secondButtonAction: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) = CenterScreen(modifier) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     CenterColumn(
         modifier = Modifier
             .widthIn(max = 300.dp)
@@ -71,7 +73,10 @@ fun AuthScreenBase(
         )
         PrimaryButton(
             text = stringResource(firstButtonLabel),
-            onClick = { firstButtonAction(username, password) },
+            onClick = {
+                keyboardController?.hide()
+                firstButtonAction(username, password)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 30.dp)

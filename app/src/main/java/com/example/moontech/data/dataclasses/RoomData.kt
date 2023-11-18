@@ -1,6 +1,9 @@
 package com.example.moontech.data.dataclasses
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RoomData(
-    val code: String,
+    override val code: String,
     val authToken:String = ""
-)
+): ObjectWithRoomCode

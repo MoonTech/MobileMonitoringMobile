@@ -28,8 +28,8 @@ fun NavGraphBuilder.transmitGraph(
                         popUpTo(route = Screen.Transmit.route)
                     }
                 },
-                requiredPrivilege = { this.canTransmit() },
-                onConfirm = {code, password -> viewModel.loginToRoomForTransmitting(code, password)},
+                requiredPrivilege = { true },
+                onConfirm = {code, password -> },
                 modifier = modifier
             )
         }

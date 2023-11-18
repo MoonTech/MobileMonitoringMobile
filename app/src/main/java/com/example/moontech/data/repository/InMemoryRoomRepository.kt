@@ -2,7 +2,7 @@ package com.example.moontech.data.repository
 
 import android.util.Log
 import com.example.moontech.data.dataclasses.Result
-import com.example.moontech.ui.viewmodel.dataclasses.Room
+import com.example.moontech.data.dataclasses.Room
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

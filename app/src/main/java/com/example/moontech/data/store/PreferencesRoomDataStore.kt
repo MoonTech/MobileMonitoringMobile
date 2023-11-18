@@ -38,6 +38,7 @@ class PreferencesRoomDataStore(
         }
 
     override suspend fun addRoomData(roomData: RoomData) {
+        Log.i(TAG, "addRoomData: begin")
         val encodedRoomData = Json.encodeToString(roomData)
         dataStore.editStringValues { rooms -> rooms.apply { add(encodedRoomData) } }
     }

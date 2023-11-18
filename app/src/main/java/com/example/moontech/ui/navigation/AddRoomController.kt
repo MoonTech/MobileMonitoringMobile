@@ -8,7 +8,7 @@ fun addRoom(currentRoute: String, navController: NavController) {
             navController.navigate(Screen.MyRooms.AddRoom.route)
         }
         Screen.Watch.Main.route -> {
-
+            navController.navigate(Screen.Watch.AddRoom.route)
         }
         Screen.Transmit.Main.route -> {
 
