@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization") version "1.9.20"
 }
 
 android {
@@ -89,6 +90,8 @@ dependencies {
     implementation("androidx.camera:camera-video:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-core:${cameraxVersion}")
-    //ffmpeg
+    // ffmpeg
     implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
+    // serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
 }

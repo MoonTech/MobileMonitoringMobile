@@ -13,7 +13,8 @@ object AppViewModelFactoryProvider {
                 application,
                 application.container.userRepository,
                 application.container.userDataStore,
-                application.container.roomRepository
+                application.container.roomRepository,
+                application.container.roomDataStore
             )
         }
     }

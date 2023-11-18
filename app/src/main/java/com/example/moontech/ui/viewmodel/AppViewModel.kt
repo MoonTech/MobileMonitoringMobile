@@ -11,15 +11,18 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.Result
+import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.UserData
 import com.example.moontech.data.repository.RoomRepository
 import com.example.moontech.data.repository.UserRepository
+import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.ui.viewmodel.dataclasses.Room
 import com.example.moontech.ui.viewmodel.dataclasses.RoomPrivilege
+import com.example.moontech.ui.viewmodel.dataclasses.WatchedRoomsController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,8 +40,9 @@ class AppViewModel(
     application: Application,
     private val userRepository: UserRepository,
     private val userDataStore: UserDataStore,
-    private val roomRepository: RoomRepository
-) : AndroidViewModel(application), MyRoomsController {
+    private val roomRepository: RoomRepository,
+    private val roomDataStore: RoomDataStore
+) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController {
     companion object {
         private const val TAG = "AppViewModel"
     }
@@ -64,9 +68,11 @@ class AppViewModel(
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
-            Log.i(TAG, "isLoggedInState: $it")
             it?.let { true } ?: false
         }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
+    override val watchedRooms: StateFlow<List<RoomData>> =
+        roomDataStore.rooms
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
     init {
         val context: Context = this.getApplication()
@@ -201,6 +207,12 @@ class AppViewModel(
     override fun addRoom(code: String, password: String?) {
         viewModelScope.launch {
             roomRepository.addRoom(code, password)
+        }
+    }
+
+    override fun addWatchedRoom(code: String, password: String) {
+        viewModelScope.launch {
+            roomDataStore.addRoomData(RoomData(code))
         }
     }
 

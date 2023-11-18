@@ -15,7 +15,7 @@ import java.io.IOException
 class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : UserDataStore {
     companion object {
         private const val TAG = "InMemoryUserDataStore"
-        val USER_DATA_KEY = stringPreferencesKey("user_data_key")
+        private val USER_DATA_KEY = stringPreferencesKey("user_data_key")
     }
 
     override val userData: Flow<UserData?> = dataStore.data
