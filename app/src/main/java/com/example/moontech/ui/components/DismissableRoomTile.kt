@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +29,15 @@ fun DismissableRoomTile(
     modifier: Modifier = Modifier,
     onDismiss: (room: ObjectWithRoomCode) -> Unit
 ) {
-    val dismissState = rememberDismissState()
-    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-        onDismiss(room)
-    }
+    val dismissState = rememberDismissState(
+        positionalThreshold = { _ -> 128.dp.toPx() },
+        confirmValueChange = {
+            if (it == DismissValue.DismissedToStart) {
+                onDismiss(room)
+            }
+            true
+        }
+    )
     SwipeToDismiss(
         modifier = modifier,
         state = dismissState,
