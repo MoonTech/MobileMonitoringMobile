@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.StateFlow
 interface WatchedRoomsController {
     val watchedRooms: StateFlow<List<RoomData>>
     fun addWatchedRoom(code: String, password: String)
+    fun removeWatchedRoom(code: String)
 }

@@ -186,5 +186,11 @@ class AppViewModel(
         }
     }
 
+    override fun removeWatchedRoom(code: String) {
+        viewModelScope.launch {
+            roomDataStore.removeRoomData(RoomData(code))
+        }
+    }
+
 
 }
