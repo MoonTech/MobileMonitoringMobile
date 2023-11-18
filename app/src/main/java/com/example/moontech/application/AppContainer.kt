@@ -8,6 +8,8 @@ import com.example.moontech.data.repository.InMemoryRoomRepository
 import com.example.moontech.data.repository.InMemoryUserRepository
 import com.example.moontech.data.repository.RoomRepository
 import com.example.moontech.data.repository.UserRepository
+import com.example.moontech.data.store.RoomCameraDataStore
+import com.example.moontech.data.store.PreferencesRoomCameraDataStore
 import com.example.moontech.data.store.PreferencesRoomDataStore
 import com.example.moontech.data.store.PreferencesUserDataStore
 import com.example.moontech.data.store.RoomDataStore
@@ -18,6 +20,7 @@ interface AppContainer {
     val userDataStore: UserDataStore
     val roomRepository: RoomRepository
     val roomDataStore: RoomDataStore
+    val roomCameraDataStore: RoomCameraDataStore
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -36,5 +39,8 @@ class DefaultAppContainer(context: Context) : AppContainer {
     }
     override val roomDataStore: RoomDataStore by lazy {
         PreferencesRoomDataStore(context.dataStore)
+    }
+    override val roomCameraDataStore: RoomCameraDataStore by lazy {
+        PreferencesRoomCameraDataStore(context.dataStore)
     }
 }

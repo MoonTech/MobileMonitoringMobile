@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Moontech</string>
-    <string name="add_camera">Add new camera</string>
+    <string name="add_camera">Add new roomCamera</string>
     <string name="watch_transmission">Watch transmission</string>
     <string name="room_code">Room code</string>
     <string name="room_password">Room password</string>

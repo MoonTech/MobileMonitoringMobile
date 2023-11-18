@@ -10,11 +10,12 @@ object AppViewModelFactoryProvider {
         initializer {
             val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MoontechApplication
             AppViewModel(
-                application,
-                application.container.userRepository,
-                application.container.userDataStore,
-                application.container.roomRepository,
-                application.container.roomDataStore
+                application = application,
+                userRepository = application.container.userRepository,
+                userDataStore = application.container.userDataStore,
+                roomRepository = application.container.roomRepository,
+                roomDataStore = application.container.roomDataStore,
+                roomCameraDataStore = application.container.roomCameraDataStore
             )
         }
     }

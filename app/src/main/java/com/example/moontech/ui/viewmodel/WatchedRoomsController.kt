@@ -1,4 +1,4 @@
-package com.example.moontech.ui.viewmodel.dataclasses
+package com.example.moontech.ui.viewmodel
 
 import com.example.moontech.data.dataclasses.RoomData
 import kotlinx.coroutines.flow.StateFlow

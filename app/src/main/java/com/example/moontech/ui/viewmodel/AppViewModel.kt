@@ -12,16 +12,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.Room
+import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.UserData
 import com.example.moontech.data.repository.RoomRepository
 import com.example.moontech.data.repository.UserRepository
+import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
-import com.example.moontech.ui.viewmodel.dataclasses.WatchedRoomsController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,8 +41,9 @@ class AppViewModel(
     private val userRepository: UserRepository,
     private val userDataStore: UserDataStore,
     private val roomRepository: RoomRepository,
-    private val roomDataStore: RoomDataStore
-) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController {
+    private val roomDataStore: RoomDataStore,
+    private val roomCameraDataStore: RoomCameraDataStore
+) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController, CameraController {
     companion object {
         private const val TAG = "AppViewModel"
     }
@@ -65,13 +67,25 @@ class AppViewModel(
     val isStreamingState: StateFlow<Boolean> =
         cameraService.filterNotNull().flatMapLatest { it.isStreaming }
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
+
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
             it?.let { true } ?: false
         }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
+
     override val watchedRooms: StateFlow<List<RoomData>> =
         roomDataStore.rooms
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
+
+    override val roomCamera: StateFlow<Result<RoomCamera>> = roomCameraDataStore.roomCamera
+        .map { roomCamera ->
+            if (roomCamera == null) {
+                Result.Empty()
+            } else {
+                Result.Success(roomCamera)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = Result.Loading())
 
     init {
         val context: Context = this.getApplication()
@@ -189,6 +203,18 @@ class AppViewModel(
     override fun removeWatchedRoom(code: String) {
         viewModelScope.launch {
             roomDataStore.removeRoomData(RoomData(code))
+        }
+    }
+
+    override fun addRoomCamera(code: String, password: String) {
+        viewModelScope.launch {
+            roomCameraDataStore.saveCamera(RoomCamera(code, password))
+        }
+    }
+
+    override fun removeRoomCamera() {
+        viewModelScope.launch {
+            roomCameraDataStore.deleteCamera()
         }
     }
 
