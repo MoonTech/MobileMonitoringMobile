@@ -15,13 +15,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -50,11 +48,11 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                 val text = Screen.valueOf(currentRoute).label
                 Log.i(TAG, "ScreenScaffold: route extracted $text")
                 Column(modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp)))
+                    color = MaterialTheme.colorScheme.primaryContainer))
                 {
                     Text(
                         text = stringResource(text),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.padding(8.dp)
                     )
                     Divider(modifier = Modifier.fillMaxWidth())
