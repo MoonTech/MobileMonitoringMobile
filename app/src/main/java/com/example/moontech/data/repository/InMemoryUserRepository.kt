@@ -2,7 +2,7 @@ package com.example.moontech.data.repository
 
 import com.example.moontech.data.dataclasses.User
 
-class InMeMemoryUserRepository: UserRepository {
+class InMemoryUserRepository: UserRepository {
     companion object {
         private val users: MutableSet<User> = mutableSetOf()
     }

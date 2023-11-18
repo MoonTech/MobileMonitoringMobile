@@ -1,6 +1,6 @@
 package com.example.moontech.ui.screens.watch
 
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.PrimaryButton
+import com.example.moontech.ui.components.base.RoomListBase
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.screens.myrooms.SplashScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -28,8 +29,9 @@ fun NavGraphBuilder.myRoomsGraph(
         composable(Screen.MyRooms.Main.route) {
             val loggedIn by viewModel.loggedInState.collectAsState()
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
+            val rooms by viewModel.myRooms.collectAsState()
             CenterScreen(modifier = modifier) {
-                Text(text = "My Rooms")
+                RoomListBase(rooms = rooms, modifier = Modifier.fillMaxSize())
                 PrimaryButton(text = "Log out", onClick = { viewModel.logOutUser() })
             }
         }

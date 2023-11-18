@@ -10,8 +10,10 @@ import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.UserData
+import com.example.moontech.data.repository.RoomRepository
 import com.example.moontech.data.repository.UserRepository
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
@@ -34,7 +36,8 @@ import kotlinx.coroutines.launch
 class AppViewModel(
     application: Application,
     private val userRepository: UserRepository,
-    private val userDataStore: UserDataStore
+    private val userDataStore: UserDataStore,
+    private val roomRepository: RoomRepository
 ) : AndroidViewModel(application) {
     companion object {
         private const val TAG = "AppViewModel"
@@ -52,6 +55,8 @@ class AppViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    private val _myRooms: MutableStateFlow<List<Room>> = MutableStateFlow(listOf())
+    val myRooms: StateFlow<List<Room>> = _myRooms
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
@@ -66,6 +71,7 @@ class AppViewModel(
         val intent = Intent(context, CameraServiceImpl::class.java)
         context.startForegroundService(intent)
         context.bindService(intent, cameraServiceConnection, Context.BIND_AUTO_CREATE)
+        fetchMyRooms()
         Log.i(TAG, "service bind")
     }
 
@@ -169,6 +175,18 @@ class AppViewModel(
                 Log.i(TAG, "registerUser: user registered")
                 logInUser(login, password)
             }
+        }
+    }
+
+    private fun fetchMyRooms() {
+        viewModelScope.launch {
+            roomRepository
+                .getRooms()
+                .collect { result ->
+                    if (result is Result.Success) {
+                        _myRooms.emit(result.data)
+                    }
+                }
         }
     }
 

@@ -1,10 +1,9 @@
-package com.example.moontech.ui.viewmodel.dataclasses
+package com.example.moontech.ui.viewmodel
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.moontech.application.MoontechApplication
-import com.example.moontech.ui.viewmodel.AppViewModel
 
 object AppViewModelFactoryProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -13,7 +12,8 @@ object AppViewModelFactoryProvider {
             AppViewModel(
                 application,
                 application.container.userRepository,
-                application.container.userDataStore
+                application.container.userDataStore,
+                application.container.roomRepository
             )
         }
     }

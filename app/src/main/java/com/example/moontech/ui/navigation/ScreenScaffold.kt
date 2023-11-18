@@ -17,7 +17,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.viewmodel.AppViewModel
-import com.example.moontech.ui.viewmodel.dataclasses.AppViewModelFactoryProvider
+import com.example.moontech.ui.viewmodel.AppViewModelFactoryProvider
 
 private const val TAG = "ScreenScaffold"
 @Composable
