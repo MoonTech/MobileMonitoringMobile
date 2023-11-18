@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 class InMemoryRoomRepository : RoomRepository {
     companion object {
         private const val TAG = "InMemoryRoomRepository"
-        private val testRooms = listOf(
+        private val testRooms = mutableListOf(
             Room(code = "My room 1"),
             Room(code = "My room 2"),
             Room(code = "My room 3"),
@@ -23,5 +23,9 @@ class InMemoryRoomRepository : RoomRepository {
         emit(Result.Loading())
         delay(1000)
         emit(Result.Success(testRooms))
+    }
+
+    override suspend fun addRoom(code: String, password: String?) {
+        testRooms.add(Room(code = code))
     }
 }

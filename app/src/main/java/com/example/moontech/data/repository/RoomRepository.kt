@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface RoomRepository {
     suspend fun getRooms(): Flow<Result<List<Room>>>
+    suspend fun addRoom(code: String, password: String?)
 }

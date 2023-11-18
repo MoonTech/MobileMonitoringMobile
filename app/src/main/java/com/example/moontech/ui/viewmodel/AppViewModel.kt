@@ -38,7 +38,7 @@ class AppViewModel(
     private val userRepository: UserRepository,
     private val userDataStore: UserDataStore,
     private val roomRepository: RoomRepository
-) : AndroidViewModel(application) {
+) : AndroidViewModel(application), MyRoomsController {
     companion object {
         private const val TAG = "AppViewModel"
     }
@@ -197,4 +197,12 @@ class AppViewModel(
             userDataStore.clearUserData()
         }
     }
+
+    override fun addRoom(code: String, password: String?) {
+        viewModelScope.launch {
+            roomRepository.addRoom(code, password)
+        }
+    }
+
+
 }
