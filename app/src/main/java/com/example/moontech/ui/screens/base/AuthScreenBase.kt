@@ -28,6 +28,7 @@ import com.example.moontech.ui.components.PrimaryButton
 
 @Composable
 fun AuthScreenBase(
+    modifier: Modifier = Modifier,
     @StringRes firstButtonLabel: Int,
     @StringRes secondButtonLabel: Int? = null,
     @StringRes firstTextFieldLabel: Int,
@@ -35,7 +36,6 @@ fun AuthScreenBase(
     @StringRes screenLabel: Int,
     firstButtonAction: (username: String, password: String) -> Unit,
     secondButtonAction: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
 ) = CenterScreen(modifier) {
     val keyboardController = LocalSoftwareKeyboardController.current
     CenterColumn(
