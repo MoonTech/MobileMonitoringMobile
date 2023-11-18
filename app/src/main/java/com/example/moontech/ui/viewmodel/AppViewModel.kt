@@ -63,8 +63,10 @@ class AppViewModel(
         cameraService.filterNotNull().flatMapLatest { it.isStreaming }
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
     val loggedInState: StateFlow<Boolean?> =
-        userDataStore.userData.map { it?.let { true } ?: false }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
+        userDataStore.userData.map {
+            Log.i(TAG, "isLoggedInState: $it")
+            it?.let { true } ?: false
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
 
     init {
         val context: Context = this.getApplication()

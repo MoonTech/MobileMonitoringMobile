@@ -1,4 +1,4 @@
-package com.example.moontech.ui.screens.userauth
+package com.example.moontech.ui.screens.base
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
@@ -28,12 +28,12 @@ import com.example.moontech.ui.components.PrimaryButton
 @Composable
 fun AuthScreenBase(
     @StringRes firstButtonLabel: Int,
-    @StringRes secondButtonLabel: Int,
+    @StringRes secondButtonLabel: Int? = null,
     @StringRes firstTextFieldLabel: Int,
     @StringRes secondTextFieldLabel: Int,
     @StringRes screenLabel: Int,
     firstButtonAction: (username: String, password: String) -> Unit,
-    secondButtonAction: () -> Unit,
+    secondButtonAction: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) = CenterScreen(modifier) {
     CenterColumn(
@@ -77,13 +77,15 @@ fun AuthScreenBase(
                 .padding(top = 30.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        OutlinedButton(
-            onClick = secondButtonAction,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.End)
-        ) {
-            Text(text = stringResource(secondButtonLabel))
+        if (secondButtonLabel != null && secondButtonAction != null) {
+            OutlinedButton(
+                onClick = secondButtonAction,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End)
+            ) {
+                Text(text = stringResource(secondButtonLabel))
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : 
             }
             throw it
         }.map { preferences ->
+            Log.i(TAG, "fetching ${preferences[USER_DATA_KEY]}")
             preferences[USER_DATA_KEY]?.let { UserData(it) }
         }
 

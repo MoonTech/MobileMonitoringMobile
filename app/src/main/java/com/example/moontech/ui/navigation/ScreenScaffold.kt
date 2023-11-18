@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.VideoCameraBack
@@ -16,16 +17,33 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.moontech.ui.components.FloatingActionButtonWithIcon
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.AppViewModelFactoryProvider
 
 private const val TAG = "ScreenScaffold"
+
 @Composable
 fun ScreenScaffold(modifier: Modifier = Modifier) {
     val viewModel: AppViewModel = viewModel(factory = AppViewModelFactoryProvider.Factory)
     val navController = rememberNavController()
 
     Scaffold(modifier = modifier,
+        floatingActionButton = {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val visibleRoutes = setOf(
+                Screen.MyRooms.Main.route,
+                Screen.Watch.Main.route,
+                Screen.Transmit.Main.route
+            )
+            FloatingActionButtonWithIcon(
+                visible = visibleRoutes.contains(navBackStackEntry?.destination?.route),
+                onClick = { addRoom(navBackStackEntry?.destination?.route ?: "", navController) },
+                icon = Icons.Filled.Add,
+                contentDescription = "Add room",
+                modifier = modifier
+            )
+        },
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val isStreaming by viewModel.isStreamingState.collectAsState()
@@ -34,7 +52,10 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                 navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
                 navigateTo = { screen ->
                     navController.navigate(screen.route) {
-                        Log.i(TAG, "ScreenScaffold: ${navController.graph.findStartDestination().route}")
+                        Log.i(
+                            TAG,
+                            "ScreenScaffold: ${navController.graph.findStartDestination().route}"
+                        )
                         popUpTo(navController.graph.id) {
                             saveState = true
                         }

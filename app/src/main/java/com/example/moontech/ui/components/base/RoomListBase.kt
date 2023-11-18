@@ -15,7 +15,7 @@ import com.example.moontech.ui.components.RoomTile
 import com.example.moontech.ui.viewmodel.dataclasses.Room
 
 @Composable
-fun RoomListBase(rooms: List<Room>, modifier: Modifier = Modifier) =
+fun RoomListBase(rooms: List<Room>, onClick: () -> Unit, modifier: Modifier = Modifier) =
     CenterColumn(modifier = modifier, verticalArrangement = Arrangement.Top) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -25,7 +25,9 @@ fun RoomListBase(rooms: List<Room>, modifier: Modifier = Modifier) =
                 key = { it.code },
                 contentType = { Room::class.java }
             ) { room ->
-                RoomTile(room = room, modifier = Modifier.height(56.dp).clickable {  })
+                RoomTile(room = room, modifier = Modifier
+                    .height(56.dp)
+                    .clickable { onClick() })
                 HorizontalDivider()
             }
         }
