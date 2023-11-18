@@ -1,18 +1,28 @@
 package com.example.moontech.ui.navigation
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.VideoCameraBack
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -27,25 +37,45 @@ private const val TAG = "ScreenScaffold"
 fun ScreenScaffold(modifier: Modifier = Modifier) {
     val viewModel: AppViewModel = viewModel(factory = AppViewModelFactoryProvider.Factory)
     val navController = rememberNavController()
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
     Scaffold(modifier = modifier,
+        topBar = {
+            val visibleRoutes = setOf(
+                Screen.MyRooms.Main.route,
+                Screen.Watch.Main.route,
+                Screen.Transmit.Main.route
+            )
+            if (currentRoute != null && currentRoute in visibleRoutes) {
+                val text = Screen.valueOf(currentRoute).label
+                Log.i(TAG, "ScreenScaffold: route extracted $text")
+                Column(modifier = Modifier.background(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp)))
+                {
+                    Text(
+                        text = stringResource(text),
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Divider(modifier = Modifier.fillMaxWidth())
+                }
+            }
+        },
         floatingActionButton = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
             val visibleRoutes = setOf(
                 Screen.MyRooms.Main.route,
                 Screen.Watch.Main.route,
                 Screen.Transmit.Main.route
             )
             FloatingActionButtonWithIcon(
-                visible = visibleRoutes.contains(navBackStackEntry?.destination?.route),
-                onClick = { addRoom(navBackStackEntry?.destination?.route ?: "", navController) },
+                visible = visibleRoutes.contains(currentRoute),
+                onClick = { addRoom(currentRoute ?: "", navController) },
                 icon = Icons.Filled.Add,
                 contentDescription = "Add room",
                 modifier = modifier
             )
         },
         bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
             val isStreaming by viewModel.isStreamingState.collectAsState()
 
             BottomNavigationBar(

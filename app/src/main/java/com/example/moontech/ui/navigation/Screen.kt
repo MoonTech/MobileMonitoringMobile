@@ -29,16 +29,14 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
     }
 
     companion object {
+        private const val TAG = "Screen"
         val screens = listOf(
             MyRooms.Splash,
             MyRooms.Main,
             MyRooms.AddRoom,
-            MyRooms,
-            Watch,
             Watch.Main,
             Watch.AddRoom,
             Watch.Watching,
-            Transmit,
             Transmit.Main,
             Transmit.AddRoom,
             Transmit.Camera,
@@ -46,9 +44,8 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
             UserAuthorization.Login,
             UserAuthorization.SignUp
         )
-    }
-
-    fun valueOf(route: String): Screen {
-        return screens.first { screen -> screen.route == route }
+        fun valueOf(route: String): Screen {
+            return screens.first { screen -> screen.route == route }
+        }
     }
 }
