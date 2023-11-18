@@ -8,9 +8,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.PermissionWrapper
+import com.example.moontech.ui.components.PrimaryButton
 import com.example.moontech.ui.navigation.Screen
-import com.example.moontech.ui.screens.roomlogin.RoomLoginScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 fun NavGraphBuilder.transmitGraph(
@@ -21,17 +22,11 @@ fun NavGraphBuilder.transmitGraph(
     val startDestination = Screen.Transmit.Main.route
     navigation(startDestination = startDestination, route = Screen.Transmit.route) {
         composable(Screen.Transmit.Main.route) {
-            RoomLoginScreen(
-                viewModel = viewModel,
-                onRoomLoggedIn = {
-                    navController.navigate(Screen.Transmit.Camera.route) {
-                        popUpTo(route = Screen.Transmit.route)
-                    }
-                },
-                requiredPrivilege = { true },
-                onConfirm = {code, password -> },
-                modifier = modifier
-            )
+            CenterScreen(modifier) {
+                PrimaryButton(text = "Start", onClick = {
+                    navController.navigate(Screen.Transmit.Camera.route)
+                })
+            }
         }
         composable(Screen.Transmit.AddRoom.route) {
 
