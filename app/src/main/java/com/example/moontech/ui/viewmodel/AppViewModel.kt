@@ -23,6 +23,7 @@ import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
+import com.example.moontech.services.web.UserApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +43,8 @@ class AppViewModel(
     private val userDataStore: UserDataStore,
     private val roomRepository: RoomRepository,
     private val roomDataStore: RoomDataStore,
-    private val roomCameraDataStore: RoomCameraDataStore
+    private val roomCameraDataStore: RoomCameraDataStore,
+    private val userApiService: UserApiService
 ) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController, CameraController {
     companion object {
         private const val TAG = "AppViewModel"

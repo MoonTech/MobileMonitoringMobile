@@ -5,15 +5,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import catching
 import com.example.moontech.data.dataclasses.RoomData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.IOException
 
 class PreferencesRoomDataStore(
     private val dataStore: DataStore<Preferences>
@@ -25,13 +23,8 @@ class PreferencesRoomDataStore(
     }
 
     override val rooms: Flow<List<RoomData>> = dataStore.data
-        .catch {
-            if (it is IOException) {
-                Log.e(TAG, "Error reading preferences", it)
-                emptyPreferences()
-            }
-            throw it
-        }.map { preferences ->
+        .catching()
+        .map { preferences ->
             preferences[ROOM_DATA_KEY]?.map {
                 Json.decodeFromString<RoomData>(it)
             }?.toList() ?: listOf()

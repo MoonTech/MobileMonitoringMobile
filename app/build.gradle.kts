@@ -94,4 +94,12 @@ dependencies {
     implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
     // serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+    // ktor
+    val ktor_version = "2.3.6"
+    val logging_interceptor_version = "4.11.0"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("com.squareup.okhttp3:logging-interceptor:$logging_interceptor_version")
 }
