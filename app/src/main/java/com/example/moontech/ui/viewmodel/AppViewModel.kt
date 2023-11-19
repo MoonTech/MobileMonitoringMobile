@@ -15,7 +15,6 @@ import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
-import com.example.moontech.data.dataclasses.UserData
 import com.example.moontech.data.repository.RoomRepository
 import com.example.moontech.data.repository.UserRepository
 import com.example.moontech.data.store.RoomCameraDataStore
@@ -154,9 +153,9 @@ class AppViewModel(
         val user = User(login, password)
         viewModelScope.launch {
             Log.i(TAG, "logInUser: ")
-            if (userRepository.login(user)) {
+            userApiService.logIn(user).onSuccess {
+                userDataStore.saveUserData(it)
                 Log.i(TAG, "logInUser: user logged in")
-                userDataStore.saveUserData(UserData("test_token"))
             }
         }
     }
@@ -165,9 +164,9 @@ class AppViewModel(
         val user = User(login, password)
         viewModelScope.launch {
             Log.i(TAG, "registerUser:")
-            if (userRepository.register(user)) {
+            userApiService.register(user).onSuccess {
+                userDataStore.saveUserData(it)
                 Log.i(TAG, "registerUser: user registered")
-                logInUser(login, password)
             }
         }
     }

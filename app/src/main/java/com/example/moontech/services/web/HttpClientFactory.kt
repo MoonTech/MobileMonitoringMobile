@@ -11,6 +11,7 @@ object HttpClientFactory {
 
     fun create(baseUrl: String): HttpClient {
         return HttpClient(OkHttp) {
+            expectSuccess = true
             engine {
                 addInterceptor(HttpLoggingInterceptor().apply {
                     setLevel(HttpLoggingInterceptor.Level.BODY)
