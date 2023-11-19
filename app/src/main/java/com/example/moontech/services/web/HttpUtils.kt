@@ -1,5 +1,6 @@
 package com.example.moontech.services.web
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
@@ -20,5 +21,8 @@ suspend inline fun <reified R> HttpClient.postResult(
         Result.success(post(urlString, builder).body())
     } catch(exception: ResponseException) {
         Result.failure(exception)
+    } catch (t: Throwable) {
+        Log.e("http", "postResult: ", t)
+        Result.failure(t)
     }
 }
