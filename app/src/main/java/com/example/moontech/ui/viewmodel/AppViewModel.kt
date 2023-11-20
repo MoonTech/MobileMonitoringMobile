@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
@@ -63,6 +64,8 @@ class AppViewModel(
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
     private val _myRooms: MutableStateFlow<List<Room>> = MutableStateFlow(listOf())
     val myRooms: StateFlow<List<Room>> = _myRooms
+    private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
+    val errorState: StateFlow<AppError> = _errorState
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
@@ -153,7 +156,7 @@ class AppViewModel(
         val user = User(login, password)
         viewModelScope.launch {
             Log.i(TAG, "logInUser: ")
-            userApiService.logIn(user).onSuccess {
+            userApiService.logIn(user).onSuccessWithErrorHandling {
                 userDataStore.saveUserData(it)
                 Log.i(TAG, "logInUser: user logged in")
             }
@@ -164,7 +167,7 @@ class AppViewModel(
         val user = User(login, password)
         viewModelScope.launch {
             Log.i(TAG, "registerUser:")
-            userApiService.register(user).onSuccess {
+            userApiService.register(user).onSuccessWithErrorHandling {
                 userDataStore.saveUserData(it)
                 Log.i(TAG, "registerUser: user registered")
             }
@@ -219,5 +222,14 @@ class AppViewModel(
         }
     }
 
+    private suspend inline fun <T> kotlin.Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit) {
+        onSuccess {
+            block(it)
+        }
+        onFailure {
+            Log.i(TAG, "onSuccessWithErrorHandling: handling failure")
+            _errorState.emit(AppError.Error("Something went wrong"))
+        }
+    }
 
 }

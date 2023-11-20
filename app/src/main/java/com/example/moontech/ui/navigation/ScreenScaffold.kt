@@ -14,10 +14,14 @@ import androidx.compose.material.icons.filled.VideoCameraBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,7 +41,18 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val snackbarHostState = remember { SnackbarHostState() }
+    val errorState = viewModel.errorState.collectAsState()
+    LaunchedEffect(errorState.value) {
+        Log.i(TAG, "ScreenScaffold: error launched ${errorState.value}")
+        errorState.value.ifError {
+            snackbarHostState.showSnackbar(it.errorMessage)
+        }
+    }
     Scaffold(modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             val visibleRoutes = setOf(
                 Screen.MyRooms.Main.route,

@@ -8,6 +8,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
+import java.time.Duration
 
 object HttpClientFactory {
 
@@ -15,6 +16,9 @@ object HttpClientFactory {
         return HttpClient(OkHttp) {
             expectSuccess = true
             engine {
+                config {
+                    connectTimeout(Duration.ofSeconds(5))
+                }
                 addInterceptor(HttpLoggingInterceptor().apply {
                     setLevel(HttpLoggingInterceptor.Level.BODY)
                 })
