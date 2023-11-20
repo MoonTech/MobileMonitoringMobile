@@ -2,6 +2,8 @@ package com.example.moontech.services.web
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
@@ -11,8 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.time.Duration
 
 object HttpClientFactory {
-
-    fun create(baseUrl: String): HttpClient {
+    fun create(baseUrl: String, tokenManager: TokenManager): HttpClient {
         return HttpClient(OkHttp) {
             expectSuccess = true
             engine {
@@ -31,6 +32,17 @@ object HttpClientFactory {
 
             install(ContentNegotiation) {
                 json()
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        tokenManager.loadTokens()
+                    }
+                    refreshTokens {
+                        tokenManager.refreshTokens(oldTokens)
+                    }
+                }
             }
         }
     }

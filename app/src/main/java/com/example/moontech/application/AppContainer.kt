@@ -18,6 +18,7 @@ import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.web.HttpClientFactory
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.RoomApiServiceImpl
+import com.example.moontech.services.web.TokenManager
 import com.example.moontech.services.web.UserApiService
 import com.example.moontech.services.web.UserApiServiceImpl
 import io.ktor.client.HttpClient
@@ -31,6 +32,7 @@ interface AppContainer {
     val httpClient: HttpClient
     val userApiService: UserApiService
     val roomApiService: RoomApiService
+    val tokenManager: TokenManager
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -54,12 +56,16 @@ class DefaultAppContainer(context: Context) : AppContainer {
         PreferencesRoomCameraDataStore(context.dataStore)
     }
     override val httpClient: HttpClient by lazy {
-        HttpClientFactory.create(context.getString(R.string.base_url))
+        val baseUrl = context.getString(R.string.base_url)
+        HttpClientFactory.create(baseUrl, tokenManager)
     }
     override val userApiService: UserApiService by lazy {
         UserApiServiceImpl(httpClient)
     }
     override val roomApiService: RoomApiService by lazy {
         RoomApiServiceImpl(httpClient)
+    }
+    override val tokenManager: TokenManager by lazy {
+        TokenManager(userDataStore)
     }
 }

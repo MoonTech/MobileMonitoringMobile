@@ -99,6 +99,7 @@ dependencies {
     val logging_interceptor_version = "4.11.0"
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    implementation("io.ktor:ktor-client-auth:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$logging_interceptor_version")
