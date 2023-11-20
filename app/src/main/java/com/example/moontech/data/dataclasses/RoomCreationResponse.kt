@@ -4,5 +4,5 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RoomCreationResponse(@SerialName("roomName") override val code: String): ObjectWithRoomCode {
+data class RoomCreationResponse(@SerialName("roomName") override val code: String): ObjectWithRoomCode {
 }
