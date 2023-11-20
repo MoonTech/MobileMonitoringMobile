@@ -11,18 +11,19 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.ManagedRoomWithCameras
 import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
+import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
-import com.example.moontech.data.repository.RoomRepository
-import com.example.moontech.data.repository.UserRepository
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
+import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -39,12 +40,11 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(
     application: Application,
-    private val userRepository: UserRepository,
     private val userDataStore: UserDataStore,
-    private val roomRepository: RoomRepository,
     private val roomDataStore: RoomDataStore,
     private val roomCameraDataStore: RoomCameraDataStore,
-    private val userApiService: UserApiService
+    private val userApiService: UserApiService,
+    private val roomApiService: RoomApiService
 ) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController, CameraController {
     companion object {
         private const val TAG = "AppViewModel"
@@ -62,8 +62,9 @@ class AppViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-    private val _myRooms: MutableStateFlow<List<Room>> = MutableStateFlow(listOf())
-    val myRooms: StateFlow<List<Room>> = _myRooms
+    private val _myRooms: MutableStateFlow<List<ManagedRoomWithCameras>> =
+        MutableStateFlow(listOf())
+    val myRooms: StateFlow<List<ManagedRoomWithCameras>> = _myRooms
     private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
     val errorState: StateFlow<AppError> = _errorState
 
@@ -176,13 +177,9 @@ class AppViewModel(
 
     private fun fetchMyRooms() {
         viewModelScope.launch {
-            roomRepository
-                .getRooms()
-                .collect { result ->
-                    if (result is Result.Success) {
-                        _myRooms.emit(result.data)
-                    }
-                }
+            roomApiService.getUserRooms().onSuccessWithErrorHandling {
+                _myRooms.emit(it)
+            }
         }
     }
 
@@ -192,9 +189,12 @@ class AppViewModel(
         }
     }
 
-    override fun addRoom(code: String, password: String?) {
+    override fun addRoom(code: String, password: String) {
         viewModelScope.launch {
-            roomRepository.addRoom(code, password)
+            roomApiService.createRoom(RoomCreationRequest(code, password))
+                .onSuccessWithErrorHandling {
+                    fetchMyRooms()
+                }
         }
     }
 
@@ -222,7 +222,7 @@ class AppViewModel(
         }
     }
 
-    private suspend inline fun <T> kotlin.Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit) {
+    private suspend inline fun <T> kotlin.Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
         onSuccess {
             block(it)
         }

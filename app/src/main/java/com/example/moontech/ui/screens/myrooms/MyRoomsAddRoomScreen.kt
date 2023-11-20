@@ -7,7 +7,7 @@ import com.example.moontech.ui.screens.base.AuthScreenBase
 
 @Composable
 fun MyRoomsAddRoomScreen(
-    onAddRoom: (code: String, password: String?) -> Unit,
+    onAddRoom: (code: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) = AuthScreenBase(
     firstButtonLabel = R.string.create,
