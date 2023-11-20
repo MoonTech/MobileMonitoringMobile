@@ -11,7 +11,7 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppError
-import com.example.moontech.data.dataclasses.ManagedRoomWithCameras
+import com.example.moontech.data.dataclasses.ManagedRoom
 import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
@@ -62,9 +62,9 @@ class AppViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-    private val _myRooms: MutableStateFlow<List<ManagedRoomWithCameras>> =
+    private val _myRooms: MutableStateFlow<List<ManagedRoom>> =
         MutableStateFlow(listOf())
-    val myRooms: StateFlow<List<ManagedRoomWithCameras>> = _myRooms
+    val myRooms: StateFlow<List<ManagedRoom>> = _myRooms
     private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
     val errorState: StateFlow<AppError> = _errorState
 
@@ -178,7 +178,7 @@ class AppViewModel(
     private fun fetchMyRooms() {
         viewModelScope.launch {
             roomApiService.getUserRooms().onSuccessWithErrorHandling {
-                _myRooms.emit(it)
+                _myRooms.emit(it.rooms)
             }
         }
     }

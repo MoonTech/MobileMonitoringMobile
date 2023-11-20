@@ -1,8 +1,8 @@
 package com.example.moontech.services.web
 
-import com.example.moontech.data.dataclasses.ManagedRoomWithCameras
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomCreationResponse
+import com.example.moontech.data.dataclasses.UserRoomsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
 
@@ -16,7 +16,7 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
         }
     }
 
-    override suspend fun getUserRooms(): Result<List<ManagedRoomWithCameras>> {
+    override suspend fun getUserRooms(): Result<UserRoomsResponse> {
         return httpClient.getResult(endpoint)
     }
 

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ManagedRoomWithCameras(
+class ManagedRoom(
     @SerialName("roomName") override val code: String,
     val cameras: List<ManagedRoomCamera>
 ) : ObjectWithRoomCode {
