@@ -19,7 +19,7 @@ fun MyRoomsScreen(addRoom: () -> Unit, viewModel: AppViewModel, modifier: Modifi
         modifier = modifier,
         onRoomClick = { /*TODO*/ },
         addRoom = addRoom,
-        rooms = mapOf(Pair(RoomType.MY_ROOM, rooms)),
+        rooms = mapOf(Pair(RoomType.MY_ROOMS, rooms)),
         floatingActionButtonVisible = true,
     )
 }

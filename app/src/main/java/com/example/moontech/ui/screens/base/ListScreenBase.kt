@@ -29,7 +29,7 @@ fun ListScreenBase(
     onTabClicked: (roomType: RoomType) -> Unit = {},
     tabs: List<RoomType> = listOf(),
     rooms: Map<RoomType, List<ObjectWithRoomCode>>,
-    selectedTab: RoomType = RoomType.MY_ROOM,
+    selectedTab: RoomType = RoomType.MY_ROOMS,
     floatingActionButtonVisible: Boolean = false
 ) {
     Scaffold(
