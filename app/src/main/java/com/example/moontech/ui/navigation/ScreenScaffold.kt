@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.VideoCameraBack
@@ -29,7 +28,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.moontech.ui.components.FloatingActionButtonWithIcon
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.AppViewModelFactoryProvider
 
@@ -73,20 +71,6 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                     Divider(modifier = Modifier.fillMaxWidth())
                 }
             }
-        },
-        floatingActionButton = {
-            val visibleRoutes = setOf(
-                Screen.MyRooms.Main.route,
-                Screen.Watch.Main.route,
-                Screen.Transmit.Main.route
-            )
-            FloatingActionButtonWithIcon(
-                visible = visibleRoutes.contains(currentRoute),
-                onClick = { addRoom(currentRoute ?: "", navController) },
-                icon = Icons.Filled.Add,
-                contentDescription = "Add room",
-                modifier = modifier
-            )
         },
         bottomBar = {
             val isStreaming by viewModel.isStreamingState.collectAsState()

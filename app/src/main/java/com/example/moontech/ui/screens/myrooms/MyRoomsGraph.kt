@@ -29,7 +29,9 @@ fun NavGraphBuilder.myRoomsGraph(
         composable(Screen.MyRooms.Main.route) {
             val loggedIn by viewModel.loggedInState.collectAsState()
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
-            MyRoomsScreen(viewModel = viewModel, modifier = modifier)
+            MyRoomsScreen(viewModel = viewModel, modifier = modifier, addRoom = {
+                navController.navigate(Screen.MyRooms.AddRoom.route)
+            })
         }
         composable(Screen.MyRooms.AddRoom.route) {
             MyRoomsAddRoomScreen(onAddRoom = { code, password ->
