@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -52,54 +50,55 @@ fun TransmittingScreen(
     }
     val roomCamerae =
 
-    CenterColumn {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Black)
-                .weight(1f)
-        ) {
-            AndroidView(
+        CenterColumn {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                factory = { context ->
-                    PreviewView(context).apply {
-                        layoutParams = LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        setBackgroundColor(android.graphics.Color.BLACK)
-                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                        scaleType = PreviewView.ScaleType.FILL_START
-                        startPreview(this.surfaceProvider)
-                        Log.i(TAG, "TransmittingScreen: PreviewView created")
-                    }
-                }
-            )
-            ElevatedButton(
-                onClick = {
-                    if (isStreaming) {
-                        stopStream()
-                    } else {
-                        startStream("rtmp://192.168.0.109:1935/live/test-camera")
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 4.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.FiberManualRecord,
-                    contentDescription = "Record",
-                    modifier = Modifier.padding(end = 8.dp)
+                AndroidView(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    factory = { context ->
+                        PreviewView(context).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                            scaleType = PreviewView.ScaleType.FILL_CENTER
+                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                            startPreview(this.surfaceProvider)
+                            Log.i(TAG, "TransmittingScreen: PreviewView created")
+                        }
+                    }
                 )
-                Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
+                ElevatedButton(
+                    onClick = {
+                        if (isStreaming) {
+                            stopStream()
+                        } else {
+                            startStream(roomCamera.url)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FiberManualRecord,
+                        contentDescription = "Record",
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
+                }
+                Text(
+                    text = "Camera in room: ${roomCamera.code}",
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                        .padding(top = 4.dp)
+                )
             }
         }
-        Row(modifier.weight(0.2f)) {
-            Text("Transmitting $roomCamera")
-        }
-    }
 }
 
 
