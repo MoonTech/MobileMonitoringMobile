@@ -48,57 +48,56 @@ fun TransmittingScreen(
             stopPreviewRemembered.value()
         }
     }
-    val roomCamerae =
-
-        CenterColumn {
-            Box(
+    CenterColumn {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            AndroidView(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    factory = { context ->
-                        PreviewView(context).apply {
-                            layoutParams = LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                            scaleType = PreviewView.ScaleType.FILL_CENTER
-                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                            startPreview(this.surfaceProvider)
-                            Log.i(TAG, "TransmittingScreen: PreviewView created")
-                        }
+                    .fillMaxSize(),
+                factory = { context ->
+                    PreviewView(context).apply {
+                        layoutParams = LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                        startPreview(this.surfaceProvider)
+                        Log.i(TAG, "TransmittingScreen: PreviewView created")
                     }
-                )
-                ElevatedButton(
-                    onClick = {
-                        if (isStreaming) {
-                            stopStream()
-                        } else {
-                            startStream(roomCamera.url)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.FiberManualRecord,
-                        contentDescription = "Record",
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
                 }
-                Text(
-                    text = "Camera in room: ${roomCamera.code}",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                        .padding(top = 4.dp)
+            )
+            ElevatedButton(
+                onClick = {
+                    if (isStreaming) {
+                        stopStream()
+                    } else {
+                        startStream(roomCamera.url)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.FiberManualRecord,
+                    contentDescription = "Record",
+                    modifier = Modifier.padding(end = 8.dp)
                 )
+                Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
             }
+            Text(
+                text = "Camera in room: ${roomCamera.code}",
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 4.dp)
+            )
         }
+    }
 }
 
 

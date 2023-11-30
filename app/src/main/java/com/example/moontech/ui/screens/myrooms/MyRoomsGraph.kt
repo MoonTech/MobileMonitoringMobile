@@ -30,7 +30,9 @@ fun NavGraphBuilder.myRoomsGraph(
             val loggedIn by viewModel.loggedInState.collectAsState()
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
             val rooms by viewModel.myRooms.collectAsState()
-
+            LaunchedEffect(loggedIn) {
+                viewModel.fetchMyRooms()
+            }
             MainScreenBase(rooms = rooms,
                 modifier = modifier,
                 addRoom = {

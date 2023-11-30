@@ -12,7 +12,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -36,7 +35,8 @@ fun NavGraphBuilder.transmitGraph(
                 val roomCamera = roomCameras.find { it.code == roomCode }
                 if (roomCamera == null) {
                     LaunchedEffect(key1 = true) {
-                        viewModel.emitError(AppError.Error("Camera not found"))
+                        val selectedRoom = viewModel.externalRooms.value.first { it.code == roomCode }
+                        viewModel.addRoomCamera(roomCode, selectedRoom.password)
                     }
                 } else {
                     TransmittingScreen(
