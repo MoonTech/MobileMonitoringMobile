@@ -12,7 +12,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.data.dataclasses.ManagedRoom
-import com.example.moontech.data.dataclasses.Result
 import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
@@ -26,6 +25,7 @@ import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
+import com.example.moontech.ui.screens.common.RoomType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,15 +83,13 @@ class AppViewModel(
         roomDataStore.rooms
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
-    override val roomCamera: StateFlow<Result<RoomCamera>> = roomCameraDataStore.roomCamera
-        .map { roomCamera ->
-            if (roomCamera == null) {
-                Result.Empty()
-            } else {
-                Result.Success(roomCamera)
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = Result.Loading())
+    override val externalRoomCameras: StateFlow<List<RoomCamera>> = roomCameraDataStore.roomCameras
+        .map { it.filter { camera -> camera.roomType == RoomType.EXTERNAL } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
+
+    override val myRoomCameras: StateFlow<List<RoomCamera>> = roomCameraDataStore.roomCameras
+        .map { it.filter { camera -> camera.roomType == RoomType.MY_ROOMS } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
     init {
         val context: Context = this.getApplication()
@@ -159,7 +157,7 @@ class AppViewModel(
         viewModelScope.launch {
             Log.i(TAG, "logInUser: ")
             userApiService.logIn(user).onSuccessWithErrorHandling {
-                userDataStore.saveUserData(it)
+                userDataStore.save(it)
                 Log.i(TAG, "logInUser: user logged in")
             }
         }
@@ -170,7 +168,7 @@ class AppViewModel(
         viewModelScope.launch {
             Log.i(TAG, "registerUser:")
             userApiService.register(user).onSuccessWithErrorHandling {
-                userDataStore.saveUserData(it)
+                userDataStore.save(it)
                 Log.i(TAG, "registerUser: user registered")
             }
         }
@@ -186,7 +184,7 @@ class AppViewModel(
 
     fun logOutUser() {
         viewModelScope.launch {
-            userDataStore.clearUserData()
+            userDataStore.clear()
         }
     }
 
@@ -203,26 +201,20 @@ class AppViewModel(
         viewModelScope.launch {
             val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(code)
             watchRoomResponse.onSuccessWithErrorHandling {
-                roomDataStore.addRoomData(RoomData(code))
+                roomDataStore.add(RoomData(code))
             }
         }
     }
 
     override fun removeWatchedRoom(code: String) {
         viewModelScope.launch {
-            roomDataStore.removeRoomData(RoomData(code))
+            roomDataStore.delete(RoomData(code))
         }
     }
 
-    override fun addRoomCamera(code: String, password: String) {
+    override fun removeRoomCamera(roomCamera: RoomCamera) {
         viewModelScope.launch {
-            roomCameraDataStore.saveCamera(RoomCamera(code, password))
-        }
-    }
-
-    override fun removeRoomCamera() {
-        viewModelScope.launch {
-            roomCameraDataStore.deleteCamera()
+            roomCameraDataStore.delete(roomCamera)
         }
     }
 

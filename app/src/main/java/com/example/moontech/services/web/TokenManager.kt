@@ -14,7 +14,7 @@ class TokenManager(private val userDataStore: UserDataStore) {
         val userData = userDataStore.userData.first()
         // here we treat access token as refresh token
         if (userData == null || oldTokens?.refreshToken == userData.accessToken) {
-            userDataStore.clearUserData()
+            userDataStore.clear()
             return null
         }
         return BearerTokens(userData.accessToken, userData.accessToken)

@@ -23,13 +23,13 @@ class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : 
             preferences[USER_DATA_KEY]?.let { UserData(it) }
         }
 
-    override suspend fun saveUserData(userData: UserData) {
+    override suspend fun save(userData: UserData) {
         dataStore.edit { preferences ->
             preferences[USER_DATA_KEY] = userData.accessToken
         }
     }
 
-    override suspend fun clearUserData() {
+    override suspend fun clear() {
         dataStore.edit { preferences ->
             preferences.minusAssign(USER_DATA_KEY)
         }

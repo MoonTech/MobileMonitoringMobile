@@ -2,9 +2,7 @@ package com.example.moontech.data.store
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import catching
 import com.example.moontech.data.dataclasses.RoomData
@@ -30,21 +28,14 @@ class PreferencesRoomDataStore(
             }?.toList() ?: listOf()
         }
 
-    override suspend fun addRoomData(roomData: RoomData) {
+    override suspend fun add(roomData: RoomData) {
         Log.i(TAG, "addRoomData: begin")
         val encodedRoomData = Json.encodeToString(roomData)
-        dataStore.editStringValues { rooms -> rooms.apply { add(encodedRoomData) } }
+        dataStore.editStringValues(ROOM_DATA_KEY) { rooms -> rooms.apply { add(encodedRoomData) } }
     }
 
-    override suspend fun removeRoomData(roomData: RoomData) {
+    override suspend fun delete(roomData: RoomData) {
         val encodedRoomData = Json.encodeToString(roomData)
-        dataStore.editStringValues { rooms -> rooms.apply { remove(encodedRoomData) } }
-    }
-
-    private suspend fun DataStore<Preferences>.editStringValues(block: (MutableSet<String>) -> Set<String>) {
-        edit { preferences: MutablePreferences ->
-            val roomDataSet = preferences[ROOM_DATA_KEY]?.toMutableSet() ?: mutableSetOf()
-            preferences[ROOM_DATA_KEY] = block(roomDataSet)
-        }
+        dataStore.editStringValues(ROOM_DATA_KEY) { rooms -> rooms.apply { remove(encodedRoomData) } }
     }
 }

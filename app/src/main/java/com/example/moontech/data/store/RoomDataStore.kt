@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface RoomDataStore {
     val rooms: Flow<List<RoomData>>
-    suspend fun addRoomData(roomData: RoomData)
-    suspend fun removeRoomData(roomData: RoomData)
+    suspend fun add(roomData: RoomData)
+    suspend fun delete(roomData: RoomData)
 }

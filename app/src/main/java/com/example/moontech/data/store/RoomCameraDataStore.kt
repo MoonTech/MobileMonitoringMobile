@@ -4,7 +4,7 @@ import com.example.moontech.data.dataclasses.RoomCamera
 import kotlinx.coroutines.flow.Flow
 
 interface RoomCameraDataStore {
-    val roomCamera: Flow<RoomCamera?>
-    suspend fun saveCamera(roomCamera: RoomCamera)
-    suspend fun deleteCamera()
+    val roomCameras: Flow<List<RoomCamera>>
+    suspend fun add(roomCamera: RoomCamera)
+    suspend fun delete(roomCamera: RoomCamera)
 }
