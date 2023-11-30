@@ -21,8 +21,10 @@
     <string name="room_name">Room name</string>
 
     <string name="add_room_for_watching">Add room for watching</string>
+    <string name="add_room">Add room</string>
     <string name="add">Add</string>
 
+    <string name="camera_name">Camera name</string>
     <string name="add_camera">Add camera to Room</string>
     <string name="base_url">http://192.168.0.109:5266</string>
 

@@ -13,8 +13,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.screens.base.MainScreenBase
 import com.example.moontech.ui.screens.myrooms.MyRoomsAddRoomScreen
-import com.example.moontech.ui.screens.myrooms.MyRoomsScreen
 import com.example.moontech.ui.screens.myrooms.SplashScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
@@ -29,9 +29,18 @@ fun NavGraphBuilder.myRoomsGraph(
         composable(Screen.MyRooms.Main.route) {
             val loggedIn by viewModel.loggedInState.collectAsState()
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
-            MyRoomsScreen(viewModel = viewModel, modifier = modifier, addRoom = {
-                navController.navigate(Screen.MyRooms.AddRoom.route)
-            })
+            val rooms by viewModel.myRooms.collectAsState()
+            LaunchedEffect(loggedIn) {
+                viewModel.fetchMyRooms()
+            }
+            MainScreenBase(rooms = rooms,
+                modifier = modifier,
+                addRoom = {
+                    navController.navigate(Screen.MyRooms.AddRoom.route)
+                },
+                onSettings = {},
+                onTransmit = { },
+                onWatch = {})
         }
         composable(Screen.MyRooms.AddRoom.route) {
             MyRoomsAddRoomScreen(onAddRoom = { code, password ->

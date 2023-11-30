@@ -1,6 +1,12 @@
 package com.example.moontech.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -39,7 +45,24 @@ fun RoomListWithTabs(
                 }
             }
         }
-        RoomListBase(rooms = myRooms, onClick = onClick)
+        RoomListBase(rooms = myRooms) {
+            RoomCard(room = it) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    OutlinedButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text(text = "Watch")
+                    }
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(text = "Transmit")
+                    }
+                }
+            }
+        }
     }
 
 @Composable

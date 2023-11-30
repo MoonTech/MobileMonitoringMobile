@@ -1,4 +1,4 @@
-package com.example.moontech.ui.screens.watch
+package com.example.moontech.ui.screens.external
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,14 +6,14 @@ import com.example.moontech.R
 import com.example.moontech.ui.screens.base.AuthScreenBase
 
 @Composable
-fun WatchAddRoomScreen(
-    onAddRoom: (code: String, password: String) -> Unit,
+fun ExternalRoomsAddRoomScreen(
+    addRoom: (code: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) = AuthScreenBase(
+    modifier = modifier,
     firstButtonLabel = R.string.add,
     firstTextFieldLabel = R.string.room_name,
     secondTextFieldLabel = R.string.password,
-    screenLabel = R.string.add_room_for_watching,
-    firstButtonAction = onAddRoom,
-    modifier = modifier
+    screenLabel = R.string.add_room,
+    firstButtonAction = addRoom
 )

@@ -11,7 +11,7 @@ fun TransmitAddRoomScreen(
     modifier: Modifier = Modifier
 ) = AuthScreenBase(
     firstButtonLabel = R.string.add,
-    firstTextFieldLabel = R.string.room_name,
+    firstTextFieldLabel = R.string.camera_name,
     secondTextFieldLabel = R.string.password,
     screenLabel = R.string.add_camera,
     firstButtonAction = addRoomCamera,

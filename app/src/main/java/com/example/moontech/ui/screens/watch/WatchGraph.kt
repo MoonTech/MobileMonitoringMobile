@@ -19,15 +19,8 @@ fun NavGraphBuilder.watchGraph(
             WatchMainScreen(
                 viewModel = viewModel,
                 modifier = modifier,
-                addRoom = { navController.navigate(Screen.Watch.AddRoom.route) },
+                addRoom = { },
                 onClick = { })
-        }
-        composable(Screen.Watch.AddRoom.route) {
-            WatchAddRoomScreen(modifier = modifier,
-                onAddRoom = { code, password ->
-                    viewModel.addWatchedRoom(code, password)
-                    navController.popBackStack(Screen.Watch.Main.route, inclusive = false)
-                })
         }
         composable(Screen.Watch.Watching.route) {
             WatchingScreen(modifier = modifier, viewModel = viewModel)
