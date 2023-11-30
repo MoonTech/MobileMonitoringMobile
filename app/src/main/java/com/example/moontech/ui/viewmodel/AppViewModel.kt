@@ -239,6 +239,10 @@ class AppViewModel(
         }
     }
 
+    suspend fun emitError(error: AppError) {
+        _errorState.emit(error)
+    }
+
     private suspend inline fun <T> Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
         onSuccess {
             block(it)
