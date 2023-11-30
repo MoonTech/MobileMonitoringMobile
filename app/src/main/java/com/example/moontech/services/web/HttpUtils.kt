@@ -8,6 +8,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 
 suspend inline fun <reified R> HttpClient.getResult(
     urlString: String,
@@ -33,6 +34,15 @@ suspend inline fun HttpClient.deleteWithStatus(
 ): Result<Boolean> {
     return withErrorHandling {
         delete(urlString, builder).status.value in 200..299
+    }
+}
+
+suspend inline fun HttpClient.putWithStatus(
+    urlString: String,
+    builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Boolean> {
+    return withErrorHandling {
+        put(urlString, builder).status.value in 200..299
     }
 }
 

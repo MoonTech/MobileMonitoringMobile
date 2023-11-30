@@ -7,4 +7,5 @@ interface CameraController {
     val externalRoomCameras: StateFlow<List<RoomCamera>>
     val myRoomCameras: StateFlow<List<RoomCamera>>
     fun removeRoomCamera(roomCamera: RoomCamera)
+    fun addRoomCamera(code: String, password: String)
 }

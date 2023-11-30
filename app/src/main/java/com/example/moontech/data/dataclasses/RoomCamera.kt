@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RoomCamera(
-    val roomCode: String,
+    override val code: String,
     val token: String,
     val url: String,
     val roomType: RoomType
-)
+): ObjectWithRoomCode

@@ -218,6 +218,10 @@ class AppViewModel(
         }
     }
 
+    override fun addRoomCamera(code: String, password: String) {
+
+    }
+
     private suspend inline fun <T> kotlin.Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
         onSuccess {
             block(it)
