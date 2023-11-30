@@ -22,7 +22,7 @@ import com.example.moontech.ui.screens.common.RoomType
 @Composable
 fun ListScreenBase(
     modifier: Modifier = Modifier,
-    onRoomClick: () -> Unit,
+    onRoomClick: (room: ObjectWithRoomCode) -> Unit,
     addRoom: () -> Unit = {},
     showTabs: Boolean = false,
     onDelete: ((room: ObjectWithRoomCode) -> Unit)? = null,

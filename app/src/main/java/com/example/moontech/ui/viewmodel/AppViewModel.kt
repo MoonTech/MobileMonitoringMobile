@@ -94,6 +94,9 @@ class AppViewModel(
         .map { it.filter { camera -> camera.roomType == RoomType.MY_ROOMS } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
+    override val roomCameras: StateFlow<List<RoomCamera>> = roomCameraDataStore.roomCameras
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
+
     init {
         val context: Context = this.getApplication()
         val intent = Intent(context, CameraServiceImpl::class.java)

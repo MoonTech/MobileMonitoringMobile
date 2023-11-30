@@ -21,7 +21,7 @@ import com.example.moontech.ui.screens.common.RoomType
 fun RoomListWithTabs(
     myRooms: List<ObjectWithRoomCode>,
     externalRooms: List<ObjectWithRoomCode>,
-    onClick: () -> Unit,
+    onClick: (room: ObjectWithRoomCode) -> Unit,
     modifier: Modifier = Modifier,
     onTabClicked: (roomType: RoomType) -> Unit,
     tabs: List<RoomType>

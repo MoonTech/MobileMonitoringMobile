@@ -19,7 +19,7 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
     object Transmit : Screen("transmit", R.string.transmit) {
         object Main : Screen("transmit_main", R.string.transmit)
         object AddRoom : Screen("transmit_add_room", R.string.transmit)
-        object Camera : Screen("transmit_camera", R.string.transmit)
+        object Camera : Screen("transmit_camera/{code}", R.string.transmit)
     }
 
     object UserAuthorization : Screen("user_authorization", R.string.login) {

@@ -23,7 +23,7 @@ import com.example.moontech.ui.components.RoomTile
 @Composable
 fun RoomListBase(
     rooms: List<ObjectWithRoomCode>,
-    onClick: () -> Unit,
+    onClick: (room: ObjectWithRoomCode) -> Unit,
     modifier: Modifier = Modifier,
     onDelete: ((room: ObjectWithRoomCode) -> Unit)? = null
 ) =
@@ -44,14 +44,14 @@ fun RoomListBase(
                     DismissableRoomTile(
                         room = room, modifier = Modifier
                             .height(56.dp)
-                            .clickable { onClick() },
+                            .clickable { onClick(room) },
                         onDismiss = onDelete
                     )
                 } else {
                     RoomTile(
                         room = room, modifier = Modifier
                             .height(56.dp)
-                            .clickable { onClick() }
+                            .clickable { onClick(room) }
                     )
                 }
                 Divider()

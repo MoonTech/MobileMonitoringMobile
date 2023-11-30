@@ -26,30 +26,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.viewmodel.UiState
+import com.example.moontech.ui.screens.common.RoomType
 
 private const val TAG = "TransmittingScreen"
 
 @Composable
 fun TransmittingScreen(
+    roomCamera: RoomCamera,
     modifier: Modifier = Modifier,
-    uiState: UiState,
     startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
     startStream: (url: String) -> Unit,
     isStreaming: Boolean,
     stopPreview: () -> Unit,
     stopStream: () -> Unit
 ) = CenterScreen(modifier) {
-    //TODO: utilise stopPreview
     val stopPreviewRemembered = rememberUpdatedState(newValue = stopPreview)
     DisposableEffect(key1 = true) {
         onDispose {
             Log.i(TAG, "TransmittingScreen: Stopping preview")
-            stopPreview()
+            stopPreviewRemembered.value()
         }
     }
+    val roomCamerae =
 
     CenterColumn {
         Box(
@@ -96,7 +97,7 @@ fun TransmittingScreen(
             }
         }
         Row(modifier.weight(0.2f)) {
-            Text("Transmitting ${uiState.transmittingRoom}")
+            Text("Transmitting $roomCamera")
         }
     }
 }
@@ -107,7 +108,7 @@ fun TransmittingScreen(
 fun TransmittingScreenPreview() {
     Surface {
         TransmittingScreen(
-            uiState = UiState(),
+            roomCamera = RoomCamera("123", "123", "123", RoomType.EXTERNAL),
             startPreview = {},
             startStream = {},
             stopPreview = {},

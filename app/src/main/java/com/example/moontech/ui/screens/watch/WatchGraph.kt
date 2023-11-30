@@ -19,7 +19,8 @@ fun NavGraphBuilder.watchGraph(
             WatchMainScreen(
                 viewModel = viewModel,
                 modifier = modifier,
-                addRoom = { navController.navigate(Screen.Watch.AddRoom.route) })
+                addRoom = { navController.navigate(Screen.Watch.AddRoom.route) },
+                onClick = { })
         }
         composable(Screen.Watch.AddRoom.route) {
             WatchAddRoomScreen(modifier = modifier,
