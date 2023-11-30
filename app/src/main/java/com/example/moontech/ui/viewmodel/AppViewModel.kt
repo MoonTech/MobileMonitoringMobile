@@ -11,6 +11,7 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
 import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
@@ -23,6 +24,7 @@ import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.CameraService
 import com.example.moontech.services.CameraServiceImpl
+import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
 import com.example.moontech.ui.screens.common.RoomType
@@ -45,7 +47,8 @@ class AppViewModel(
     private val roomDataStore: RoomDataStore,
     private val roomCameraDataStore: RoomCameraDataStore,
     private val userApiService: UserApiService,
-    private val roomApiService: RoomApiService
+    private val roomApiService: RoomApiService,
+    private val cameraApiService: CameraApiService
 ) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController, CameraController {
     companion object {
         private const val TAG = "AppViewModel"
@@ -219,10 +222,21 @@ class AppViewModel(
     }
 
     override fun addRoomCamera(code: String, password: String) {
-
+        viewModelScope.launch {
+            cameraApiService.addCamera(CameraRequest(code, password))
+                .onSuccessWithErrorHandling {
+                    val roomCamera = RoomCamera(
+                        code = code,
+                        token = it.cameraToken,
+                        url = it.cameraUrl,
+                        roomType = RoomType.EXTERNAL
+                    )
+                    roomCameraDataStore.add(roomCamera)
+                }
+        }
     }
 
-    private suspend inline fun <T> kotlin.Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
+    private suspend inline fun <T> Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
         onSuccess {
             block(it)
         }

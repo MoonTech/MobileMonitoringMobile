@@ -15,6 +15,8 @@ import com.example.moontech.data.store.PreferencesUserDataStore
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
+import com.example.moontech.services.web.CameraApiService
+import com.example.moontech.services.web.CameraApiServiceImpl
 import com.example.moontech.services.web.HttpClientFactory
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.RoomApiServiceImpl
@@ -32,6 +34,7 @@ interface AppContainer {
     val httpClient: HttpClient
     val userApiService: UserApiService
     val roomApiService: RoomApiService
+    val cameraApiService: CameraApiService
     val tokenManager: TokenManager
 }
 
@@ -64,6 +67,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
     }
     override val roomApiService: RoomApiService by lazy {
         RoomApiServiceImpl(httpClient)
+    }
+    override val cameraApiService: CameraApiService by lazy {
+        CameraApiServiceImpl(httpClient)
     }
     override val tokenManager: TokenManager by lazy {
         TokenManager(userDataStore)

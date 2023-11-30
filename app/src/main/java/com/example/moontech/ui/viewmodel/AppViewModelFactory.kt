@@ -15,7 +15,8 @@ object AppViewModelFactoryProvider {
                 roomDataStore = application.container.roomDataStore,
                 roomCameraDataStore = application.container.roomCameraDataStore,
                 userApiService = application.container.userApiService,
-                roomApiService = application.container.roomApiService
+                roomApiService = application.container.roomApiService,
+                cameraApiService = application.container.cameraApiService
             )
         }
     }
