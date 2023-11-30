@@ -15,9 +15,10 @@ import com.example.moontech.ui.viewmodel.AppViewModel
 fun TransmitMainScreen(viewModel: AppViewModel, modifier: Modifier = Modifier, addRoom: () -> Unit) {
     val externalCameras by viewModel.externalRoomCameras.collectAsState()
     val myCameras by viewModel.myRoomCameras.collectAsState()
+    val myRooms by viewModel.myRooms.collectAsState()
     val rooms = mapOf(
         Pair(RoomType.EXTERNAL, externalCameras),
-        Pair(RoomType.MY_ROOMS, myCameras)
+        Pair(RoomType.MY_ROOMS, myRooms)
     )
     var selectedTab by rememberSaveable {
         mutableStateOf(RoomType.MY_ROOMS)
