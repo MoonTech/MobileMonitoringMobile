@@ -11,29 +11,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hierarchy
+
+private const val TAG = "BottomNavigationBar"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(
-    backStackEntry: NavBackStackEntry?,
+    backStackEntries: List<NavBackStackEntry>,
     navigationItems: List<NavigationItem>,
     navigateTo: (screen: Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // TODO: Refactor
     val selectedTabIndex = navigationItems.indexOfFirst {
-        backStackEntry?.destination?.hierarchy?.any { destination ->
-            destination.route == it.screen.route ||
-                    it.acceptedScreens.any { it.route == destination.route }
-        } ?: false
+        backStackEntries.map { it.destination.route }.any { route ->
+            route == it.screen.route || it.acceptedScreens.any { it.route == route }
+        }
     }.let { if (it < 0) 0 else it }
     TabRow(selectedTabIndex = selectedTabIndex, modifier = modifier) {
         navigationItems.forEach {
-            val selected = backStackEntry?.destination?.hierarchy?.any { destination ->
-                destination.route == it.screen.route ||
-                        it.acceptedScreens.any { it.route == destination.route }
-            } ?: false
+            val selected = backStackEntries.map { it.destination.route }.any { route ->
+                route == it.screen.route || it.acceptedScreens.any { it.route == route }
+            }
             Tab(
                 selected = selected,
                 onClick = { if (!selected) navigateTo(it.screen) },

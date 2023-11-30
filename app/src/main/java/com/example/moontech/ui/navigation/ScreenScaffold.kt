@@ -37,6 +37,7 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
     val viewModel: AppViewModel = viewModel(factory = AppViewModelFactoryProvider.Factory)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBackStackEntries by navController.currentBackStack.collectAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val snackbarHostState = remember { SnackbarHostState() }
     val errorState = viewModel.errorState.collectAsState()
@@ -87,7 +88,7 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                         restoreState = true
                     }
                 },
-                backStackEntry = navBackStackEntry
+                backStackEntries = navBackStackEntries
             )
         }) { padding ->
         AppNavigation(

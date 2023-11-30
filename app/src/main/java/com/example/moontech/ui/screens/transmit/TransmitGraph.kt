@@ -29,14 +29,18 @@ fun NavGraphBuilder.transmitGraph(
         ) {
             PermissionWrapper(permission = Manifest.permission.CAMERA, modifier = modifier) {
                 val isStreaming by viewModel.isStreamingState.collectAsState()
-                val parentEntry = remember(it) { navController.getBackStackEntry(Screen.Transmit.route) }
+                val parentEntry =
+                    remember(it) { navController.getBackStackEntry(Screen.Transmit.route) }
                 val roomCode = parentEntry.arguments?.getString("code")!!
-                val roomCameras by  viewModel.roomCameras.collectAsState()
+                val roomCameras by viewModel.roomCameras.collectAsState()
                 val roomCamera = roomCameras.find { it.code == roomCode }
                 if (roomCamera == null) {
-                    LaunchedEffect(key1 = true) {
-                        val selectedRoom = viewModel.externalRooms.value.first { it.code == roomCode }
-                        viewModel.addRoomCamera(roomCode, selectedRoom.password)
+                    LaunchedEffect(true) {
+                        navController.navigate(Screen.Transmit.AddRoom.route) {
+                            popUpTo(Screen.Transmit.Camera.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 } else {
                     TransmittingScreen(
@@ -50,6 +54,18 @@ fun NavGraphBuilder.transmitGraph(
                     )
                 }
             }
+        }
+
+        composable(Screen.Transmit.AddRoom.route) {
+            val parentEntry =
+                remember(it) { navController.getBackStackEntry(Screen.Transmit.route) }
+            val roomCode = parentEntry.arguments?.getString("code")!!
+            TransmitAddRoomScreen(modifier = modifier,
+                addRoomCamera = { _, password ->
+                    viewModel.addRoomCamera(roomCode, password) {
+                        navController.popBackStack()
+                    }
+                })
         }
     }
 }

@@ -224,7 +224,7 @@ class AppViewModel(
         }
     }
 
-    override fun addRoomCamera(code: String, password: String) {
+    override fun addRoomCamera(code: String, password: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             cameraApiService.addCamera(CameraRequest(code, password))
                 .onSuccessWithErrorHandling {
@@ -235,6 +235,7 @@ class AppViewModel(
                         roomType = RoomType.EXTERNAL
                     )
                     roomCameraDataStore.add(roomCamera)
+                    onSuccess()
                 }
         }
     }
