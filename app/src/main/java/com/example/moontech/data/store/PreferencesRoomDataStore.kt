@@ -34,8 +34,13 @@ class PreferencesRoomDataStore(
         dataStore.editStringValues(ROOM_DATA_KEY) { rooms -> rooms.apply { add(encodedRoomData) } }
     }
 
-    override suspend fun delete(roomData: RoomData) {
-        val encodedRoomData = Json.encodeToString(roomData)
-        dataStore.editStringValues(ROOM_DATA_KEY) { rooms -> rooms.apply { remove(encodedRoomData) } }
+    override suspend fun delete(code: String) {
+        dataStore.editStringValues(ROOM_DATA_KEY) { rooms ->
+            rooms.apply {
+                removeIf {
+                    Json.decodeFromString<RoomData>(code).code == code
+                }
+            }
+        }
     }
 }

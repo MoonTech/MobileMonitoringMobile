@@ -207,14 +207,14 @@ class AppViewModel(
         viewModelScope.launch {
             val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(code)
             watchRoomResponse.onSuccessWithErrorHandling {
-                roomDataStore.add(RoomData(code))
+                roomDataStore.add(RoomData(code, password))
             }
         }
     }
 
     override fun removeExternalRoom(code: String) {
         viewModelScope.launch {
-            roomDataStore.delete(RoomData(code))
+            roomDataStore.delete(code)
         }
     }
 
