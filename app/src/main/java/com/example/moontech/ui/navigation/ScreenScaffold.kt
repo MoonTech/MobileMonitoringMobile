@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
-import androidx.compose.material.icons.filled.VideoCameraBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,8 +53,7 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
         topBar = {
             val visibleRoutes = setOf(
                 Screen.MyRooms.Main.route,
-                Screen.Watch.Main.route,
-                Screen.Transmit.Main.route
+                Screen.ExternalRooms.Main.route
             )
             if (currentRoute != null && currentRoute in visibleRoutes) {
                 val text = Screen.valueOf(currentRoute).label
@@ -74,7 +72,6 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
         },
         bottomBar = {
             val isStreaming by viewModel.isStreamingState.collectAsState()
-
             BottomNavigationBar(
                 navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
                 navigateTo = { screen ->
@@ -110,17 +107,14 @@ val myRoomsNavigationItem =
         showBadge = false,
         acceptedScreens = listOf(Screen.UserAuthorization)
     )
-val watchNavigationItem =
-    NavigationItem(screen = Screen.Watch, icon = Icons.Filled.LiveTv, showBadge = false)
-val transmitNavigationItem =
-    NavigationItem(screen = Screen.Transmit, icon = Icons.Filled.VideoCameraBack, showBadge = false)
+val externalRoomsNavigationItem =
+    NavigationItem(screen = Screen.ExternalRooms, icon = Icons.Filled.LiveTv, showBadge = false)
 
 val defaultNavigationItems: List<NavigationItem> =
-    listOf(myRoomsNavigationItem, watchNavigationItem, transmitNavigationItem)
+    listOf(myRoomsNavigationItem, externalRoomsNavigationItem)
 
 
 val streamingNavigationItems: List<NavigationItem> = listOf(
     myRoomsNavigationItem,
-    watchNavigationItem,
-    transmitNavigationItem.copy(showBadge = true)
+    externalRoomsNavigationItem
 )

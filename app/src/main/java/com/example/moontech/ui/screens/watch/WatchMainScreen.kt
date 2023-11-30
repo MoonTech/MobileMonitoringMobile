@@ -9,7 +9,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
-import com.example.moontech.ui.screens.base.ListScreenBase
 import com.example.moontech.ui.screens.common.RoomType
 import com.example.moontech.ui.viewmodel.AppViewModel
 
@@ -22,7 +21,7 @@ fun WatchMainScreen(
     addRoom: () -> Unit,
     onClick: (room: ObjectWithRoomCode) -> Unit
 ) {
-    val externalRooms by viewModel.watchedRooms.collectAsState()
+    val externalRooms by viewModel.externalRooms.collectAsState()
     val myRooms by viewModel.myRooms.collectAsState()
     val rooms = mapOf(
         Pair(RoomType.EXTERNAL, externalRooms),
@@ -32,20 +31,6 @@ fun WatchMainScreen(
         mutableStateOf(RoomType.MY_ROOMS)
     }
     Log.i(TAG, "WatchMainScreen: ${rooms.size}")
-    ListScreenBase(
-        modifier = modifier,
-        onRoomClick = onClick,
-        addRoom = addRoom,
-        rooms = rooms,
-        floatingActionButtonVisible = selectedTab == RoomType.EXTERNAL,
-        showTabs = true,
-        tabs = listOf(RoomType.MY_ROOMS, RoomType.EXTERNAL),
-        selectedTab = selectedTab,
-        onTabClicked = { tab ->
-            if (tab != selectedTab) {
-                selectedTab = tab
-            }
-        }
-    )
+
 }
 

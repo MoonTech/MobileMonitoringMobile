@@ -49,7 +49,7 @@ class AppViewModel(
     private val userApiService: UserApiService,
     private val roomApiService: RoomApiService,
     private val cameraApiService: CameraApiService
-) : AndroidViewModel(application), MyRoomsController, WatchedRoomsController, CameraController {
+) : AndroidViewModel(application), MyRoomsController, ExternalRoomsController, CameraController {
     companion object {
         private const val TAG = "AppViewModel"
     }
@@ -82,7 +82,7 @@ class AppViewModel(
             it?.let { true } ?: false
         }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
 
-    override val watchedRooms: StateFlow<List<RoomData>> =
+    override val externalRooms: StateFlow<List<RoomData>> =
         roomDataStore.rooms
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
@@ -203,7 +203,7 @@ class AppViewModel(
         }
     }
 
-    override fun addWatchedRoom(code: String, password: String) {
+    override fun addExternalRoom(code: String, password: String) {
         viewModelScope.launch {
             val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(code)
             watchRoomResponse.onSuccessWithErrorHandling {
@@ -212,7 +212,7 @@ class AppViewModel(
         }
     }
 
-    override fun removeWatchedRoom(code: String) {
+    override fun removeExternalRoom(code: String) {
         viewModelScope.launch {
             roomDataStore.delete(RoomData(code))
         }

@@ -8,7 +8,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
-import com.example.moontech.ui.screens.base.ListScreenBase
 import com.example.moontech.ui.screens.common.RoomType
 import com.example.moontech.ui.viewmodel.AppViewModel
 
@@ -30,19 +29,4 @@ fun TransmitMainScreen(
         mutableStateOf(RoomType.MY_ROOMS)
     }
 
-    ListScreenBase(
-        modifier = modifier,
-        onRoomClick = onClick,
-        addRoom = addRoom,
-        rooms = rooms,
-        floatingActionButtonVisible = selectedTab == RoomType.EXTERNAL,
-        showTabs = true,
-        tabs = listOf(RoomType.MY_ROOMS, RoomType.EXTERNAL),
-        selectedTab = selectedTab,
-        onTabClicked = { tab ->
-            if (tab != selectedTab) {
-                selectedTab = tab
-            }
-        }
-    )
 }
