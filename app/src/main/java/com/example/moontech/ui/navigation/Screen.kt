@@ -16,7 +16,6 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
 
     object Watch : Screen("watch", R.string.watch) {
         object Main : Screen("watch_main", R.string.watch)
-        object AddRoom : Screen("watch_add_room", R.string.watch)
         object Watching : Screen("watch_watching", R.string.watch)
     }
 

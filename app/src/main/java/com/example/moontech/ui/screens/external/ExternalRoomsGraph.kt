@@ -26,7 +26,7 @@ fun NavGraphBuilder.externalRoomsGraph(
                     navController.navigate(Screen.ExternalRooms.AddRoom.route)
                 },
                 onSettings = {},
-                onTransmit = { },
+                onTransmit = { navController.navigate(Screen.Transmit.route.replace("{code}", it.code)) },
                 onWatch = {})
         }
 
