@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moontech.R
 import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
@@ -30,12 +31,15 @@ import com.example.moontech.services.web.UserApiService
 import com.example.moontech.ui.screens.common.RoomType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -69,8 +73,16 @@ class AppViewModel(
     private val _myRooms: MutableStateFlow<List<ManagedRoom>> =
         MutableStateFlow(listOf())
     val myRooms: StateFlow<List<ManagedRoom>> = _myRooms
+
     private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
-    val errorState: StateFlow<AppError> = _errorState
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val cameraServiceErrorState: Flow<AppError> =
+        cameraService.filterNotNull().flatMapLatest { it.streamError }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val errorState: StateFlow<AppError> = flowOf(_errorState, cameraServiceErrorState).flattenMerge()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
@@ -137,9 +149,9 @@ class AppViewModel(
         }
     }
 
-    fun startStream(url: String) {
+    fun startStream(roomCamera: RoomCamera) {
         withCameraService {
-            it.startStream(url)
+            it.startStream("${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.token}")
         }
     }
 

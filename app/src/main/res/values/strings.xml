@@ -27,6 +27,7 @@
     <string name="camera_name">Camera name</string>
     <string name="add_camera">Add camera to Room</string>
     <string name="base_url">http://192.168.0.109:5266</string>
+    <string name="stream_url">rtmp://192.168.0.109:1935/live/</string>
 
     <string name="external">External rooms</string>
 </resources>

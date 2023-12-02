@@ -27,7 +27,7 @@ fun NavGraphBuilder.externalRoomsGraph(
                 },
                 onSettings = {},
                 onTransmit = { navController.navigate(Screen.Transmit.route.replace("{code}", it.code)) },
-                onWatch = {})
+                onWatch = { navController.navigate(Screen.Watch.route) })
         }
 
         composable(Screen.ExternalRooms.AddRoom.route) {

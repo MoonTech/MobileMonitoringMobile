@@ -9,7 +9,7 @@ interface Streamer {
      * @param streamCommand Command describing input video and encoder settings
      * @return Path to pipe consuming video frames to stream.
      */
-    fun startStream(url: String, streamCommand: StreamCommand): String
+    fun startStream(url: String, streamCommand: StreamCommand, onStreamFailedCallback: () -> Unit): String
 
     fun endStream(url: String)
 

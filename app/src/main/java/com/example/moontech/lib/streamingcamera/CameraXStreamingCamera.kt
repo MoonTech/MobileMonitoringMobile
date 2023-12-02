@@ -14,6 +14,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.moontech.lib.streamer.Streamer
 import com.example.moontech.lib.streamer.rtmp.RtmpStreamer
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class CameraXStreamingCamera(
     private val context: Context,
@@ -40,13 +44,25 @@ class CameraXStreamingCamera(
         private const val TAG = "CameraXStreamingCamera"
     }
 
-    override fun startStream(rtmpUrl: String) {
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun startStream(
+        rtmpUrl: String,
+        onStreamFailed: () -> Unit
+    ) {
         Log.i(TAG, "startStream: ")
         withCameraProvider {
-            val pipe = streamer.startStream(rtmpUrl, streamingStrategy.supportedStreamCommand())
+            val pipe = streamer.startStream(
+                rtmpUrl,
+                streamingStrategy.supportedStreamCommand()
+            ) {
+                onStreamFailed()
+                GlobalScope.launch(Dispatchers.Main) {
+                    stopStream()
+                }
+            }
             streamMediator = PipeFrameMediator(pipe)
-            streamUseCase = streamingStrategy.init(this) {
-                    buffer -> streamMediator?.onFrameProduced(buffer)
+            streamUseCase = streamingStrategy.init(this) { buffer ->
+                streamMediator?.onFrameProduced(buffer)
             }.also { bindToLifecycle(it) }
         }
     }

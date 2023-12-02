@@ -13,11 +13,18 @@ class RtmpStreamer(private val context: Context) : Streamer {
 
     private val pipes = mutableMapOf<String, StreamSession>()
 
-    override fun startStream(url: String, streamCommand: StreamCommand): String {
+    override fun startStream(
+        url: String,
+        streamCommand: StreamCommand,
+        onStreamFailedCallback: () -> Unit
+    ): String {
         val pipe = FFmpegKitConfig.registerNewFFmpegPipe(context)
         val command = streamCommand.withOutputInfoToString(pipe, url)
         val session = FFmpegKit.executeAsync(command, { session ->
             Log.i(TAG, "startStream: session completed $session")
+            if (session.returnCode.isValueError) {
+                onStreamFailedCallback()
+            }
         }, { log ->
             Log.i(TAG, "stream log: ${log.message}")
         }, { statistics ->

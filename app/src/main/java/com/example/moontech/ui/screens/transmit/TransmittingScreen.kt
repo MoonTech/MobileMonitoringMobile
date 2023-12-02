@@ -36,7 +36,7 @@ fun TransmittingScreen(
     roomCamera: RoomCamera,
     modifier: Modifier = Modifier,
     startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
-    startStream: (url: String) -> Unit,
+    startStream: (roomCamera: RoomCamera) -> Unit,
     isStreaming: Boolean,
     stopPreview: () -> Unit,
     stopStream: () -> Unit
@@ -75,7 +75,7 @@ fun TransmittingScreen(
                     if (isStreaming) {
                         stopStream()
                     } else {
-                        startStream(roomCamera.url)
+                        startStream(roomCamera)
                     }
                 },
                 modifier = Modifier

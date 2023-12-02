@@ -14,7 +14,11 @@ class PipeFrameMediator(private val outputPipe: String): FrameMediator {
 
     override fun onFrameProduced(byteBuffer: ByteBuffer) {
         if (outputStream.channel.isOpen)
-            outputStream.write(byteBuffer.array())
+            try {
+                outputStream.write(byteBuffer.array())
+            } catch (e: Exception) {
+                close()
+            }
         }
 
     override fun close() {

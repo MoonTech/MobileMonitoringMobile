@@ -19,7 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.AppViewModelFactoryProvider
+import kotlinx.coroutines.launch
 
 private const val TAG = "ScreenScaffold"
 
@@ -40,11 +45,19 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
     val navBackStackEntries by navController.currentBackStack.collectAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val snackbarHostState = remember { SnackbarHostState() }
-    val errorState = viewModel.errorState.collectAsState()
-    LaunchedEffect(errorState.value) {
-        Log.i(TAG, "ScreenScaffold: error launched ${errorState.value}")
-        errorState.value.ifError {
-            snackbarHostState.showSnackbar(it.errorMessage)
+    val errorState by viewModel.errorState.collectAsState()
+    var lastError by rememberSaveable { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
+    Log.i(TAG, "ScreenScaffold: $lastError, ${errorState.hashCode()}")
+    if (errorState.hashCode() != lastError) {
+        lastError = errorState.hashCode()
+        LaunchedEffect(errorState) {
+            scope.launch {
+                Log.i(TAG, "ScreenScaffold: error launched $errorState")
+                errorState.ifError {
+                    snackbarHostState.showSnackbar(it.errorMessage)
+                }
+            }
         }
     }
     Scaffold(modifier = modifier,
