@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.base.MainScreenBase
 import com.example.moontech.ui.viewmodel.AppViewModel
 
@@ -26,7 +27,7 @@ fun NavGraphBuilder.externalRoomsGraph(
                     navController.navigate(Screen.ExternalRooms.AddRoom.route)
                 },
                 onSettings = {},
-                onTransmit = { navController.navigate(Screen.Transmit.route.replace("{code}", it.code)) },
+                onTransmit = { navController.navigateToScreenWithCode(Screen.Transmit, it.code) },
                 onWatch = { navController.navigate(Screen.Watch.route) })
         }
 

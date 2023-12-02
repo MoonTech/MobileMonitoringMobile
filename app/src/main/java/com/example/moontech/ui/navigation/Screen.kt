@@ -14,9 +14,9 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
         object AddRoom : Screen("ext_rooms_add_room", R.string.external)
     }
 
-    object Watch : Screen("watch", R.string.watch) {
+    object Watch : Screen("watch/{code}", R.string.watch) {
         object Main : Screen("watch_main", R.string.watch)
-        object Watching : Screen("watch_watching", R.string.watch)
+        object Watching : Screen("watch_watching/{code}", R.string.watch)
     }
 
     object Transmit : Screen("transmit/{code}", R.string.transmit) {

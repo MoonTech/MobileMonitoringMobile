@@ -14,7 +14,6 @@ import com.example.moontech.R
 import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
-import com.example.moontech.data.dataclasses.Room
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
@@ -42,7 +41,6 @@ import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppViewModel(
@@ -53,7 +51,8 @@ class AppViewModel(
     private val userApiService: UserApiService,
     private val roomApiService: RoomApiService,
     private val cameraApiService: CameraApiService
-) : AndroidViewModel(application), MyRoomsController, ExternalRoomsController, CameraController {
+) : AndroidViewModel(application), MyRoomsController, ExternalRoomsController, CameraController,
+    WatchController {
     companion object {
         private const val TAG = "AppViewModel"
     }
@@ -69,20 +68,21 @@ class AppViewModel(
     }
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-    private val _myRooms: MutableStateFlow<List<ManagedRoom>> =
-        MutableStateFlow(listOf())
-    val myRooms: StateFlow<List<ManagedRoom>> = _myRooms
+    val uiState = _uiState.asStateFlow()
+    private val _myRooms: MutableStateFlow<List<ManagedRoom>> = MutableStateFlow(listOf())
+    val myRooms = _myRooms.asStateFlow()
 
     private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val cameraServiceErrorState: Flow<AppError> =
         cameraService.filterNotNull().flatMapLatest { it.streamError }
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val errorState: StateFlow<AppError> = flowOf(_errorState, cameraServiceErrorState).flattenMerge()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
+    val errorState: StateFlow<AppError> =
+        flowOf(_errorState, cameraServiceErrorState).flattenMerge()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val isStreamingState: StateFlow<Boolean> =
@@ -109,6 +109,9 @@ class AppViewModel(
     override val roomCameras: StateFlow<List<RoomCamera>> = roomCameraDataStore.roomCameras
         .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = listOf())
 
+    private val _watchedRoom = MutableStateFlow<WatchedRoom?>(null)
+    override val watchedRoom = _watchedRoom.asStateFlow()
+
     init {
         val context: Context = this.getApplication()
         val intent = Intent(context, CameraServiceImpl::class.java)
@@ -118,15 +121,11 @@ class AppViewModel(
         Log.i(TAG, "service bind")
     }
 
-    private fun updateWatchedRoom(room: Room) {
-        _uiState.update { prevState ->
-            prevState.copy(watchedRoomCode = room.code)
-        }
-    }
-
-    private fun updateTransmittingRoom(room: Room) {
-        _uiState.update { prevState ->
-            prevState.copy(transmittingRoomCode = room.code)
+    fun watch(code: String) {
+        viewModelScope.launch {
+            roomApiService.watchRoom(code).onSuccessWithErrorHandling {
+                _watchedRoom.emit(it)
+            }
         }
     }
 
