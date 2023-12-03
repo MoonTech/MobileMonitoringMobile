@@ -39,8 +39,7 @@ fun RoomCard(
                 Text(
                     text = room.code,
                     style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.clickable { })
+                    textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.weight(1f))
                 rowTitleContent()
             }
