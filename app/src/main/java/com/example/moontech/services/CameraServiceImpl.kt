@@ -19,6 +19,7 @@ import com.example.moontech.lib.streamingcamera.CameraXStreamingCamera
 import com.example.moontech.lib.streamingcamera.StreamingCamera
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class CameraServiceImpl() : LifecycleService(), CameraService {
     companion object {
@@ -28,52 +29,59 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
     private val binder: IBinder = LocalBinder()
     private lateinit var streamingCamera: StreamingCamera
 
-    private val _isStreaming = MutableStateFlow(false)
-    private val _isPreview = MutableStateFlow(false)
-    private val _streamError = MutableStateFlow<AppError>(AppError.Empty())
+    private val _serviceState = MutableStateFlow(CameraServiceState())
+    override val serviceState = _serviceState.asStateFlow()
 
-    override val isStreaming = _isStreaming.asStateFlow()
-    override val isPreview = _isPreview.asStateFlow()
-    override val streamError = _streamError.asStateFlow()
-
-    override fun startStream(rtmpUrl: String) {
-        // TODO: Add error handling ex. invalid url
+    override fun startStream(url: String, name: String) {
         Log.i(TAG, "startStream: ")
-        if (_isStreaming.compareAndSet(expect = false, update = true)) {
-            streamingCamera.startStream(rtmpUrl = rtmpUrl, onStreamFailed = {
-                _isStreaming.compareAndSet(expect = true, update = false)
-                Log.i(TAG, "startStream: Stream failed")
-                _streamError.tryEmit(AppError.Error("Transmission error"))
+        _serviceState.updateConditionally({ !isStreaming }) {
+            streamingCamera.startStream(rtmpUrl = url, onStreamFailed = {
+                stopStreamAfterError(AppError.Error("Transmission error"))
             })
+            it.copy(isStreaming = true, streamName = name)
         }
     }
 
     override fun stopStream() {
-        Log.i(TAG, "stopStream: ")
-        if (_isStreaming.compareAndSet(expect = true, update = false)) {
+        _serviceState.updateConditionally({ isStreaming }) {
             streamingCamera.stopStream()
+            it.copy(isStreaming = false)
         }
     }
 
     override fun startPreview(surfaceProvider: SurfaceProvider) {
         Log.i(TAG, "startPreview: ")
-        if (_isPreview.compareAndSet(expect = false, update = true)) {
-            return streamingCamera.startPreview(surfaceProvider)
+        _serviceState.updateConditionally({ !isPreview }) {
+            streamingCamera.startPreview(surfaceProvider)
+            it.copy(isPreview = true)
         }
     }
 
     override fun stopPreview() {
         Log.i(TAG, "stopPreview: ")
-        if (_isPreview.compareAndSet(expect = true, update = false)) {
+        _serviceState.updateConditionally({isPreview}) {
             streamingCamera.stopPreview()
+            it.copy(isPreview = false)
         }
     }
 
     override fun closeServiceIfNotUsed() {
         Log.i(TAG, "closeServiceIfNotUsed: ")
-        if (!isPreview.value && !isStreaming.value) {
+        _serviceState.updateConditionally({!isPreview && !isStreaming}) {
             Log.i(TAG, "closeServiceIfNotUsed: stopping self")
             stopSelf()
+            it.copy(isStreaming = false, isPreview = false)
+        }
+    }
+
+    private fun stopStreamAfterError(error: AppError) {
+        _serviceState.update { prevState ->
+            if (prevState.isStreaming) {
+                Log.i(TAG, "startStream: Stream failed")
+                prevState.copy(isStreaming = false, streamError = error)
+            } else {
+                prevState
+            }
         }
     }
 
@@ -136,5 +144,18 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
 
     inner class LocalBinder : Binder() {
         fun getService(): CameraService = this@CameraServiceImpl
+    }
+
+    private fun <T> MutableStateFlow<T>.updateConditionally(
+        condition: T.() -> Boolean,
+        block: (T) -> T
+    ) {
+        update {
+            if (condition(it)) {
+                block(it)
+            } else {
+                it
+            }
+        }
     }
 }

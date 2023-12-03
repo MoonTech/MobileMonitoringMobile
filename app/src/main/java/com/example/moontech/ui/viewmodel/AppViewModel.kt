@@ -28,17 +28,12 @@ import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
 import com.example.moontech.ui.screens.common.RoomType
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -73,21 +68,9 @@ class AppViewModel(
     val myRooms = _myRooms.asStateFlow()
 
     private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val cameraServiceErrorState: Flow<AppError> =
-        cameraService.filterNotNull().flatMapLatest { it.streamError }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val errorState: StateFlow<AppError> =
-        flowOf(_errorState, cameraServiceErrorState).flattenMerge()
-            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = AppError.Empty())
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val isStreamingState: StateFlow<Boolean> =
-        cameraService.filterNotNull().flatMapLatest { it.isStreaming }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
+    val errorState = _errorState.asStateFlow()
+    private val _isStreamingState = MutableStateFlow(false)
+    val isStreamingState = _isStreamingState.asStateFlow()
 
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
@@ -111,6 +94,8 @@ class AppViewModel(
 
     private val _watchedRoom = MutableStateFlow<WatchedRoom?>(null)
     override val watchedRoom = _watchedRoom.asStateFlow()
+    private val _transmittingRoomCode = MutableStateFlow<String?>(null)
+    val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
 
     init {
         val context: Context = this.getApplication()
@@ -119,6 +104,15 @@ class AppViewModel(
         context.bindService(intent, cameraServiceConnection, Context.BIND_AUTO_CREATE)
         fetchMyRooms()
         Log.i(TAG, "service bind")
+        viewModelScope.launch {
+            cameraService.collect {
+                it?.serviceState?.collect { cameraServiceState ->
+                    _isStreamingState.emit(cameraServiceState.isStreaming)
+                    _errorState.emit(cameraServiceState.streamError)
+                    _transmittingRoomCode.emit(cameraServiceState.streamName)
+                }
+            }
+        }
     }
 
     fun watch(code: String) {
@@ -150,7 +144,10 @@ class AppViewModel(
 
     fun startStream(roomCamera: RoomCamera) {
         withCameraService {
-            it.startStream("${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.token}")
+            it.startStream(
+                url = "${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.token}",
+                name = roomCamera.code
+            )
         }
     }
 

@@ -4,8 +4,8 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,21 +22,15 @@ fun BottomNavigationBar(
     navigateTo: (screen: Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO: Refactor
-    val selectedTabIndex = navigationItems.indexOfFirst {
-        backStackEntries.map { it.destination.route }.any { route ->
-            route == it.screen.route || it.acceptedScreens.any { it.route == route }
-        }
-    }.let { if (it < 0) 0 else it }
-    TabRow(selectedTabIndex = selectedTabIndex, modifier = modifier) {
+    NavigationBar( modifier = modifier) {
         navigationItems.forEach {
             val selected = backStackEntries.map { it.destination.route }.any { route ->
                 route == it.screen.route || it.acceptedScreens.any { it.route == route }
             }
-            Tab(
+            NavigationBarItem(
                 selected = selected,
                 onClick = { if (!selected) navigateTo(it.screen) },
-                text = { Text(text = stringResource(it.screen.label)) },
+                label = { Text(text = stringResource(it.screen.label)) },
                 icon = {
                     BadgedBox(badge = { if (it.showBadge) Badge() }) {
                         Icon(

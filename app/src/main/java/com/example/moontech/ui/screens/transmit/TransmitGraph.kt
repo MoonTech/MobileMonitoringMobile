@@ -1,6 +1,7 @@
 package com.example.moontech.ui.screens.transmit
 
 import android.Manifest
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,17 +22,19 @@ fun NavGraphBuilder.transmitGraph(
     viewModel: AppViewModel,
     modifier: Modifier
 ) {
-    val startDestination = Screen.Transmit.Camera.route
+    val startDestination = Screen.Transmit.Main.route
     navigation(startDestination = startDestination, route = Screen.Transmit.route) {
+        composable(Screen.Transmit.Main.route) {
+            Text(text = "Transmit Main")
+        }
+
         composable(
             Screen.Transmit.Camera.route,
             arguments = listOf(navArgument("code") { type = NavType.StringType })
         ) {
             PermissionWrapper(permission = Manifest.permission.CAMERA, modifier = modifier) {
                 val isStreaming by viewModel.isStreamingState.collectAsState()
-                val parentEntry =
-                    remember(it) { navController.getBackStackEntry(Screen.Transmit.route) }
-                val roomCode = parentEntry.arguments?.getString("code")!!
+                val roomCode = it.arguments?.getString("code")!!
                 val roomCameras by viewModel.roomCameras.collectAsState()
                 val roomCamera = roomCameras.find { it.code == roomCode }
                 if (roomCamera == null) {

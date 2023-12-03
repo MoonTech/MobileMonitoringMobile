@@ -1,14 +1,11 @@
 package com.example.moontech.services
 
 import androidx.camera.core.Preview
-import com.example.moontech.data.dataclasses.AppError
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface CameraService {
-    val isStreaming: StateFlow<Boolean>
-    val isPreview: StateFlow<Boolean>
-    val streamError: StateFlow<AppError>
-    fun startStream(url: String)
+    val serviceState: Flow<CameraServiceState>
+    fun startStream(url: String, name: String)
 
     fun stopStream()
 

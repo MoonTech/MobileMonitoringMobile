@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
+import androidx.compose.material.icons.filled.VideoCameraBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -72,8 +73,11 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
             if (currentRoute != null && currentRoute in visibleRoutes) {
                 val text = Screen.valueOf(currentRoute).label
                 Log.i(TAG, "ScreenScaffold: route extracted $text")
-                Column(modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.primaryContainer))
+                Column(
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
                 {
                     Text(
                         text = stringResource(text),
@@ -123,9 +127,11 @@ val myRoomsNavigationItem =
     )
 val externalRoomsNavigationItem =
     NavigationItem(screen = Screen.ExternalRooms, icon = Icons.Filled.LiveTv, showBadge = false)
+val transmitNavigationItem =
+    NavigationItem(screen = Screen.Transmit, icon = Icons.Filled.VideoCameraBack, showBadge = false)
 
 val defaultNavigationItems: List<NavigationItem> =
-    listOf(myRoomsNavigationItem, externalRoomsNavigationItem)
+    listOf(myRoomsNavigationItem, externalRoomsNavigationItem, transmitNavigationItem)
 
 
 val streamingNavigationItems: List<NavigationItem> = listOf(
