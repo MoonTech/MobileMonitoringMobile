@@ -13,7 +13,7 @@ fun NavController.navigateToScreenWithCode(
 
 fun NavController.navigateWithParams(
     screen: Screen,
-    params: Map<String, Any>,
+    params: Map<String, Any?>,
     builder: NavOptionsBuilder.() -> Unit = {}
 ) {
     val parametrizedRoute = params.entries.fold(screen.route) { s, entry ->

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.PrimaryButton
@@ -29,6 +31,7 @@ import com.example.moontech.ui.components.PrimaryButton
 @Composable
 fun AuthScreenBase(
     modifier: Modifier = Modifier,
+    appState: AppState = AppState.Empty(),
     @StringRes firstButtonLabel: Int,
     @StringRes secondButtonLabel: Int? = null,
     @StringRes firstTextFieldLabel: Int,
@@ -36,6 +39,7 @@ fun AuthScreenBase(
     @StringRes screenLabel: Int,
     firstButtonAction: (username: String, password: String) -> Unit,
     secondButtonAction: (() -> Unit)? = null,
+    emitError: (error: AppState.Error) -> Unit
 ) = CenterScreen(modifier) {
     val keyboardController = LocalSoftwareKeyboardController.current
     CenterColumn(
@@ -76,16 +80,24 @@ fun AuthScreenBase(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        PrimaryButton(
-            text = stringResource(firstButtonLabel),
-            onClick = {
-                keyboardController?.hide()
-                firstButtonAction(username, password)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-        )
+        if (appState.isLoading()) {
+            CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp))
+        } else {
+            PrimaryButton(
+                text = stringResource(firstButtonLabel),
+                onClick = {
+                    keyboardController?.hide()
+                    if (username.length < 3 || (secondTextFieldLabel != null && password.length < 3)) {
+                        emitError(AppState.Error("Input must be at least 3 characters long"))
+                    } else {
+                        firstButtonAction(username, password)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp)
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         if (secondButtonLabel != null && secondButtonAction != null) {
             OutlinedButton(

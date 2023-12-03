@@ -44,7 +44,7 @@ fun NavGraphBuilder.myRoomsGraph(
             MyRoomsAddRoomScreen(onAddRoom = { code, password ->
                 viewModel.addRoom(code, password)
                 navController.popBackStack(Screen.MyRooms.Main.route, inclusive = false)
-            }, modifier = modifier)
+            }, emitError = { viewModel.emitError(it) }, modifier = modifier)
         }
         composable(Screen.MyRooms.Splash.route) {
             SplashScreen(

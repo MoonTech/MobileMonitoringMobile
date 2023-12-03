@@ -29,10 +29,16 @@ fun NavGraphBuilder.externalRoomsGraph(
         }
 
         composable(Screen.ExternalRooms.AddRoom.route) {
-            ExternalRoomsAddRoomScreen(addRoom = { code, password ->
-                viewModel.addExternalRoom(code, password)
-                navController.popBackStack(Screen.ExternalRooms.Main.route, inclusive = false)
-            }, modifier = modifier)
+            ExternalRoomsAddRoomScreen(
+                addRoom = { code, password ->
+                    viewModel.addExternalRoom(code, password)
+                    navController.popBackStack(Screen.ExternalRooms.Main.route, inclusive = false)
+                },
+                emitError = {
+                    viewModel.emitError(it)
+                },
+                modifier = modifier
+            )
         }
 
     }

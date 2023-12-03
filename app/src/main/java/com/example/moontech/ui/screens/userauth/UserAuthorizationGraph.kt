@@ -2,6 +2,7 @@ package com.example.moontech.ui.screens.userauth
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -20,11 +21,15 @@ fun NavGraphBuilder.userAuthorizationGraph(
     navigation(startDestination = startDestination, route = Screen.UserAuthorization.route) {
         composable(Screen.UserAuthorization.Login.route) {
             val loggedIn by viewModel.loggedInState.collectAsState()
+            val scope = rememberCoroutineScope()
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
             LoginScreen(
                 modifier = modifier,
                 navigateToSignUpScreen = {
                     navController.navigate(Screen.UserAuthorization.SignUp.route)
+                },
+                emitError = {
+                    viewModel.emitError(it)
                 },
                 logIn = { username, password ->
                     viewModel.logInUser(username, password)
@@ -39,10 +44,11 @@ fun NavGraphBuilder.userAuthorizationGraph(
                 signUp = { username, password ->
                     viewModel.registerUser(username, password)
                 },
+                emitError = { viewModel.emitError(it) },
                 navigateToLoginScreen = {
                     navController.navigate(Screen.UserAuthorization.Login.route) {
                         popUpTo(Screen.UserAuthorization.Login.route)
-                        launchSingleTop  = true
+                        launchSingleTop = true
                     }
                 }
             )

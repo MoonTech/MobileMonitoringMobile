@@ -13,7 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.moontech.R
-import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
@@ -52,7 +52,7 @@ fun NavGraphBuilder.transmitGraph(
                 val roomCamera = roomCameras.find { it.code == roomCode }
                 if (roomCode != null && roomCamera == null) {
                     LaunchedEffect(true) {
-                        viewModel.emitError(AppError.Error("Camera attached to a Room '$roomCode' doesn't exist"))
+                        viewModel.emitError(AppState.Error("Camera attached to a Room '$roomCode' doesn't exist"))
                     }
                 } else {
                     TransmittingScreen(
@@ -106,6 +106,9 @@ fun NavGraphBuilder.transmitGraph(
                 firstTextFieldLabel = R.string.room_name,
                 secondTextFieldLabel = R.string.password,
                 screenLabel = R.string.add_camera,
+                emitError = {
+                    viewModel.emitError(it)
+                },
                 firstButtonAction = { code, password ->
                     navController.navigateWithParams(
                         Screen.Transmit.AddCamera,
@@ -126,15 +129,18 @@ fun NavGraphBuilder.transmitGraph(
             val password = navBackStackEntry.arguments?.getString("password")
             if (roomCode == null) {
                 LaunchedEffect(true) {
-                    viewModel.emitError(AppError.Error("Something went wrong"))
+                    viewModel.emitError(AppState.Error("Something went wrong"))
                 }
                 return@composable
             }
+            val appState by viewModel.authState.collectAsState()
             AuthScreenBase(
                 modifier = modifier,
+                appState = appState,
                 firstButtonLabel = R.string.add,
                 firstTextFieldLabel = R.string.camera_name,
                 screenLabel = R.string.add_camera,
+                emitError = { viewModel.emitError(it) },
                 firstButtonAction = { cameraName, _ ->
                     viewModel.addRoomCamera(
                         cameraName = cameraName,

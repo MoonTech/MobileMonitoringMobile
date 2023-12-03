@@ -14,7 +14,7 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.example.moontech.R
-import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.lib.streamingcamera.CameraXStreamingCamera
 import com.example.moontech.lib.streamingcamera.StreamingCamera
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
         Log.i(TAG, "startStream: ")
         _serviceState.updateConditionally({ !isStreaming }) {
             streamingCamera.startStream(rtmpUrl = url, onStreamFailed = {
-                stopStreamAfterError(AppError.Error("Transmission error"))
+                stopStreamAfterError(AppState.Error("Transmission error"))
             })
             it.copy(isStreaming = true, streamName = name)
         }
@@ -74,7 +74,7 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
         }
     }
 
-    private fun stopStreamAfterError(error: AppError) {
+    private fun stopStreamAfterError(error: AppState) {
         _serviceState.update { prevState ->
             if (prevState.isStreaming) {
                 Log.i(TAG, "startStream: Stream failed")
