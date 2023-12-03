@@ -1,6 +1,7 @@
 package com.example.moontech.ui.screens.transmit
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,8 +17,11 @@ import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.common.RoomType
 import com.example.moontech.ui.viewmodel.AppViewModel
+
+private const val TAG = "TransmitGraph"
 
 fun NavGraphBuilder.transmitGraph(
     navController: NavController,
@@ -29,7 +33,10 @@ fun NavGraphBuilder.transmitGraph(
 
         composable(
             Screen.Transmit.Camera.route,
-            arguments = listOf(navArgument("code") { type = NavType.StringType })
+            arguments = listOf(navArgument("code") {
+                type = NavType.StringType
+                nullable = true
+            })
         ) {
             PermissionWrapper(permission = Manifest.permission.CAMERA, modifier = modifier) {
                 val isStreaming by viewModel.isStreamingState.collectAsState()
@@ -85,8 +92,14 @@ fun NavGraphBuilder.transmitGraph(
                 modifier = modifier,
                 rooms = rooms,
                 addCamera = { /*TODO*/ },
-                selectCamera = {},
-                onSettings = {}
+                selectCamera = {
+                    Log.i(TAG, "transmitGraph: Camera selected ${it.code}")
+                    navController.navigateToScreenWithCode(Screen.Transmit.Camera, it.code) {
+                        popUpTo(Screen.Transmit.Camera.route) {
+                            inclusive = true
+                        }
+                    }
+                },
             )
         }
     }

@@ -15,7 +15,6 @@ import com.example.moontech.ui.components.base.RoomListBase
 @Composable
 fun <T : ObjectWithRoomCode> ListScreenBase(
     modifier: Modifier = Modifier,
-    onRoomClick: (room: T) -> Unit,
     addRoom: () -> Unit = {},
     rooms: List<T>,
     floatingActionButtonVisible: Boolean = false,

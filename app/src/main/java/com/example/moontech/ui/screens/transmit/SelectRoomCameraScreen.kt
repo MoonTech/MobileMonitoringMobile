@@ -1,9 +1,6 @@
 package com.example.moontech.ui.screens.transmit
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -25,12 +22,10 @@ fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
     addCamera: () -> Unit,
     selectCamera: (T) -> Unit,
     modifier: Modifier = Modifier,
-    onSettings: (room: T) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(RoomType.EXTERNAL) }
     ListScreenBase(
         modifier = modifier,
-        onRoomClick = { selectCamera(it) },
         addRoom = addCamera,
         rooms = rooms[selectedTab] ?: listOf(),
         floatingActionButtonVisible = selectedTab.index == RoomType.EXTERNAL.index,
@@ -45,12 +40,6 @@ fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
             }
         }
     ) { room ->
-        RoomCard(room = room, rowTitleContent = {
-            IconButton(onClick = {
-                onSettings(room)
-            }) {
-                Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Setting")
-            }
-        }) { }
+        RoomCard(room = room, modifier = Modifier.clickable { selectCamera(room) })
     }
 }

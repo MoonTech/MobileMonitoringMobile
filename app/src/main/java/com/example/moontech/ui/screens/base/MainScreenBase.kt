@@ -18,7 +18,6 @@ fun <T: ObjectWithRoomCode> MainScreenBase(
 ) {
     ListScreenBase(
         modifier = modifier,
-        onRoomClick = { /*TODO*/ },
         addRoom = addRoom,
         rooms = rooms,
         floatingActionButtonVisible = true,

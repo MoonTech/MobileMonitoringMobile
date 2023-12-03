@@ -1,34 +1,46 @@
 package com.example.moontech.ui.components
 
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.moontech.data.dataclasses.RoomCamera
 
 @Composable
-fun TransmittingControls(
+fun BoxScope.TransmittingControls(
     roomCamera: RoomCamera?,
-    modifier: Modifier = Modifier,
     isStreaming: Boolean,
     onStartStream: () -> Unit,
     onStopStream: () -> Unit,
     onSwitchRoom: () -> Unit
-) = CenterColumn(modifier.width(IntrinsicSize.Max)) {
-    OutlinedButton(onClick = { onSwitchRoom() }, enabled = !isStreaming, modifier = Modifier.fillMaxWidth()) {
-        Text(text = if (roomCamera == null) "Select room" else "Switch room")
+) {
+    FilledTonalButton(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(4.dp),
+        onClick = {onSwitchRoom()},
+        enabled = !isStreaming
+    ) {
+        Text(text = if (roomCamera == null) "Select room" else "Switch room",)
     }
-    Button(onClick = {
-        if (isStreaming) {
-            onStopStream()
-        } else {
-            onStartStream()
-        }
-    }, enabled = roomCamera != null) {
+    ElevatedButton(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 4.dp),
+        onClick = {
+            if (isStreaming) {
+                onStopStream()
+            } else {
+                onStartStream()
+            }
+        },
+        enabled = roomCamera != null
+    ) {
         Text(text = if (roomCamera == null) "Start transmission" else "Stop transmission")
     }
 }

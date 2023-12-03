@@ -16,7 +16,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.components.TransmittingControlPanel
 import com.example.moontech.ui.components.TransmittingControls
 import com.example.moontech.ui.components.TransmittingInfoPanel
 
@@ -41,6 +40,11 @@ fun TransmittingScreen(
         }
     }
     CenterColumn {
+        TransmittingInfoPanel(
+            modifier = Modifier.fillMaxWidth(),
+            isStreaming = isStreaming,
+            roomCamera = roomCamera
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,26 +66,19 @@ fun TransmittingScreen(
                     }
                 }
             )
+            TransmittingControls(
+                roomCamera = roomCamera,
+                isStreaming = isStreaming,
+                onStartStream = {
+                    roomCamera?.let { startStream(it) }
+                },
+                onStopStream = {
+                    stopStream()
+                },
+                onSwitchRoom = {
+                    selectCamera()
+                }
+            )
         }
-        TransmittingControlPanel(
-            modifier = Modifier.fillMaxWidth(),
-            leftPanel = {
-                TransmittingInfoPanel(isStreaming = isStreaming, roomCamera = roomCamera)
-            },
-            rightPanel = {
-                TransmittingControls(
-                    roomCamera = roomCamera,
-                    isStreaming = isStreaming,
-                    onStartStream = {
-                        roomCamera?.let { startStream(it) }
-                    },
-                    onStopStream = {
-                        stopStream()
-                    },
-                    onSwitchRoom = {
-                        selectCamera()
-                    })
-            }
-        )
     }
 }
