@@ -136,5 +136,6 @@ val defaultNavigationItems: List<NavigationItem> =
 
 val streamingNavigationItems: List<NavigationItem> = listOf(
     myRoomsNavigationItem,
-    externalRoomsNavigationItem
+    externalRoomsNavigationItem,
+    transmitNavigationItem.copy(showBadge = true)
 )

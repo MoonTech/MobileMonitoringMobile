@@ -41,6 +41,6 @@ fun BoxScope.TransmittingControls(
         },
         enabled = roomCamera != null
     ) {
-        Text(text = if (roomCamera == null) "Start transmission" else "Stop transmission")
+        Text(text = if (!isStreaming) "Start transmission" else "Stop transmission")
     }
 }

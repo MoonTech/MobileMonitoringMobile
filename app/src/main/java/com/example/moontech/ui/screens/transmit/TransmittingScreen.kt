@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.moontech.data.dataclasses.RoomCamera
@@ -32,11 +35,13 @@ fun TransmittingScreen(
     stopStream: () -> Unit,
     selectCamera: () -> Unit
 ) = CenterScreen(modifier) {
-    val stopPreviewRemembered = rememberUpdatedState(newValue = stopPreview)
+    var previewStopped by remember{mutableStateOf(false)}
     DisposableEffect(key1 = true) {
         onDispose {
             Log.i(TAG, "TransmittingScreen: Stopping preview")
-            stopPreviewRemembered.value()
+            if (!previewStopped) {
+                stopPreview()
+            }
         }
     }
     CenterColumn {
@@ -64,7 +69,8 @@ fun TransmittingScreen(
                         startPreview(this.surfaceProvider)
                         Log.i(TAG, "TransmittingScreen: PreviewView created")
                     }
-                }
+                },
+                onRelease = { Log.i(TAG, "TransmittingScreen: on release") }
             )
             TransmittingControls(
                 roomCamera = roomCamera,
@@ -76,6 +82,8 @@ fun TransmittingScreen(
                     stopStream()
                 },
                 onSwitchRoom = {
+                    stopPreview()
+                    previewStopped = true
                     selectCamera()
                 }
             )
