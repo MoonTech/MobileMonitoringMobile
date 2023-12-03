@@ -1,7 +1,6 @@
 package com.example.moontech.ui.screens.transmit
 
 import android.Manifest
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.example.moontech.data.dataclasses.AppError
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -22,11 +22,8 @@ fun NavGraphBuilder.transmitGraph(
     viewModel: AppViewModel,
     modifier: Modifier
 ) {
-    val startDestination = Screen.Transmit.Main.route
+    val startDestination = Screen.Transmit.Camera.route
     navigation(startDestination = startDestination, route = Screen.Transmit.route) {
-        composable(Screen.Transmit.Main.route) {
-            Text(text = "Transmit Main")
-        }
 
         composable(
             Screen.Transmit.Camera.route,
@@ -34,16 +31,17 @@ fun NavGraphBuilder.transmitGraph(
         ) {
             PermissionWrapper(permission = Manifest.permission.CAMERA, modifier = modifier) {
                 val isStreaming by viewModel.isStreamingState.collectAsState()
-                val roomCode = it.arguments?.getString("code")!!
+                val transmittingRoomCode by viewModel.transmittingRoomCode.collectAsState()
+                val roomCode = if (isStreaming) {
+                    transmittingRoomCode
+                } else {
+                    it.arguments?.getString("code")
+                }
                 val roomCameras by viewModel.roomCameras.collectAsState()
                 val roomCamera = roomCameras.find { it.code == roomCode }
-                if (roomCamera == null) {
+                if (roomCode != null && roomCamera == null) {
                     LaunchedEffect(true) {
-                        navController.navigate(Screen.Transmit.AddRoom.route) {
-                            popUpTo(Screen.Transmit.Camera.route) {
-                                inclusive = true
-                            }
-                        }
+                        viewModel.emitError(AppError.Error("Camera attached to a Room '$roomCode' doesn't exist"))
                     }
                 } else {
                     TransmittingScreen(
