@@ -64,7 +64,7 @@ fun TransmittingInfoPanel(
                             showMenu = false
                             onSwitchRoom()
                         }
-                        .padding(start = 2.dp, end = 2.dp)
+                        .padding(start = 8.dp, end = 8.dp)
                 )
             }
         }

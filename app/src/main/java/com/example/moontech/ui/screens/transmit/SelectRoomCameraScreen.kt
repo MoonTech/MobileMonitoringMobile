@@ -19,14 +19,14 @@ import com.example.moontech.ui.screens.common.RoomType
 @Composable
 fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
     rooms: Map<RoomType, List<T>>,
-    addCamera: () -> Unit,
+    addRoom: () -> Unit,
     selectCamera: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(RoomType.EXTERNAL) }
     ListScreenBase(
         modifier = modifier,
-        addRoom = addCamera,
+        addRoom = addRoom,
         rooms = rooms[selectedTab] ?: listOf(),
         floatingActionButtonVisible = selectedTab.index == RoomType.EXTERNAL.index,
         topBar = {

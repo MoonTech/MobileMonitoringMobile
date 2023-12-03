@@ -32,7 +32,7 @@ fun AuthScreenBase(
     @StringRes firstButtonLabel: Int,
     @StringRes secondButtonLabel: Int? = null,
     @StringRes firstTextFieldLabel: Int,
-    @StringRes secondTextFieldLabel: Int,
+    @StringRes secondTextFieldLabel: Int? = null,
     @StringRes screenLabel: Int,
     firstButtonAction: (username: String, password: String) -> Unit,
     secondButtonAction: (() -> Unit)? = null,
@@ -62,15 +62,20 @@ fun AuthScreenBase(
             keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Next),
             modifier = Modifier.fillMaxWidth()
         )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(secondTextFieldLabel)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Done),
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (secondTextFieldLabel != null) {
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(stringResource(secondTextFieldLabel)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    imeAction = ImeAction.Done
+                ),
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
         PrimaryButton(
             text = stringResource(firstButtonLabel),
             onClick = {

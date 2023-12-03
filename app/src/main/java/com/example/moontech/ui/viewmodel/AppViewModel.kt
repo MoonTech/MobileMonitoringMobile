@@ -232,12 +232,13 @@ class AppViewModel(
         }
     }
 
-    override fun addRoomCamera(code: String, password: String, onSuccess: () -> Unit) {
+    override fun addRoomCamera(cameraName: String, roomCode: String, password: String?, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            cameraApiService.addCamera(CameraRequest(code, password))
+            // TODO: Make password nullable and remove ?: ""
+            cameraApiService.addCamera(CameraRequest(roomCode, password ?: ""))
                 .onSuccessWithErrorHandling {
                     val roomCamera = RoomCamera(
-                        code = code,
+                        code = roomCode,
                         token = it.cameraToken,
                         url = it.cameraUrl,
                         roomType = RoomType.EXTERNAL
