@@ -1,6 +1,7 @@
 package com.example.moontech.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -31,9 +33,10 @@ fun TransmittingInfoPanel(
     onSwitchRoom: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    Row(modifier = modifier) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         if (roomCamera != null) {
             Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .padding(end = 10.dp)
                     .fillMaxWidth(0.75f)
@@ -51,6 +54,13 @@ fun TransmittingInfoPanel(
                     maxLines = 1
                 )
             }
+        } else {
+            Text(
+                text = "Select a room",
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
