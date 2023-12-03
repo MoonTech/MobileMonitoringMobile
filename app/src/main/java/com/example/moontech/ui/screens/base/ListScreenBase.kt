@@ -13,15 +13,16 @@ import com.example.moontech.ui.components.FloatingActionButtonWithIcon
 import com.example.moontech.ui.components.base.RoomListBase
 
 @Composable
-fun <T: ObjectWithRoomCode> ListScreenBase(
+fun <T : ObjectWithRoomCode> ListScreenBase(
     modifier: Modifier = Modifier,
-    onRoomClick: (room: T) -> Unit,
     addRoom: () -> Unit = {},
     rooms: List<T>,
     floatingActionButtonVisible: Boolean = false,
+    topBar: @Composable () -> Unit = {},
     content: @Composable (room: T) -> Unit
 ) {
     Scaffold(
+        topBar = { topBar() },
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButtonWithIcon(

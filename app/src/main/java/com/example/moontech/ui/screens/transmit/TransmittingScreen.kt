@@ -9,46 +9,51 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FiberManualRecord
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.ui.components.CenterColumn
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.screens.common.RoomType
+import com.example.moontech.ui.components.TransmittingControls
+import com.example.moontech.ui.components.TransmittingInfoPanel
 
 private const val TAG = "TransmittingScreen"
 
 @Composable
 fun TransmittingScreen(
-    roomCamera: RoomCamera,
+    roomCamera: RoomCamera?,
     modifier: Modifier = Modifier,
     startPreview: (surfaceProvider: SurfaceProvider) -> Unit,
     startStream: (roomCamera: RoomCamera) -> Unit,
     isStreaming: Boolean,
     stopPreview: () -> Unit,
-    stopStream: () -> Unit
+    stopStream: () -> Unit,
+    selectCamera: () -> Unit
 ) = CenterScreen(modifier) {
-    val stopPreviewRemembered = rememberUpdatedState(newValue = stopPreview)
+    var previewStopped by remember{mutableStateOf(false)}
     DisposableEffect(key1 = true) {
         onDispose {
             Log.i(TAG, "TransmittingScreen: Stopping preview")
-            stopPreviewRemembered.value()
+            if (!previewStopped) {
+                stopPreview()
+            }
         }
     }
     CenterColumn {
+        TransmittingInfoPanel(
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 2.dp, top = 2.dp),
+            isStreaming = isStreaming,
+            roomCamera = roomCamera,
+            onSwitchRoom = { selectCamera() }
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -68,50 +73,19 @@ fun TransmittingScreen(
                         startPreview(this.surfaceProvider)
                         Log.i(TAG, "TransmittingScreen: PreviewView created")
                     }
+                },
+                onRelease = { Log.i(TAG, "TransmittingScreen: on release") }
+            )
+            TransmittingControls(
+                roomCamera = roomCamera,
+                isStreaming = isStreaming,
+                onStartStream = {
+                    roomCamera?.let { startStream(it) }
+                },
+                onStopStream = {
+                    stopStream()
                 }
             )
-            ElevatedButton(
-                onClick = {
-                    if (isStreaming) {
-                        stopStream()
-                    } else {
-                        startStream(roomCamera)
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.FiberManualRecord,
-                    contentDescription = "Record",
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(text = if (isStreaming) "Stop transmission" else "Start transmission")
-            }
-            Text(
-                text = "Camera in room: ${roomCamera.code}",
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 4.dp)
-            )
         }
-    }
-}
-
-
-@Preview
-@Composable
-fun TransmittingScreenPreview() {
-    Surface {
-        TransmittingScreen(
-            roomCamera = RoomCamera("123", "123", "123", RoomType.EXTERNAL),
-            startPreview = {},
-            startStream = {},
-            stopPreview = {},
-            stopStream = {},
-            isStreaming = false
-        )
     }
 }

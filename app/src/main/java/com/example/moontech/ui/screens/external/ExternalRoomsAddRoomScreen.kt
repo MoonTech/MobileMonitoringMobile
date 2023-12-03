@@ -3,11 +3,13 @@ package com.example.moontech.ui.screens.external
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.moontech.R
+import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.ui.screens.base.AuthScreenBase
 
 @Composable
 fun ExternalRoomsAddRoomScreen(
     addRoom: (code: String, password: String) -> Unit,
+    emitError: (error: AppState.Error) -> Unit,
     modifier: Modifier = Modifier
 ) = AuthScreenBase(
     modifier = modifier,
@@ -15,5 +17,6 @@ fun ExternalRoomsAddRoomScreen(
     firstTextFieldLabel = R.string.room_name,
     secondTextFieldLabel = R.string.password,
     screenLabel = R.string.add_room,
-    firstButtonAction = addRoom
+    firstButtonAction = addRoom,
+    emitError = emitError
 )

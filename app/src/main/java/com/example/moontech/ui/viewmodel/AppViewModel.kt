@@ -11,7 +11,7 @@ import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moontech.R
-import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
 import com.example.moontech.data.dataclasses.RoomCamera
@@ -67,8 +67,10 @@ class AppViewModel(
     private val _myRooms: MutableStateFlow<List<ManagedRoom>> = MutableStateFlow(listOf())
     val myRooms = _myRooms.asStateFlow()
 
-    private val _errorState: MutableStateFlow<AppError> = MutableStateFlow(AppError.Empty())
+    private val _errorState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Empty())
     val errorState = _errorState.asStateFlow()
+    private val _authState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Empty())
+    val authState = _authState.asStateFlow()
     private val _isStreamingState = MutableStateFlow(false)
     val isStreamingState = _isStreamingState.asStateFlow()
 
@@ -232,24 +234,37 @@ class AppViewModel(
         }
     }
 
-    override fun addRoomCamera(code: String, password: String, onSuccess: () -> Unit) {
+    override fun addRoomCamera(
+        cameraName: String,
+        roomCode: String,
+        password: String?,
+        onSuccess: () -> Unit
+    ) {
         viewModelScope.launch {
-            cameraApiService.addCamera(CameraRequest(code, password))
-                .onSuccessWithErrorHandling {
-                    val roomCamera = RoomCamera(
-                        code = code,
-                        token = it.cameraToken,
-                        url = it.cameraUrl,
-                        roomType = RoomType.EXTERNAL
-                    )
-                    roomCameraDataStore.add(roomCamera)
-                    onSuccess()
-                }
+            // TODO: Make password nullable and remove ?: ""
+            _authState.emit(AppState.Loading())
+            var response = cameraApiService.addCamera(CameraRequest(roomCode, password ?: ""))
+            response.onSuccessWithErrorHandling {
+                val roomCamera = RoomCamera(
+                    code = roomCode,
+                    token = it.cameraToken,
+                    url = it.cameraUrl,
+                    roomType = RoomType.EXTERNAL
+                )
+                roomCameraDataStore.add(roomCamera)
+                onSuccess()
+                _authState.emit(AppState.Empty())
+            }
+            response.onFailure {
+                _authState.emit(AppState.Empty())
+            }
         }
     }
 
-    suspend fun emitError(error: AppError) {
-        _errorState.emit(error)
+    fun emitError(error: AppState) {
+        viewModelScope.launch {
+            _errorState.emit(error)
+        }
     }
 
     private suspend inline fun <T> Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
@@ -258,7 +273,7 @@ class AppViewModel(
         }
         onFailure {
             Log.i(TAG, "onSuccessWithErrorHandling: handling failure")
-            _errorState.emit(AppError.Error("Something went wrong"))
+            _errorState.emit(AppState.Error("Something went wrong"))
         }
     }
 
