@@ -22,8 +22,8 @@ import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
-import com.example.moontech.services.CameraService
-import com.example.moontech.services.CameraServiceImpl
+import com.example.moontech.services.camera.CameraService
+import com.example.moontech.services.camera.CameraServiceImpl
 import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService

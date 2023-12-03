@@ -1,4 +1,4 @@
-package com.example.moontech.services
+package com.example.moontech.services.camera
 
 import android.app.Notification
 import android.app.NotificationChannel

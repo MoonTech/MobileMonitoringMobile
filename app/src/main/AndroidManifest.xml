@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".services.CameraServiceImpl"
+            android:name=".services.camera.CameraServiceImpl"
             android:exported="false"
             android:foregroundServiceType="camera" />
     </application>

@@ -1,4 +1,4 @@
-package com.example.moontech.services
+package com.example.moontech.services.camera
 
 import androidx.camera.core.Preview
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.example.moontech.services
+package com.example.moontech.services.camera
 
 import com.example.moontech.data.dataclasses.AppError
 
