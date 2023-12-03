@@ -81,7 +81,7 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
                 {
                     Text(
                         text = stringResource(text),
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(8.dp)
                     )
                     Divider(modifier = Modifier.fillMaxWidth())

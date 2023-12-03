@@ -38,9 +38,7 @@ fun NavGraphBuilder.myRoomsGraph(
                 addRoom = {
                     navController.navigate(Screen.MyRooms.AddRoom.route)
                 },
-                onSettings = {},
-                onTransmit = { },
-                onWatch = {})
+                onSettings = {})
         }
         composable(Screen.MyRooms.AddRoom.route) {
             MyRoomsAddRoomScreen(onAddRoom = { code, password ->

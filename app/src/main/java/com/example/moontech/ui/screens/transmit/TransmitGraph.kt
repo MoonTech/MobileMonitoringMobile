@@ -13,8 +13,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.moontech.data.dataclasses.AppError
+import com.example.moontech.data.dataclasses.ObjectWithRoomCode
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.screens.common.RoomType
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 fun NavGraphBuilder.transmitGraph(
@@ -51,7 +53,10 @@ fun NavGraphBuilder.transmitGraph(
                         startStream = viewModel::startStream,
                         startPreview = viewModel::startPreview,
                         stopStream = viewModel::stopStream,
-                        stopPreview = viewModel::stopPreview
+                        stopPreview = viewModel::stopPreview,
+                        selectCamera = {
+                            navController.navigate(Screen.Transmit.SelectCamera.route)
+                        }
                     )
                 }
             }
@@ -67,6 +72,22 @@ fun NavGraphBuilder.transmitGraph(
                         navController.popBackStack()
                     }
                 })
+        }
+
+        composable(Screen.Transmit.SelectCamera.route) {
+            val externalRooms by viewModel.externalRoomCameras.collectAsState()
+            val rooms = mutableMapOf<RoomType, List<ObjectWithRoomCode>>(
+                Pair(RoomType.EXTERNAL, externalRooms)
+            )
+            val myRooms by viewModel.myRooms.collectAsState()
+            if (myRooms.isNotEmpty()) rooms[RoomType.MY_ROOMS] = myRooms
+            SelectRoomCameraScreen(
+                modifier = modifier,
+                rooms = rooms,
+                addCamera = { /*TODO*/ },
+                selectCamera = {},
+                onSettings = {}
+            )
         }
     }
 }

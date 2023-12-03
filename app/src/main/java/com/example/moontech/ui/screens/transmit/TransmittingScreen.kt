@@ -30,7 +30,8 @@ fun TransmittingScreen(
     startStream: (roomCamera: RoomCamera) -> Unit,
     isStreaming: Boolean,
     stopPreview: () -> Unit,
-    stopStream: () -> Unit
+    stopStream: () -> Unit,
+    selectCamera: () -> Unit
 ) = CenterScreen(modifier) {
     val stopPreviewRemembered = rememberUpdatedState(newValue = stopPreview)
     DisposableEffect(key1 = true) {
@@ -78,7 +79,7 @@ fun TransmittingScreen(
                         stopStream()
                     },
                     onSwitchRoom = {
-
+                        selectCamera()
                     })
             }
         )

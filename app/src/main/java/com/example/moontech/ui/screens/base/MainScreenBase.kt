@@ -14,8 +14,6 @@ fun <T: ObjectWithRoomCode> MainScreenBase(
     rooms: List<T>,
     addRoom: () -> Unit,
     modifier: Modifier = Modifier,
-    onTransmit: (room: T) -> Unit,
-    onWatch: (room: T) -> Unit,
     onSettings: (room: T) -> Unit,
 ) {
     ListScreenBase(
