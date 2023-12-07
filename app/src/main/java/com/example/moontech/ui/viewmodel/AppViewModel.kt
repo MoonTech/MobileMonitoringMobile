@@ -241,12 +241,13 @@ class AppViewModel(
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
-            // TODO: Make password nullable and remove ?: ""
             _authState.emit(AppState.Loading())
-            var response = cameraApiService.addCamera(CameraRequest(roomCode, password ?: ""))
+            var response =
+                cameraApiService.addCamera(CameraRequest(roomCode, password, cameraName))
             response.onSuccessWithErrorHandling {
                 val roomCamera = RoomCamera(
                     code = roomCode,
+                    name = cameraName,
                     token = it.cameraToken,
                     url = it.cameraUrl,
                     roomType = RoomType.EXTERNAL

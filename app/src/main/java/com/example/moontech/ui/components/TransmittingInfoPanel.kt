@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,7 +66,7 @@ fun TransmittingInfoPanel(
         IconButton(
             onClick = { showMenu = true }
         ) {
-            Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Switch room")
+            Icon(imageVector = Icons.Default.Menu, contentDescription = "Switch room")
             DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                 Text(text = if (roomCamera == null) "Select room" else "Switch room",
                     Modifier
