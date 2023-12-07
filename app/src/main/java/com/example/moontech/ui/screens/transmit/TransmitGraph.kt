@@ -88,11 +88,15 @@ fun NavGraphBuilder.transmitGraph(
                 selectCamera = { room ->
                     Log.i(TAG, "transmitGraph: Camera selected ${room.code}")
                     if (myRooms.any { it.code == room.code } && myRoomCameras.none { it.code == room.code }) {
-                        navController.navigate(Screen.Transmit.AddCamera.route)
-                    }
-                    navController.navigateToScreenWithCode(Screen.Transmit.Camera, room.code) {
-                        popUpTo(Screen.Transmit.Camera.route) {
-                            inclusive = true
+                        navController.navigateWithParams(
+                            Screen.Transmit.AddCamera,
+                            mapOf(Pair("code", room.code), Pair("password", null))
+                        )
+                    } else {
+                        navController.navigateToScreenWithCode(Screen.Transmit.Camera, room.code) {
+                            popUpTo(Screen.Transmit.Camera.route) {
+                                inclusive = true
+                            }
                         }
                     }
                 },

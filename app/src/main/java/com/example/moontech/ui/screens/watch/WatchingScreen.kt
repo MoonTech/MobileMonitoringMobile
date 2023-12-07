@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
@@ -60,6 +62,9 @@ fun WatchingScreen(
     exitFullScreen: () -> Unit
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
+    // TODO: Test switching between cameras
+    // TODO: Save my room cameras also on local device
+    val context = LocalContext.current
     DisposableEffect(true) {
         onDispose {
             Log.i(TAG, "WatchingScreen: stopping")
@@ -69,7 +74,15 @@ fun WatchingScreen(
     var selectedCameraName by rememberSaveable {
         mutableStateOf(watchedRoom.connectedCameras.firstOrNull()?.cameraName ?: "")
     }
-    var selectedCamera = watchedRoom.connectedCameras.first { it.cameraName == selectedCameraName }
+    val selectedCamera = watchedRoom.connectedCameras.firstOrNull() { it.cameraName == selectedCameraName }
+    LaunchedEffect(selectedCamera) {
+        selectedCamera?.let {
+            val mediaItem =
+                buildHlsMediaItem("${context.getText(R.string.watch_url)}/${it.id}.m3u8")
+            play(mediaItem)
+        }
+    }
+
     var showControls by remember { mutableStateOf(false) }
     var fullScreen by rememberSaveable { mutableStateOf(false) }
     val orientation = if (fullScreen) {
@@ -96,9 +109,11 @@ fun WatchingScreen(
                         }
                     })
                     init(this)
-                    val mediaItem =
-                        buildHlsMediaItem("${context.getText(R.string.watch_url)}/${selectedCamera.id}.m3u8")
-                    play(mediaItem)
+                    selectedCamera?.let {
+                        val mediaItem =
+                            buildHlsMediaItem("${context.getText(R.string.watch_url)}/${it.id}.m3u8")
+                        play(mediaItem)
+                    }
                 }
             })
 
@@ -114,9 +129,9 @@ fun WatchingScreen(
                         Divider()
                     },
                     itemContent = {
-                        Text(text = it.id,
+                        Text(text = it.cameraName,
                             modifier = Modifier
-                                .clickable { }
+                                .clickable { selectedCameraName = it.cameraName }
                                 .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
                                 .fillMaxWidth())
                     })

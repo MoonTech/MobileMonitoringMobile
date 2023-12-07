@@ -50,10 +50,10 @@ fun NavGraphBuilder.watchGraph(
 
             val watchedRoom by viewModel.watchedRoom.collectAsState()
             Log.i(TAG, "watchGraph: $watchedRoom")
+            LaunchedEffect(true) {
+                viewModel.watch(roomCode)
+            }
             if (watchedRoom?.code != roomCode) {
-                LaunchedEffect(true) {
-                    viewModel.watch(roomCode)
-                }
                 CenterScreen(modifier = modifier) {
                     CircularProgressIndicator()
                 }
