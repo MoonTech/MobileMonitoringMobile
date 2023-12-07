@@ -18,6 +18,7 @@ import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
+import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
@@ -117,9 +118,17 @@ class AppViewModel(
         }
     }
 
+    private fun getRoom(code: String): RoomData? {
+        return externalRooms.value.firstOrNull { it.code == code }
+    }
+
     fun watch(code: String) {
+        Log.i(TAG, "watch: watch 1")
         viewModelScope.launch {
-            roomApiService.watchRoom(code).onSuccessWithErrorHandling {
+            val room = getRoom(code)
+            roomApiService.watchRoom(
+                WatchRequest(code, room?.password)
+            ).onSuccessWithErrorHandling {
                 _watchedRoom.emit(it)
             }
         }
@@ -215,7 +224,9 @@ class AppViewModel(
 
     override fun addExternalRoom(code: String, password: String) {
         viewModelScope.launch {
-            val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(code)
+            val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(
+                WatchRequest(code, password)
+            )
             watchRoomResponse.onSuccessWithErrorHandling {
                 roomDataStore.add(RoomData(code, password))
             }

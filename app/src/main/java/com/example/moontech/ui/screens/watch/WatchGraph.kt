@@ -1,5 +1,6 @@
 @file:UnstableApi package com.example.moontech.ui.screens.watch
 
+import android.util.Log
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +39,7 @@ fun NavGraphBuilder.watchGraph(
             }
 
             val watchedRoom by viewModel.watchedRoom.collectAsState()
+            Log.i(TAG, "watchGraph: $watchedRoom")
             if (watchedRoom?.code != roomCode) {
                 LaunchedEffect(true) {
                     viewModel.watch(roomCode)
