@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,8 +39,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
+import com.example.moontech.R
 import com.example.moontech.data.dataclasses.WatchedRoom
-import com.example.moontech.data.dataclasses.WatchedRoomCamera
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.MenuDrawer
 import com.example.moontech.ui.components.RememberScreenOrientation
@@ -61,20 +60,16 @@ fun WatchingScreen(
     exitFullScreen: () -> Unit
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
-    val cameras = remember {
-        mutableStateListOf(
-            WatchedRoomCamera("Cam 1", "Cam 1", true),
-            WatchedRoomCamera("Cam 2", "Cam 2", true),
-            WatchedRoomCamera("Cam 3", "Cam 3", true),
-            WatchedRoomCamera("Cam 4", "Cam 4", true),
-        )
-    }
     DisposableEffect(true) {
         onDispose {
             Log.i(TAG, "WatchingScreen: stopping")
             stop()
         }
     }
+    var selectedCameraName by rememberSaveable {
+        mutableStateOf(watchedRoom.connectedCameras.firstOrNull()?.cameraName ?: "")
+    }
+    var selectedCamera = watchedRoom.connectedCameras.first { it.cameraName == selectedCameraName }
     var showControls by remember { mutableStateOf(false) }
     var fullScreen by rememberSaveable { mutableStateOf(false) }
     val orientation = if (fullScreen) {
@@ -102,14 +97,14 @@ fun WatchingScreen(
                     })
                     init(this)
                     val mediaItem =
-                        buildHlsMediaItem("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8")
+                        buildHlsMediaItem("${context.getText(R.string.watch_url)}/${selectedCamera.id}.m3u8")
                     play(mediaItem)
                 }
             })
 
             androidx.compose.animation.AnimatedVisibility(visible = showControls) {
                 MenuDrawer(modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut()),
-                    items = cameras,
+                    items = watchedRoom.connectedCameras,
                     header = {
                         Text(
                             text = "Select camera",
