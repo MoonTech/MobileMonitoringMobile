@@ -100,6 +100,7 @@ class AppViewModel(
     private val _transmittingRoomCode = MutableStateFlow<String?>(null)
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
 
+
     init {
         val context: Context = this.getApplication()
         val intent = Intent(context, CameraServiceImpl::class.java)

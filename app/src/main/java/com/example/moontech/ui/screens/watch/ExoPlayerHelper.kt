@@ -8,7 +8,6 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 fun buildExoPlayer(context: Context): ExoPlayer {
     return ExoPlayer.Builder(context)
         .setMediaSourceFactory(DefaultMediaSourceFactory(context))
-//        .setLiveTargetOffsetMs(5000)
         .build()
 }
 
