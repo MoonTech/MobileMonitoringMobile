@@ -74,6 +74,8 @@ class AppViewModel(
     val authState = _authState.asStateFlow()
     private val _isStreamingState = MutableStateFlow(false)
     val isStreamingState = _isStreamingState.asStateFlow()
+    private val _navigationVisible = MutableStateFlow(true)
+    val navigationVisible = _navigationVisible.asStateFlow()
 
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
@@ -243,6 +245,18 @@ class AppViewModel(
     override fun removeRoomCamera(roomCamera: RoomCamera) {
         viewModelScope.launch {
             roomCameraDataStore.delete(roomCamera)
+        }
+    }
+
+    fun showNavigation() {
+        viewModelScope.launch {
+            _navigationVisible.emit(true)
+        }
+    }
+
+    fun hideNavigation() {
+        viewModelScope.launch {
+            _navigationVisible.emit(false)
         }
     }
 

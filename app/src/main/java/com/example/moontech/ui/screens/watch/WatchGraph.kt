@@ -1,4 +1,6 @@
-@file:UnstableApi package com.example.moontech.ui.screens.watch
+@file:UnstableApi
+
+package com.example.moontech.ui.screens.watch
 
 import android.util.Log
 import androidx.compose.material3.CircularProgressIndicator
@@ -7,6 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -16,8 +20,12 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.ui.components.CenterScreen
+import com.example.moontech.ui.components.hideSystemUi
+import com.example.moontech.ui.components.showSystemUi
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.viewmodel.AppViewModel
+import com.example.moontech.ui.viewmodel.ExoPlayerViewModel
+import com.example.moontech.ui.viewmodel.ExoPlayerViewModelFactoryProvider
 
 private const val TAG = "WatchGraph"
 fun NavGraphBuilder.watchGraph(
@@ -31,6 +39,8 @@ fun NavGraphBuilder.watchGraph(
             Screen.Watch.Watching.route,
             arguments = listOf(navArgument("code") { type = NavType.StringType })
         ) {
+            val exoPlayerViewModel: ExoPlayerViewModel =
+                viewModel(factory = ExoPlayerViewModelFactoryProvider.Factory)
             val parentEntry = remember(it) { navController.getBackStackEntry(Screen.Watch.route) }
             val roomCode = parentEntry.arguments?.getString("code")
             if (roomCode == null) {
@@ -48,7 +58,22 @@ fun NavGraphBuilder.watchGraph(
                     CircularProgressIndicator()
                 }
             } else {
-                WatchingScreen(modifier = modifier, watchedRoom = watchedRoom!!)
+                val context = LocalContext.current
+                WatchingScreen(
+                    modifier = modifier,
+                    watchedRoom = watchedRoom!!,
+                    init = { view -> exoPlayerViewModel.init(view) },
+                    play = { mediaItem -> exoPlayerViewModel.play(mediaItem) },
+                    stop = { exoPlayerViewModel.stop() },
+                    enterFullScreen = {
+                        viewModel.hideNavigation()
+                        context.hideSystemUi()
+                    },
+                    exitFullScreen = {
+                        viewModel.showNavigation()
+                        context.showSystemUi()
+                    }
+                )
             }
         }
     }
