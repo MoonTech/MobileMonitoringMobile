@@ -13,6 +13,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.base.MainScreenBase
 import com.example.moontech.ui.screens.myrooms.MyRoomsAddRoomScreen
 import com.example.moontech.ui.screens.myrooms.SplashScreen
@@ -38,7 +39,9 @@ fun NavGraphBuilder.myRoomsGraph(
                 addRoom = {
                     navController.navigate(Screen.MyRooms.AddRoom.route)
                 },
-                onSettings = {})
+                onSettings = {
+                    navController.navigateToScreenWithCode(Screen.Watch, it.code)
+                })
         }
         composable(Screen.MyRooms.AddRoom.route) {
             MyRoomsAddRoomScreen(onAddRoom = { code, password ->

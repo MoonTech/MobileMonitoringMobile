@@ -18,6 +18,7 @@ import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
 import com.example.moontech.data.dataclasses.User
+import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
@@ -73,6 +74,8 @@ class AppViewModel(
     val authState = _authState.asStateFlow()
     private val _isStreamingState = MutableStateFlow(false)
     val isStreamingState = _isStreamingState.asStateFlow()
+    private val _navigationVisible = MutableStateFlow(true)
+    val navigationVisible = _navigationVisible.asStateFlow()
 
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
@@ -99,6 +102,7 @@ class AppViewModel(
     private val _transmittingRoomCode = MutableStateFlow<String?>(null)
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
 
+
     init {
         val context: Context = this.getApplication()
         val intent = Intent(context, CameraServiceImpl::class.java)
@@ -117,9 +121,17 @@ class AppViewModel(
         }
     }
 
+    private fun getRoom(code: String): RoomData? {
+        return externalRooms.value.firstOrNull { it.code == code }
+    }
+
     fun watch(code: String) {
+        Log.i(TAG, "watch: watch 1")
         viewModelScope.launch {
-            roomApiService.watchRoom(code).onSuccessWithErrorHandling {
+            val room = getRoom(code)
+            roomApiService.watchRoom(
+                WatchRequest(code, room?.password)
+            ).onSuccessWithErrorHandling {
                 _watchedRoom.emit(it)
             }
         }
@@ -215,7 +227,9 @@ class AppViewModel(
 
     override fun addExternalRoom(code: String, password: String) {
         viewModelScope.launch {
-            val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(code)
+            val watchRoomResponse: kotlin.Result<WatchedRoom> = roomApiService.watchRoom(
+                WatchRequest(code, password)
+            )
             watchRoomResponse.onSuccessWithErrorHandling {
                 roomDataStore.add(RoomData(code, password))
             }
@@ -234,6 +248,18 @@ class AppViewModel(
         }
     }
 
+    fun showNavigation() {
+        viewModelScope.launch {
+            _navigationVisible.emit(true)
+        }
+    }
+
+    fun hideNavigation() {
+        viewModelScope.launch {
+            _navigationVisible.emit(false)
+        }
+    }
+
     override fun addRoomCamera(
         cameraName: String,
         roomCode: String,
@@ -241,12 +267,13 @@ class AppViewModel(
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
-            // TODO: Make password nullable and remove ?: ""
             _authState.emit(AppState.Loading())
-            var response = cameraApiService.addCamera(CameraRequest(roomCode, password ?: ""))
+            var response =
+                cameraApiService.addCamera(CameraRequest(roomCode, password, cameraName))
             response.onSuccessWithErrorHandling {
                 val roomCamera = RoomCamera(
                     code = roomCode,
+                    name = cameraName,
                     token = it.cameraToken,
                     url = it.cameraUrl,
                     roomType = RoomType.EXTERNAL

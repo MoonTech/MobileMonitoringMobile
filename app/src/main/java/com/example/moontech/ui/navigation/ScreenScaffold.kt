@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moontech.ui.viewmodel.AppViewModel
@@ -90,23 +89,22 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
         },
         bottomBar = {
             val isStreaming by viewModel.isStreamingState.collectAsState()
-            BottomNavigationBar(
-                navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
-                navigateTo = { screen ->
-                    navController.navigate(screen.route) {
-                        Log.i(
-                            TAG,
-                            "ScreenScaffold: ${navController.graph.findStartDestination().route}"
-                        )
-                        popUpTo(navController.graph.id) {
-                            saveState = true
+            val navigationVisible by viewModel.navigationVisible.collectAsState()
+            if (navigationVisible) {
+                BottomNavigationBar(
+                    navigationItems = if (isStreaming) streamingNavigationItems else defaultNavigationItems,
+                    navigateTo = { screen ->
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                backStackEntries = navBackStackEntries
-            )
+                    },
+                    backStackEntries = navBackStackEntries
+                )
+            }
         }) { padding ->
         AppNavigation(
             viewModel = viewModel,
