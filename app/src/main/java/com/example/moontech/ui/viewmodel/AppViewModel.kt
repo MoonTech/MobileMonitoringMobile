@@ -160,8 +160,7 @@ class AppViewModel(
 
     fun startStream(roomCamera: RoomCamera) {
         withCameraService { cameraService ->
-            // TODO: Change "test" to camera ID
-            val streamResponse = cameraApiService.stream(StreamRequest("test"))
+            val streamResponse = cameraApiService.stream(StreamRequest(roomCamera.id))
             streamResponse.onSuccessWithErrorHandling {
                 cameraService.startStream(
                     url = it.streamUrl,
@@ -273,6 +272,7 @@ class AppViewModel(
         cameraName: String,
         roomCode: String,
         password: String?,
+        roomType: RoomType,
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
@@ -283,7 +283,8 @@ class AppViewModel(
                 val roomCamera = RoomCamera(
                     code = roomCode,
                     name = cameraName,
-                    token = it.cameraToken,
+                    token = "",
+                    id = it.id,
                     roomType = RoomType.EXTERNAL
                 )
                 roomCameraDataStore.add(roomCamera)

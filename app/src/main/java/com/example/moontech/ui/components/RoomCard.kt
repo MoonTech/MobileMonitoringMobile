@@ -23,11 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
 
 @Composable
-fun RoomCard(
-    room: ObjectWithRoomCode,
+fun <T: ObjectWithRoomCode> RoomCard(
+    room: T,
     modifier: Modifier = Modifier,
     rowTitleContent: @Composable () -> Unit = {},
-    content: @Composable () -> Unit = {}
+    content: @Composable (T) -> Unit = {}
 ) {
     ElevatedCard(modifier = modifier.padding(top = 4.dp, bottom = 4.dp, start = 4.dp, end = 4.dp)) {
         Column(
@@ -43,7 +43,7 @@ fun RoomCard(
                 Spacer(modifier = Modifier.weight(1f))
                 rowTitleContent()
             }
-            content()
+            content(room)
         }
     }
 }

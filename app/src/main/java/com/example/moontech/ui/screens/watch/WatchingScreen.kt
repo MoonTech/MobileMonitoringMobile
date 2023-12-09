@@ -110,8 +110,7 @@ fun WatchingScreen(
                     })
                     init(this)
                     selectedCamera?.let {
-                        val mediaItem =
-                            buildHlsMediaItem("${context.getText(R.string.watch_url)}/${it.id}.m3u8")
+                        val mediaItem = buildHlsMediaItem(it.watchUrl)
                         play(mediaItem)
                     }
                 }

@@ -40,6 +40,9 @@ fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
             }
         }
     ) { room ->
-        RoomCard(room = room, modifier = Modifier.clickable { selectCamera(room) })
+        RoomCard(
+            room = room,
+            modifier = Modifier.clickable { selectCamera(room) }
+        )
     }
 }

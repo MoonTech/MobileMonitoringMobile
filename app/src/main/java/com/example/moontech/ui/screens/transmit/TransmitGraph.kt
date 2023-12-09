@@ -150,6 +150,7 @@ fun NavGraphBuilder.transmitGraph(
                         cameraName = cameraName,
                         roomCode = roomCode,
                         password = password,
+                        roomType = if (password == null) RoomType.MY_ROOMS else RoomType.EXTERNAL,
                         onSuccess = {
                             navController.navigateToScreenWithCode(
                                 Screen.Transmit.Camera,

@@ -48,7 +48,7 @@ fun TransmittingInfoPanel(
                     maxLines = 1
                 )
                 Text(
-                    text = "Camera: ${roomCamera.token}",
+                    text = "Camera: ${roomCamera.name}",
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1
