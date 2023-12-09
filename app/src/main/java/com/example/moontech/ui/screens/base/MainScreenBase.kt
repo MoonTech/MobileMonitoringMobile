@@ -15,13 +15,15 @@ fun <T : ObjectWithRoomCode> MainScreenBase(
     addRoom: () -> Unit,
     modifier: Modifier = Modifier,
     onSettings: (room: T) -> Unit,
-    onClick: (room: T) -> Unit,
+    topBar: @Composable () -> Unit,
+    onClick: (room: T) -> Unit
 ) {
     ListScreenBase(
         modifier = modifier,
         addRoom = addRoom,
         rooms = rooms,
         floatingActionButtonVisible = true,
+        topBar = topBar
     ) { room ->
         RoomCard(
             modifier = Modifier.clickable { onClick(room) },

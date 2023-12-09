@@ -1,21 +1,15 @@
 package com.example.moontech.ui.navigation
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.VideoCameraBack
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,8 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -63,29 +55,6 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier,
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
-        },
-        topBar = {
-            val visibleRoutes = setOf(
-                Screen.MyRooms.Main.route,
-                Screen.ExternalRooms.Main.route
-            )
-            if (currentRoute != null && currentRoute in visibleRoutes) {
-                val text = Screen.valueOf(currentRoute).label
-                Log.i(TAG, "ScreenScaffold: route extracted $text")
-                Column(
-                    modifier = Modifier.background(
-                        color = MaterialTheme.colorScheme.primaryContainer
-                    )
-                )
-                {
-                    Text(
-                        text = stringResource(text),
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Divider(modifier = Modifier.fillMaxWidth())
-                }
-            }
         },
         bottomBar = {
             val isStreaming by viewModel.isStreamingState.collectAsState()

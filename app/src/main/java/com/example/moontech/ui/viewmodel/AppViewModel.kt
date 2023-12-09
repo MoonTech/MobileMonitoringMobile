@@ -30,6 +30,10 @@ import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
 import com.example.moontech.ui.screens.common.RoomType
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,7 +51,8 @@ class AppViewModel(
     private val roomCameraDataStore: RoomCameraDataStore,
     private val userApiService: UserApiService,
     private val roomApiService: RoomApiService,
-    private val cameraApiService: CameraApiService
+    private val cameraApiService: CameraApiService,
+    private val httpClient: HttpClient
 ) : AndroidViewModel(application), MyRoomsController, ExternalRoomsController, CameraController,
     WatchController {
     companion object {
@@ -217,6 +222,9 @@ class AppViewModel(
 
     fun logOutUser() {
         viewModelScope.launch {
+            _myRooms.emit(listOf())
+            httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+                .firstOrNull()?.clearToken()
             userDataStore.clear()
         }
     }
