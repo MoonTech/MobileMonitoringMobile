@@ -68,7 +68,7 @@ fun TransmittingScreen(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.MATCH_PARENT
                         )
-                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                        scaleType = PreviewView.ScaleType.FIT_CENTER
                         implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                         startPreview(this.surfaceProvider)
                         Log.i(TAG, "TransmittingScreen: PreviewView created")

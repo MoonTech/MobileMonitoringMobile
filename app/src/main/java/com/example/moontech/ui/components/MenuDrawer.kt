@@ -19,7 +19,7 @@ fun <T> MenuDrawer(
     modifier: Modifier = Modifier,
     items: List<T>,
     header: @Composable () -> Unit,
-    itemContent: @Composable (T) -> Unit
+    itemContent: @Composable (closeMenu: () -> Unit, T) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
     IconButton(
@@ -31,7 +31,7 @@ fun <T> MenuDrawer(
         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }, modifier = Modifier.widthIn(min = 200.dp)) {
             header()
             for (item in items) {
-                itemContent(item)
+                itemContent({ showMenu = false },item)
             }
         }
     }

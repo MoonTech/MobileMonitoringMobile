@@ -9,7 +9,6 @@ import androidx.annotation.OptIn
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,11 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -43,8 +39,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.components.MenuDrawer
 import com.example.moontech.ui.components.RememberScreenOrientation
+import com.example.moontech.ui.components.WatchingScreenInfoPanel
 
 private const val TAG = "WatchingScreen"
 
@@ -61,8 +57,6 @@ fun WatchingScreen(
     exitFullScreen: () -> Unit
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
-    // TODO: Test switching between cameras
-    // TODO: Save my room cameras also on local device
     val context = LocalContext.current
     DisposableEffect(true) {
         onDispose {
@@ -88,12 +82,19 @@ fun WatchingScreen(
     } else {
         -1
     }
-
     val orientationState = RememberScreenOrientation(orientation,
         onPortrait = { exitFullScreen() },
         onLandscape = { enterFullScreen() },
         onDispose = { exitFullScreen() })
+
     Column(modifier = Modifier.fillMaxSize()) {
+        if (!fullScreen) {
+            WatchingScreenInfoPanel(
+                watchedRoom = watchedRoom,
+                selectedCameraName = selectedCameraName,
+                onCameraClicked = { selectedCameraName = it.cameraName }
+            )
+        }
         Box(modifier = Modifier.fillMaxWidth()) {
             AndroidView(modifier = Modifier.fillMaxSize(), factory = { context ->
                 PlayerView(context).apply {
@@ -113,26 +114,6 @@ fun WatchingScreen(
                     }
                 }
             })
-
-            androidx.compose.animation.AnimatedVisibility(visible = showControls) {
-                MenuDrawer(modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut()),
-                    items = watchedRoom.connectedCameras,
-                    header = {
-                        Text(
-                            text = "Select camera",
-                            style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
-                        )
-                        Divider()
-                    },
-                    itemContent = {
-                        Text(text = it.cameraName,
-                            modifier = Modifier
-                                .clickable { selectedCameraName = it.cameraName }
-                                .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
-                                .fillMaxWidth())
-                    })
-            }
             androidx.compose.animation.AnimatedVisibility(
                 visible = showControls,
                 modifier = Modifier
