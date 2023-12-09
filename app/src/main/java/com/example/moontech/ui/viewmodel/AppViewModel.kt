@@ -159,7 +159,7 @@ class AppViewModel(
     fun startStream(roomCamera: RoomCamera) {
         withCameraService {
             it.startStream(
-                url = "${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.token}",
+                url = "${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.code}-${roomCamera.token}",
                 name = roomCamera.code
             )
         }
@@ -275,7 +275,6 @@ class AppViewModel(
                     code = roomCode,
                     name = cameraName,
                     token = it.cameraToken,
-                    url = it.cameraUrl,
                     roomType = RoomType.EXTERNAL
                 )
                 roomCameraDataStore.add(roomCamera)

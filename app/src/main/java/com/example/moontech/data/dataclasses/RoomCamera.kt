@@ -8,6 +8,5 @@ data class RoomCamera(
     override val code: String,
     val name: String,
     val token: String,
-    val url: String,
     val roomType: RoomType
 ): ObjectWithRoomCode
