@@ -1,3 +1,6 @@
 package com.example.moontech.data.dataclasses
 
-data class StreamResponse(val cameraId: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class StreamResponse(val streamUrl: String)

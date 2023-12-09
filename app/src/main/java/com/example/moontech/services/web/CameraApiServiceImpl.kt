@@ -2,6 +2,7 @@ package com.example.moontech.services.web
 
 import com.example.moontech.data.dataclasses.CameraCreationResponse
 import com.example.moontech.data.dataclasses.CameraRequest
+import com.example.moontech.data.dataclasses.StreamRequest
 import com.example.moontech.data.dataclasses.StreamResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -24,9 +25,9 @@ class CameraApiServiceImpl(private val httpClient: HttpClient): CameraApiService
         return httpClient.putWithStatus("$endpoint/$id")
     }
 
-    override suspend fun stream(cameraRequest: CameraRequest): Result<StreamResponse> {
+    override suspend fun stream(streamRequest: StreamRequest): Result<StreamResponse> {
         return httpClient.postResult("/videoServer/streamUrl") {
-            setBody(cameraRequest)
+            setBody(streamRequest)
         }
     }
 

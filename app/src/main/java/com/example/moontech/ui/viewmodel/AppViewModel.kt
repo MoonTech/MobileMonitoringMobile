@@ -10,13 +10,13 @@ import android.util.Log
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moontech.R
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
+import com.example.moontech.data.dataclasses.StreamRequest
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
@@ -157,11 +157,15 @@ class AppViewModel(
     }
 
     fun startStream(roomCamera: RoomCamera) {
-        withCameraService {
-            it.startStream(
-                url = "${getApplication<Application>().getString(R.string.stream_url)}/${roomCamera.code}-${roomCamera.token}",
-                name = roomCamera.code
-            )
+        withCameraService { cameraService ->
+            // TODO: Change "test" to camera ID
+            val streamResponse = cameraApiService.stream(StreamRequest("test"))
+            streamResponse.onSuccessWithErrorHandling {
+                cameraService.startStream(
+                    url = it.streamUrl,
+                    name = roomCamera.code
+                )
+            }
         }
     }
 
@@ -171,7 +175,7 @@ class AppViewModel(
         }
     }
 
-    private fun withCameraService(block: (CameraService) -> Unit) {
+    private fun withCameraService(block: suspend (CameraService) -> Unit) {
         viewModelScope.launch {
             cameraService.filterNotNull().collect {
                 block(it)
