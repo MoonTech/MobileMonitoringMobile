@@ -40,6 +40,8 @@ fun NavGraphBuilder.myRoomsGraph(
                     navController.navigate(Screen.MyRooms.AddRoom.route)
                 },
                 onSettings = {
+                },
+                onClick = {
                     navController.navigateToScreenWithCode(Screen.Watch, it.code)
                 })
         }

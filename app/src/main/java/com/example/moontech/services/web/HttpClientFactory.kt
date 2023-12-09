@@ -36,6 +36,7 @@ object HttpClientFactory {
 
             install(Auth) {
                 bearer {
+                    sendWithoutRequest { !it.url.pathSegments.contains("watch") }
                     loadTokens {
                         tokenManager.loadTokens()
                     }
