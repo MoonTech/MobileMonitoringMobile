@@ -2,6 +2,8 @@ package com.example.moontech.services.web
 
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomCreationResponse
+import com.example.moontech.data.dataclasses.RoomTokenRequest
+import com.example.moontech.data.dataclasses.RoomTokenResponse
 import com.example.moontech.data.dataclasses.UserRoomsResponse
 import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
@@ -26,8 +28,17 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
         return httpClient.deleteWithStatus("$endpoint/$code")
     }
 
-    override suspend fun watchRoom(request: WatchRequest): Result<WatchedRoom> {
+    override suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom> {
         return httpClient.postResult("$endpoint/watch") {
+            setBody(request)
+            accessToken?.let {
+                this.headers.append("Authorization", "Bearer $accessToken")
+            }
+        }
+    }
+
+    override suspend fun getRoomToken(request: RoomTokenRequest): Result<RoomTokenResponse> {
+        return httpClient.postResult("$endpoint/token") {
             setBody(request)
         }
     }
