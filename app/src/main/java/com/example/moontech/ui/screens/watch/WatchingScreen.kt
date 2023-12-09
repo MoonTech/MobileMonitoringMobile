@@ -41,7 +41,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
-import com.example.moontech.R
 import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.MenuDrawer
@@ -77,8 +76,7 @@ fun WatchingScreen(
     val selectedCamera = watchedRoom.connectedCameras.firstOrNull() { it.cameraName == selectedCameraName }
     LaunchedEffect(selectedCamera) {
         selectedCamera?.let {
-            val mediaItem =
-                buildHlsMediaItem("${context.getText(R.string.watch_url)}/${it.id}.m3u8")
+            val mediaItem = buildHlsMediaItem(it.watchUrl)
             play(mediaItem)
         }
     }

@@ -285,7 +285,7 @@ class AppViewModel(
                     name = cameraName,
                     token = "",
                     id = it.id,
-                    roomType = RoomType.EXTERNAL
+                    roomType = roomType
                 )
                 roomCameraDataStore.add(roomCamera)
                 onSuccess()
