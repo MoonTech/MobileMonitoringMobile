@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +40,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.example.moontech.data.dataclasses.WatchedRoom
+import com.example.moontech.data.dataclasses.WatchedRoomCamera
 import com.example.moontech.ui.components.CenterScreen
 import com.example.moontech.ui.components.RememberScreenOrientation
 import com.example.moontech.ui.components.WatchingScreenInfoPanel
@@ -54,9 +57,13 @@ fun WatchingScreen(
     play: (mediaItem: MediaItem) -> Unit,
     stop: () -> Unit,
     enterFullScreen: () -> Unit,
-    exitFullScreen: () -> Unit
+    exitFullScreen: () -> Unit,
+    startRecording: (WatchedRoomCamera) -> Unit,
+    stopRecording: (WatchedRoomCamera) -> Unit,
+    isRecording: Boolean
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
+    // TODO: Recording is now global, make it per room-camera
     val context = LocalContext.current
     DisposableEffect(true) {
         onDispose {
@@ -67,7 +74,8 @@ fun WatchingScreen(
     var selectedCameraName by rememberSaveable {
         mutableStateOf(watchedRoom.connectedCameras.firstOrNull()?.cameraName ?: "")
     }
-    val selectedCamera = watchedRoom.connectedCameras.firstOrNull() { it.cameraName == selectedCameraName }
+    val selectedCamera =
+        watchedRoom.connectedCameras.firstOrNull() { it.cameraName == selectedCameraName }
     LaunchedEffect(selectedCamera) {
         selectedCamera?.let {
             val mediaItem = buildHlsMediaItem(it.watchUrl)
@@ -114,6 +122,30 @@ fun WatchingScreen(
                     }
                 }
             })
+            androidx.compose.animation.AnimatedVisibility(
+                visible = showControls,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 100.dp, bottom = 7.dp)
+            ) {
+                TextButton(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .animateEnterExit(enter = fadeIn(), exit = fadeOut()),
+                    onClick = {
+                        if (isRecording) {
+                            selectedCamera?.let {
+                                stopRecording(it)
+                            }
+                        } else {
+                            selectedCamera?.let {
+                                startRecording(it)
+                            }
+                        }
+                    }) {
+                    Text(text = if (isRecording) "Stop recording" else "Start recording", color = Color.White)
+                }
+            }
             androidx.compose.animation.AnimatedVisibility(
                 visible = showControls,
                 modifier = Modifier

@@ -78,6 +78,6 @@ class DefaultAppContainer(context: Context) : AppContainer {
         TokenManager(userDataStore)
     }
     override val videoServerApiService: VideoServerApiService by lazy {
-        VideoServerApiServiceImpl(httpClient)
+        VideoServerApiServiceImpl(httpClient, context)
     }
 }

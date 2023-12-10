@@ -22,6 +22,7 @@ import com.example.moontech.data.dataclasses.StreamRequest
 import com.example.moontech.data.dataclasses.User
 import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
+import com.example.moontech.data.dataclasses.WatchedRoomCamera
 import com.example.moontech.data.store.RoomCameraDataStore
 import com.example.moontech.data.store.RoomDataStore
 import com.example.moontech.data.store.UserDataStore
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class AppViewModel(
@@ -316,32 +318,37 @@ class AppViewModel(
         }
     }
 
-    fun startRecording(cameraId: String) {
+    fun startRecording(roomCamera: WatchedRoomCamera) {
         viewModelScope.launch {
-            videoServerApiService.startRecord(RecordRequest(cameraId))
+            videoServerApiService.startRecord(RecordRequest(roomCamera.id))
                 .onSuccessWithErrorHandling {
-                    fetchIsRecording(cameraId)
+                    fetchIsRecording(roomCamera.id)
                 }
         }
     }
 
-    fun stopRecording(cameraId: String) {
+    fun stopRecording(roomCode: String, roomCamera: WatchedRoomCamera) {
         viewModelScope.launch {
-            videoServerApiService.stopRecord(RecordRequest(cameraId))
-                .onSuccessWithErrorHandling {
-                    _isRecording.emit(false)
-                }
+            videoServerApiService.stopRecord(
+                request = RecordRequest(roomCamera.id),
+                filePrefix = "${roomCode}-${roomCamera.cameraName}"
+            ).onSuccessWithErrorHandling {
+                _isRecording.emit(false)
+                _errorState.emit(AppState.Error("Video $it saved."))
+            }
         }
     }
 
     private suspend fun fetchIsRecording(cameraId: String) {
         isRecordingJob?.cancelAndJoin()
         isRecordingJob = viewModelScope.launch {
-            videoServerApiService.checkRecord(RecordRequest(cameraId))
-                .onSuccessWithErrorHandling {
-                    _isRecording.emit(it)
-                }
-            delay(10000)
+            while (this.isActive) {
+                videoServerApiService.checkRecord(RecordRequest(cameraId))
+                    .onSuccessWithErrorHandling {
+                        _isRecording.emit(it)
+                    }
+                delay(10000)
+            }
         }
     }
 

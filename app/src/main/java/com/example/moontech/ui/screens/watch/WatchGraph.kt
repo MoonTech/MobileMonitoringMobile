@@ -2,6 +2,7 @@
 
 package com.example.moontech.ui.screens.watch
 
+import android.Manifest
 import android.util.Log
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +21,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.ui.components.CenterScreen
+import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.components.hideSystemUi
 import com.example.moontech.ui.components.showSystemUi
 import com.example.moontech.ui.navigation.Screen
@@ -59,21 +61,30 @@ fun NavGraphBuilder.watchGraph(
                 }
             } else {
                 val context = LocalContext.current
-                WatchingScreen(
+                val isRecording by viewModel.isRecording.collectAsState()
+                PermissionWrapper(
                     modifier = modifier,
-                    watchedRoom = watchedRoom!!,
-                    init = { view -> exoPlayerViewModel.init(view) },
-                    play = { mediaItem -> exoPlayerViewModel.play(mediaItem) },
-                    stop = { exoPlayerViewModel.stop() },
-                    enterFullScreen = {
-                        viewModel.hideNavigation()
-                        context.hideSystemUi()
-                    },
-                    exitFullScreen = {
-                        viewModel.showNavigation()
-                        context.showSystemUi()
-                    }
-                )
+                    permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) {
+                    WatchingScreen(
+                        modifier = modifier,
+                        watchedRoom = watchedRoom!!,
+                        init = { view -> exoPlayerViewModel.init(view) },
+                        play = { mediaItem -> exoPlayerViewModel.play(mediaItem) },
+                        stop = { exoPlayerViewModel.stop() },
+                        enterFullScreen = {
+                            viewModel.hideNavigation()
+                            context.hideSystemUi()
+                        },
+                        exitFullScreen = {
+                            viewModel.showNavigation()
+                            context.showSystemUi()
+                        },
+                        startRecording = { camera -> viewModel.startRecording(camera) },
+                        stopRecording = { camera -> viewModel.stopRecording(roomCode, camera) },
+                        isRecording = isRecording
+                    )
+                }
             }
         }
     }
