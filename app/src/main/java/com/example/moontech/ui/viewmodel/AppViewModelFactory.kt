@@ -17,6 +17,7 @@ object AppViewModelFactoryProvider {
                 userApiService = application.container.userApiService,
                 roomApiService = application.container.roomApiService,
                 cameraApiService = application.container.cameraApiService,
+                videoServerApiService = application.container.videoServerApiService,
                 httpClient = application.container.httpClient
             )
         }

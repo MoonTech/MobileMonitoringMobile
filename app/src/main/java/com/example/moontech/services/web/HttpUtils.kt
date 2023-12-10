@@ -46,6 +46,15 @@ suspend inline fun HttpClient.putWithStatus(
     }
 }
 
+suspend inline fun HttpClient.getWithStatus(
+    urlString: String,
+    builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Boolean> {
+    return withErrorHandling {
+        get(urlString, builder).status.value in 200..299
+    }
+}
+
 suspend inline fun <reified R> HttpClient.withErrorHandling(block: HttpClient.() -> R): Result<R> {
     return try {
         Result.success(block())

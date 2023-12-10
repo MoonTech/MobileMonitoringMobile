@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
+import com.example.moontech.data.dataclasses.RecordRequest
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
@@ -29,12 +30,16 @@ import com.example.moontech.services.camera.CameraServiceImpl
 import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.UserApiService
+import com.example.moontech.services.web.VideoServerApiService
 import com.example.moontech.ui.screens.common.RoomType
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -52,6 +57,7 @@ class AppViewModel(
     private val userApiService: UserApiService,
     private val roomApiService: RoomApiService,
     private val cameraApiService: CameraApiService,
+    private val videoServerApiService: VideoServerApiService,
     private val httpClient: HttpClient
 ) : AndroidViewModel(application), MyRoomsController, ExternalRoomsController, CameraController,
     WatchController {
@@ -107,6 +113,9 @@ class AppViewModel(
     override val watchedRoom = _watchedRoom.asStateFlow()
     private val _transmittingRoomCode = MutableStateFlow<String?>(null)
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording = _isRecording.asStateFlow()
+    private var isRecordingJob: Job? = null
 
 
     init {
@@ -165,7 +174,7 @@ class AppViewModel(
 
     fun startStream(roomCamera: RoomCamera) {
         withCameraService { cameraService ->
-            val streamResponse = cameraApiService.stream(StreamRequest(roomCamera.id))
+            val streamResponse = videoServerApiService.stream(StreamRequest(roomCamera.id))
             streamResponse.onSuccessWithErrorHandling {
                 cameraService.startStream(
                     url = it.streamUrl,
@@ -244,10 +253,12 @@ class AppViewModel(
                 RoomTokenRequest(code, password)
             )
             roomTokenResponse.onSuccessWithErrorHandling {
-                roomDataStore.add(RoomData(
-                    code = code,
-                    authToken = it.accessToken
-                ))
+                roomDataStore.add(
+                    RoomData(
+                        code = code,
+                        authToken = it.accessToken
+                    )
+                )
             }
         }
     }
@@ -302,6 +313,35 @@ class AppViewModel(
             response.onFailure {
                 _authState.emit(AppState.Empty())
             }
+        }
+    }
+
+    fun startRecording(cameraId: String) {
+        viewModelScope.launch {
+            videoServerApiService.startRecord(RecordRequest(cameraId))
+                .onSuccessWithErrorHandling {
+                    fetchIsRecording(cameraId)
+                }
+        }
+    }
+
+    fun stopRecording(cameraId: String) {
+        viewModelScope.launch {
+            videoServerApiService.stopRecord(RecordRequest(cameraId))
+                .onSuccessWithErrorHandling {
+                    _isRecording.emit(false)
+                }
+        }
+    }
+
+    private suspend fun fetchIsRecording(cameraId: String) {
+        isRecordingJob?.cancelAndJoin()
+        isRecordingJob = viewModelScope.launch {
+            videoServerApiService.checkRecord(RecordRequest(cameraId))
+                .onSuccessWithErrorHandling {
+                    _isRecording.emit(it)
+                }
+            delay(10000)
         }
     }
 

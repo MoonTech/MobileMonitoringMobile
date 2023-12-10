@@ -23,6 +23,8 @@ import com.example.moontech.services.web.RoomApiServiceImpl
 import com.example.moontech.services.web.TokenManager
 import com.example.moontech.services.web.UserApiService
 import com.example.moontech.services.web.UserApiServiceImpl
+import com.example.moontech.services.web.VideoServerApiService
+import com.example.moontech.services.web.VideoServerApiServiceImpl
 import io.ktor.client.HttpClient
 
 interface AppContainer {
@@ -35,6 +37,7 @@ interface AppContainer {
     val userApiService: UserApiService
     val roomApiService: RoomApiService
     val cameraApiService: CameraApiService
+    val videoServerApiService: VideoServerApiService
     val tokenManager: TokenManager
 }
 
@@ -73,5 +76,8 @@ class DefaultAppContainer(context: Context) : AppContainer {
     }
     override val tokenManager: TokenManager by lazy {
         TokenManager(userDataStore)
+    }
+    override val videoServerApiService: VideoServerApiService by lazy {
+        VideoServerApiServiceImpl(httpClient)
     }
 }
