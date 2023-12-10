@@ -64,7 +64,8 @@ fun NavGraphBuilder.watchGraph(
                 val isRecording by viewModel.isRecording.collectAsState()
                 PermissionWrapper(
                     modifier = modifier,
-                    permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    apply = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU
                 ) {
                     WatchingScreen(
                         modifier = modifier,

@@ -42,7 +42,6 @@ import androidx.media3.ui.PlayerView
 import com.example.moontech.data.dataclasses.WatchedRoom
 import com.example.moontech.data.dataclasses.WatchedRoomCamera
 import com.example.moontech.ui.components.CenterScreen
-import com.example.moontech.ui.components.RememberScreenOrientation
 import com.example.moontech.ui.components.WatchingScreenInfoPanel
 
 private const val TAG = "WatchingScreen"
@@ -69,6 +68,7 @@ fun WatchingScreen(
         onDispose {
             Log.i(TAG, "WatchingScreen: stopping")
             stop()
+            exitFullScreen()
         }
     }
     var selectedCameraName by rememberSaveable {
@@ -90,10 +90,10 @@ fun WatchingScreen(
     } else {
         -1
     }
-    val orientationState = RememberScreenOrientation(orientation,
-        onPortrait = { exitFullScreen() },
-        onLandscape = { enterFullScreen() },
-        onDispose = { exitFullScreen() })
+//    val orientationState = RememberScreenOrientation(orientation,
+//        onPortrait = { exitFullScreen() },
+//        onLandscape = { enterFullScreen() },
+//        onDispose = { exitFullScreen() })
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (!fullScreen) {
@@ -143,7 +143,10 @@ fun WatchingScreen(
                             }
                         }
                     }) {
-                    Text(text = if (isRecording) "Stop recording" else "Start recording", color = Color.White)
+                    Text(
+                        text = if (isRecording) "Stop recording" else "Start recording",
+                        color = Color.White
+                    )
                 }
             }
             androidx.compose.animation.AnimatedVisibility(
@@ -153,7 +156,14 @@ fun WatchingScreen(
                     .padding(end = 50.dp, bottom = 9.dp)
             ) {
                 IconButton(
-                    onClick = { fullScreen = !fullScreen },
+                    onClick = {
+                        fullScreen = !fullScreen
+                        if (fullScreen) {
+                            enterFullScreen()
+                        } else {
+                            exitFullScreen()
+                        }
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.BottomEnd)

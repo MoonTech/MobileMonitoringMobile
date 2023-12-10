@@ -16,24 +16,29 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun PermissionWrapper(
     permission: String,
     modifier: Modifier = Modifier,
+    apply: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val cameraPermissionState = rememberPermissionState(
-        permission
-    )
-    Log.e("t", "${cameraPermissionState.status.isGranted}")
+    if (apply) {
+        val cameraPermissionState = rememberPermissionState(
+            permission
+        )
+        Log.e("t", "${cameraPermissionState.status.isGranted}")
 
-    when {
-        cameraPermissionState.status.isGranted -> content()
-        else -> CenterScreen(modifier) {
-            LaunchedEffect(key1 = true) {
-                cameraPermissionState.launchPermissionRequest()
+        when {
+            cameraPermissionState.status.isGranted -> content()
+            else -> CenterScreen(modifier) {
+                LaunchedEffect(key1 = true) {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+                Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                    Text(text = "Request permission")
+                }
             }
-            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-                Text(text = "Request permission")
-            }
+
         }
-
+    } else {
+        content()
     }
 
 }
