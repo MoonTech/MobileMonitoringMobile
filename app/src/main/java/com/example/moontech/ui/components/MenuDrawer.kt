@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ fun <T> MenuDrawer(
         Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }, modifier = Modifier.widthIn(min = 200.dp)) {
             header()
+            Text(text = "tetete")
             for (item in items) {
                 itemContent({ showMenu = false },item)
             }
