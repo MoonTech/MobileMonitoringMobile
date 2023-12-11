@@ -13,7 +13,7 @@ import org.robolectric.shadows.ShadowLog
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"])
-open class GenericUiTest {
+abstract class GenericUiTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
