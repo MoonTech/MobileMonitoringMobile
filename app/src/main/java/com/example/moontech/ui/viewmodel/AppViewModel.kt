@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -115,7 +116,7 @@ class AppViewModel(
     override val watchedRoom = _watchedRoom.asStateFlow()
     private val _transmittingRoomCode = MutableStateFlow<String?>(null)
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
-    private val _isRecording = MutableStateFlow(false)
+    private val _isRecording = MutableStateFlow<Set<String>>(setOf())
     val isRecording = _isRecording.asStateFlow()
     private var isRecordingJob: Job? = null
 
@@ -236,6 +237,9 @@ class AppViewModel(
             _myRooms.emit(listOf())
             httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
                 .firstOrNull()?.clearToken()
+            val camerasToDelete = myRoomCameras.value
+            camerasToDelete.forEach { roomCameraDataStore.delete(it) }
+            isRecordingJob?.cancel()
             userDataStore.clear()
         }
     }
@@ -333,7 +337,7 @@ class AppViewModel(
                 request = RecordRequest(roomCamera.id),
                 filePrefix = "${roomCode}-${roomCamera.cameraName}"
             ).onSuccessWithErrorHandling {
-                _isRecording.emit(false)
+                _isRecording.update { recordedCameras -> recordedCameras-roomCamera.id }
                 _errorState.emit(AppState.Error("Video $it saved."))
             }
         }
@@ -345,7 +349,11 @@ class AppViewModel(
             while (this.isActive) {
                 videoServerApiService.checkRecord(RecordRequest(cameraId))
                     .onSuccessWithErrorHandling {
-                        _isRecording.emit(it)
+                        if (it) {
+                            _isRecording.update { recordedCameras -> recordedCameras+cameraId }
+                        } else {
+                            _isRecording.update { recordedCameras -> recordedCameras-cameraId }
+                        }
                     }
                 delay(10000)
             }

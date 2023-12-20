@@ -59,7 +59,7 @@ fun WatchingScreen(
     exitFullScreen: () -> Unit,
     startRecording: (WatchedRoomCamera) -> Unit,
     stopRecording: (WatchedRoomCamera) -> Unit,
-    isRecording: Boolean
+    recordingCameras: Set<String>
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
     // TODO: Recording is now global, make it per room-camera
@@ -133,7 +133,7 @@ fun WatchingScreen(
                         .align(Alignment.TopEnd)
                         .animateEnterExit(enter = fadeIn(), exit = fadeOut()),
                     onClick = {
-                        if (isRecording) {
+                        if (recordingCameras.contains(selectedCamera?.id)) {
                             selectedCamera?.let {
                                 stopRecording(it)
                             }
@@ -144,7 +144,11 @@ fun WatchingScreen(
                         }
                     }) {
                     Text(
-                        text = if (isRecording) "Stop recording" else "Start recording",
+                        text = if (recordingCameras.contains(selectedCamera?.id)) {
+                            "Stop recording"
+                        } else {
+                            "Start recording"
+                        },
                         color = Color.White
                     )
                 }

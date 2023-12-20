@@ -61,7 +61,7 @@ fun NavGraphBuilder.watchGraph(
                 }
             } else {
                 val context = LocalContext.current
-                val isRecording by viewModel.isRecording.collectAsState()
+                val recordingCameras by viewModel.isRecording.collectAsState()
                 PermissionWrapper(
                     modifier = modifier,
                     permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -83,7 +83,7 @@ fun NavGraphBuilder.watchGraph(
                         },
                         startRecording = { camera -> viewModel.startRecording(camera) },
                         stopRecording = { camera -> viewModel.stopRecording(roomCode, camera) },
-                        isRecording = isRecording
+                        recordingCameras = recordingCameras
                     )
                 }
             }

@@ -8,5 +8,10 @@ interface VideoServerApiService {
     suspend fun stream(streamRequest: StreamRequest): Result<StreamResponse>
     suspend fun startRecord(request: RecordRequest): Result<Boolean>
     suspend fun stopRecord(request: RecordRequest, filePrefix: String): Result<String>
+
+    /**
+     * Returns true if camera specified in request is being recorded.
+     * False otherwise.
+     * */
     suspend fun checkRecord(request: RecordRequest): Result<Boolean>
 }
