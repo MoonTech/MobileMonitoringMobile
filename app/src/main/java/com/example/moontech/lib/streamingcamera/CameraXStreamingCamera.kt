@@ -3,10 +3,14 @@ package com.example.moontech.lib.streamingcamera
 import android.content.Context
 import android.util.Log
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.OnImageCapturedCallback
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -43,10 +47,13 @@ class CameraXStreamingCamera(
         onStreamFailed: () -> Unit
     ) {
         Log.i(TAG, "startStream: ")
-        withCameraProvider {
+        withRotationDegrees { rotationDegrees ->
+            val streamCommand = streamingStrategy.supportedStreamCommand()
+                .copy(filters = "rotate=$rotationDegrees * (PI/180), ")
+
             val pipe = streamer.startStream(
-                rtmpUrl,
-                streamingStrategy.supportedStreamCommand()
+                url = rtmpUrl,
+                streamCommand = streamCommand
             ) {
                 onStreamFailed()
                 GlobalScope.launch(Dispatchers.Main) {
@@ -54,10 +61,13 @@ class CameraXStreamingCamera(
                 }
             }
             streamMediator = PipeFrameMediator(pipe)
-            streamUseCase = streamingStrategy.init(this) { buffer ->
+            streamUseCase = streamingStrategy.init(cameraProvider) { buffer ->
                 streamMediator?.onFrameProduced(buffer)
-            }.also { bindToLifecycle(it) }
+            }.also {
+                cameraProvider.bindToLifecycle(it)
+            }
         }
+
     }
 
     override fun stopStream() {
@@ -116,5 +126,27 @@ class CameraXStreamingCamera(
                 observer(value)
             }
         })
+    }
+
+    private fun imageCaptor(block: (rotationDegrees: Int) -> Unit): OnImageCapturedCallback {
+        return object : OnImageCapturedCallback() {
+            override fun onCaptureSuccess(image: ImageProxy) {
+                block(image.imageInfo.rotationDegrees)
+                image.close()
+            }
+        }
+    }
+
+    private fun withRotationDegrees(block: (rotationDegrees: Int) -> Unit) {
+        ImageCapture.Builder().build().also {
+            cameraProvider.bindToLifecycle(it)
+            it.takePicture(
+                ContextCompat.getMainExecutor(context),
+                imageCaptor { rotationDegrees ->
+                    block(rotationDegrees)
+                    cameraProvider.unbind(it)
+                }
+            )
+        }
     }
 }

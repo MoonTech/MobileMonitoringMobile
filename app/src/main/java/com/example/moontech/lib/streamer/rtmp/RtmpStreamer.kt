@@ -73,7 +73,8 @@ class RtmpStreamer(private val context: Context) : Streamer {
     }
 
     private fun StreamCommand.withOutputInfoToString(inpurUrl: String, outputUrl: String, textFile: String): String {
-        return "${this.copy(inputUrl = inpurUrl)} -vf \"transpose=1, drawtext=textfile=$textFile:reload=1:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=10:x=10:y=10\" -f flv $outputUrl"
+        val additionalFilter = "drawtext=textfile=$textFile:reload=1:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=10:x=10:y=10"
+        return "${this.copy(inputUrl = inpurUrl, filters = filters  + additionalFilter)} -f flv $outputUrl"
     }
 
     private fun restartCurrentTimeJob() {
@@ -96,7 +97,11 @@ class RtmpStreamer(private val context: Context) : Streamer {
                     fileWriter.write("${dateFormatter.format(it)}  ${timeFormatter.format(it)}")
                 }
             }
-            Files.move(Paths.get(tempFile.absolutePath), Paths.get(file.absolutePath), StandardCopyOption.ATOMIC_MOVE)
+            Files.move(
+                Paths.get(tempFile.absolutePath),
+                Paths.get(file.absolutePath),
+                StandardCopyOption.ATOMIC_MOVE
+            )
         }
     }
 

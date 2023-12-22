@@ -46,7 +46,6 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
         imageAnalysis = ImageAnalysis.Builder().build()
         Log.i(TAG, "init: image analysis created")
         imageAnalysis.setAnalyzer(executor) {
-            it.imageInfo.rotationDegrees
             it.image?.let { image ->
                 val outputConvertedBuffer = ByteBuffer.wrap(YUV_420_888toNV21(image))
                 newFrameCallback.invoke(outputConvertedBuffer)
@@ -62,7 +61,7 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
             additionalInputParameters = "-pixel_format nv21 -video_size 640x480 -framerate 35 -use_wallclock_as_timestamps 1 ",
             inputUrl = "inputUrl",
             encoder = "libx264",
-            encoderSettings = "-profile:v baseline -x264-params keyint=105:scenecut=0 -preset veryfast"
+            encoderSettings = "-profile:v baseline -x264-params keyint=105:scenecut=0 -preset veryfast",
         )
     }
 
