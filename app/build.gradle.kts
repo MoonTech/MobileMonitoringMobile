@@ -102,6 +102,7 @@ dependencies {
     implementation("androidx.camera:camera-video:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("com.google.mlkit:barcode-scanning:16.0.1")
     // ffmpeg
     implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
     // serialization

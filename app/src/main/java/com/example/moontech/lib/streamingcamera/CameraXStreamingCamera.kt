@@ -7,11 +7,11 @@ import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.example.moontech.lib.qrcodescanner.CameraXQrCodeScanner
+import com.example.moontech.lib.qrcodescanner.QrCodeScanner
 import com.example.moontech.lib.streamer.Streamer
 import com.example.moontech.lib.streamer.rtmp.RtmpStreamer
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -29,16 +29,9 @@ class CameraXStreamingCamera(
     private var streamMediator: FrameMediator? = null
     private var streamer: Streamer = RtmpStreamer(context)
     private var streamingStrategy: StreamingStrategy = ImageAnalysisRawStreamingStrategy()
-
-    private val cameraProvider: LiveData<ProcessCameraProvider> by lazy {
-        MutableLiveData<ProcessCameraProvider>().apply {
-            val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-            cameraProviderFuture.addListener({
-                Log.i(TAG, "CameraProvider: provided camera provider to live data")
-                value = cameraProviderFuture.get()
-            }, ContextCompat.getMainExecutor(context))
-        }
-    }
+    private val cameraProvider = ProcessCameraProvider.getInstance(context).get()
+    private val qrCodeScanner: QrCodeScanner = CameraXQrCodeScanner(cameraProvider, lifecycleOwner)
+    override var onQrCodeScanned: (String) -> Unit = {}
 
     companion object {
         private const val TAG = "CameraXStreamingCamera"
@@ -95,10 +88,17 @@ class CameraXStreamingCamera(
         withCameraProvider {
             preview?.also {
                 it.setSurfaceProvider(null)
-//                unbind(it)
-//                preview = null
             }
         }
+    }
+
+    override fun startQrCodeScanner() {
+        qrCodeScanner.onCodeScanned = onQrCodeScanned
+        qrCodeScanner.init()
+    }
+
+    override fun stopQrCodeScanner() {
+        qrCodeScanner.close()
     }
 
     private fun ProcessCameraProvider.bindToLifecycle(vararg useCase: UseCase) {
@@ -106,7 +106,7 @@ class CameraXStreamingCamera(
     }
 
     private fun withCameraProvider(block: ProcessCameraProvider.() -> Unit) {
-        cameraProvider.observeOnce(block)
+        cameraProvider.block()
     }
 
     private fun <T> LiveData<T>.observeOnce(observer: (T) -> Unit) {

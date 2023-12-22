@@ -6,5 +6,6 @@ data class CameraServiceState(
     val isStreaming: Boolean = false,
     val isPreview: Boolean = false,
     val streamName: String? = null,
-    val streamError: AppState = AppState.Empty()
+    val streamError: AppState = AppState.Empty(),
+    val lastQrCodeContent: String? = null
 )

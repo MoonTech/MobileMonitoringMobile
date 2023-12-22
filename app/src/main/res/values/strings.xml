@@ -24,10 +24,11 @@
     <string name="add_room">Add room</string>
     <string name="add">Add</string>
     <string name="next">Next</string>
+    <string name="add_qr_code">Add with QR code</string>
 
     <string name="camera_name">Camera name</string>
     <string name="add_camera">Add camera to Room</string>
-    <string name="base_url">http://10.0.2.2:5266</string>
+    <string name="base_url">http://10.0.2.2:5000</string>
 
     <string name="external">External rooms</string>
 </resources>

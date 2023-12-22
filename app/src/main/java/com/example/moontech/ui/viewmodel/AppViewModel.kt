@@ -118,6 +118,8 @@ class AppViewModel(
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
     private val _isRecording = MutableStateFlow<Set<String>>(setOf())
     val isRecording = _isRecording.asStateFlow()
+    private val _lastQrCodeContent = MutableStateFlow<String?>(null)
+    val lastQrCode = _lastQrCodeContent.asStateFlow()
     private var isRecordingJob: Job? = null
 
 
@@ -134,6 +136,7 @@ class AppViewModel(
                     _isStreamingState.emit(cameraServiceState.isStreaming)
                     _errorState.emit(cameraServiceState.streamError)
                     _transmittingRoomCode.emit(cameraServiceState.streamName)
+                    _lastQrCodeContent.emit(cameraServiceState.lastQrCodeContent)
                 }
             }
         }
@@ -172,6 +175,18 @@ class AppViewModel(
     fun stopPreview() {
         withCameraService {
             it.stopPreview()
+        }
+    }
+
+    fun startQrCodeScanner() {
+        withCameraService {
+            it.startQrCodeScanner()
+        }
+    }
+
+    fun stopQrCodeScanner() {
+        withCameraService {
+            it.stopQrCodeScanner()
         }
     }
 

@@ -74,6 +74,20 @@ class CameraServiceImpl() : LifecycleService(), CameraService {
         }
     }
 
+    override fun startQrCodeScanner() {
+        streamingCamera.startQrCodeScanner()
+        streamingCamera.onQrCodeScanned = {qrCode ->
+            _serviceState.update {
+                it.copy(lastQrCodeContent = qrCode)
+            }
+        }
+    }
+
+    override fun stopQrCodeScanner() {
+        streamingCamera.onQrCodeScanned = {}
+        streamingCamera.stopQrCodeScanner()
+    }
+
     private fun stopStreamAfterError(error: AppState) {
         _serviceState.update { prevState ->
             if (prevState.isStreaming) {

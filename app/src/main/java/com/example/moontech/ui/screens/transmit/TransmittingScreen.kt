@@ -37,6 +37,7 @@ fun TransmittingScreen(
     stopStream: () -> Unit,
     selectCamera: () -> Unit
 ) = CenterScreen(modifier) {
+    // TODO: Fix stopping preview
     var previewStopped by remember{mutableStateOf(false)}
     DisposableEffect(key1 = true) {
         onDispose {

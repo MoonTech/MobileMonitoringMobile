@@ -10,4 +10,10 @@ interface StreamingCamera {
     fun startPreview(surfaceProvider: SurfaceProvider)
 
     fun stopPreview()
+
+    fun startQrCodeScanner()
+
+    fun stopQrCodeScanner()
+
+    var onQrCodeScanned: (String) -> Unit
 }

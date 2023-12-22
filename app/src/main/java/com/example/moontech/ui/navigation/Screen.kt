@@ -20,6 +20,7 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
 
     object  Transmit : Screen("transmit", R.string.transmit) {
         object AddRoom : Screen("transmit_add_room", R.string.transmit)
+        object AddRoomQrCode : Screen("transmit_add_room_qr", R.string.transmit)
         object AddCamera : Screen("transmit_add_camera/{code}/{password}", R.string.transmit)
         object SelectCamera : Screen("transmit_select_camera", R.string.transmit)
         object Camera : Screen("transmit_camera/{code}", R.string.transmit)

@@ -14,4 +14,8 @@ interface CameraService {
     fun stopPreview()
 
     fun closeServiceIfNotUsed()
+
+    fun startQrCodeScanner()
+
+    fun stopQrCodeScanner()
 }
