@@ -92,12 +92,15 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
             val configuration = LocalConfiguration.current
             val isStreaming by viewModel.isStreamingState.collectAsState()
             val items = if (isStreaming) streamingNavigationItems else defaultNavigationItems
-            if (configuration.orientation == ORIENTATION_LANDSCAPE) {
+            val navigationVisible by viewModel.navigationVisible.collectAsState()
+            if (configuration.orientation == ORIENTATION_LANDSCAPE && navigationVisible) {
                 val context = LocalContext.current
                 DisposableEffect(true) {
                     context.hideSystemUi()
                     onDispose {
-                        context.showSystemUi()
+                        if (navigationVisible) {
+                            context.showSystemUi()
+                        }
                     }
                 }
                 LandscapeNavigation(

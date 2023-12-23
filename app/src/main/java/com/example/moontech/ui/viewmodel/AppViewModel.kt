@@ -91,7 +91,7 @@ class AppViewModel(
     val isStreamingState = _isStreamingState.asStateFlow()
     private val _navigationVisible = MutableStateFlow(true)
     val navigationVisible = _navigationVisible.asStateFlow()
-
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = true)
     val loggedInState: StateFlow<Boolean?> =
         userDataStore.userData.map {
             it?.let { true } ?: false
