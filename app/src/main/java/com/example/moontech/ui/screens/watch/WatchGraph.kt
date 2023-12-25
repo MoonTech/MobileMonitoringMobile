@@ -4,6 +4,7 @@ package com.example.moontech.ui.screens.watch
 
 import android.Manifest
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -87,11 +88,13 @@ fun NavGraphBuilder.watchGraph(
                         recordingCameras = recordingCameras,
                         navigateToRecordings = {
                             viewModel.fetchRecordings(watchedRoom!!.code)
+                            viewModel.hideNavigation()
                             navController.navigateToScreenWithCode(
                                 Screen.Watch.Recordings,
                                 watchedRoom!!.code
                             )
-                        }
+                        },
+                        exit = { navController.popBackStack() }
                     )
                 }
             }
@@ -101,6 +104,11 @@ fun NavGraphBuilder.watchGraph(
         })) {
             val code = it.arguments?.getString("code")
             val recordings by viewModel.recordings.collectAsState()
+            BackHandler {
+                navController.popBackStack()
+                viewModel.showNavigation()
+                Log.i(TAG, "watchGraph: navigation shown")
+            }
             if (recordings == null || recordings!!.code != code) {
                 CenterScreen(modifier = modifier) {
                     CircularProgressIndicator()

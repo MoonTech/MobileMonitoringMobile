@@ -9,6 +9,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.UseCase
+import androidx.camera.core.resolutionselector.ResolutionFilter
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -47,9 +49,15 @@ class CameraXStreamingCamera(
         onStreamFailed: () -> Unit
     ) {
         Log.i(TAG, "startStream: ")
-        withRotationDegrees { rotationDegrees ->
-            val streamCommand = streamingStrategy.supportedStreamCommand()
-                .copy(filters = "rotate=$rotationDegrees * (PI/180), ")
+        withImage { image ->
+            Log.i(TAG, "startStream: ${image.width} ${image.height}")
+            var width = image.width
+            var height = image.height
+            var streamCommand = streamingStrategy.supportedStreamCommand(width, height)
+            if (image.imageInfo.rotationDegrees == 90 || image.imageInfo.rotationDegrees == 270) {
+                    streamCommand = streamCommand.copy(filters = "transpose = 1,")
+            }
+            Log.i(TAG, "startStream: $streamCommand")
 
             val pipe = streamer.startStream(
                 url = rtmpUrl,
@@ -128,22 +136,26 @@ class CameraXStreamingCamera(
         })
     }
 
-    private fun imageCaptor(block: (rotationDegrees: Int) -> Unit): OnImageCapturedCallback {
+    private fun imageCaptor(block: (image: ImageProxy) -> Unit): OnImageCapturedCallback {
         return object : OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
-                block(image.imageInfo.rotationDegrees)
+                block(image)
                 image.close()
             }
         }
     }
 
-    private fun withRotationDegrees(block: (rotationDegrees: Int) -> Unit) {
-        ImageCapture.Builder().build().also {
+    private fun withImage(block: (image: ImageProxy) -> Unit) {
+        ImageCapture.Builder()
+            .setResolutionSelector(ResolutionSelector.Builder().setResolutionFilter(
+                ResolutionFilter { supportedSizes, rotationDegrees -> supportedSizes.filter { size -> size.height == 640 || size.width == 640 } })
+                .build()
+            ).build().also {
             cameraProvider.bindToLifecycle(it)
             it.takePicture(
                 ContextCompat.getMainExecutor(context),
-                imageCaptor { rotationDegrees ->
-                    block(rotationDegrees)
+                imageCaptor { image ->
+                    block(image)
                     cameraProvider.unbind(it)
                 }
             )

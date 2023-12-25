@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -60,7 +61,8 @@ fun WatchingScreen(
     startRecording: (WatchedRoomCamera) -> Unit,
     stopRecording: (WatchedRoomCamera) -> Unit,
     recordingCameras: Set<String>,
-    navigateToRecordings: () -> Unit
+    navigateToRecordings: () -> Unit,
+    exit: () -> Unit
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
     // TODO: Recording is now global, make it per room-camera
@@ -69,7 +71,6 @@ fun WatchingScreen(
         onDispose {
             Log.i(TAG, "WatchingScreen: stopping")
             stop()
-            exitFullScreen()
         }
     }
     var selectedCameraName by rememberSaveable {
@@ -90,6 +91,14 @@ fun WatchingScreen(
         SCREEN_ORIENTATION_LANDSCAPE
     } else {
         -1
+    }
+    BackHandler {
+        if (fullScreen) {
+            exitFullScreen()
+            fullScreen = !fullScreen
+        } else {
+            exit()
+        }
     }
 //    val orientationState = RememberScreenOrientation(orientation,
 //        onPortrait = { exitFullScreen() },

@@ -10,6 +10,8 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.UseCase
+import androidx.camera.core.resolutionselector.ResolutionFilter
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.example.moontech.lib.streamer.rtmp.StreamCommand
 import java.nio.ByteBuffer
@@ -19,8 +21,9 @@ import kotlin.experimental.inv
 
 
 private const val TAG = "ImageAnalysisRawStreamingStrategy"
+
 @OptIn(ExperimentalCamera2Interop::class)
-class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
+class ImageAnalysisRawStreamingStrategy() : StreamingStrategy {
 
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var imageAnalysis: ImageAnalysis
@@ -36,10 +39,16 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
             CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
             Range(25, 35)
         )
+        builder.setResolutionSelector(
+            ResolutionSelector.Builder().setResolutionFilter(
+                ResolutionFilter { supportedSizes, rotationDegrees -> supportedSizes.filter { size -> size.height == 640 || size.width == 640 } })
+                .build()
+        )
         val imageAnalysis = builder.build()
     }
 
-    @OptIn(ExperimentalGetImage::class) override fun init(
+    @OptIn(ExperimentalGetImage::class)
+    override fun init(
         processCameraProvider: ProcessCameraProvider,
         newFrameCallback: (byteBuffer: ByteBuffer) -> Unit
     ): UseCase {
@@ -55,10 +64,10 @@ class ImageAnalysisRawStreamingStrategy(): StreamingStrategy {
         return imageAnalysis
     }
 
-    override fun supportedStreamCommand(): StreamCommand {
+    override fun supportedStreamCommand(width: Int, height: Int): StreamCommand {
         return StreamCommand(
             inputFormat = "rawvideo",
-            additionalInputParameters = "-pixel_format nv21 -video_size 640x480 -framerate 35 -use_wallclock_as_timestamps 1 ",
+            additionalInputParameters = "-pixel_format nv21 -video_size ${width}x${height} -framerate 35 -use_wallclock_as_timestamps 1 ",
             inputUrl = "inputUrl",
             encoder = "libx264",
             encoderSettings = "-profile:v baseline -x264-params keyint=105:scenecut=0 -preset veryfast",
