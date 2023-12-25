@@ -1,5 +1,6 @@
 package com.example.moontech.services.web
 
+import com.example.moontech.data.dataclasses.RecordingsResponse
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomCreationResponse
 import com.example.moontech.data.dataclasses.RoomTokenRequest
@@ -18,4 +19,6 @@ interface RoomApiService {
     suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom>
 
     suspend fun getRoomToken(request: RoomTokenRequest): Result<RoomTokenResponse>
+
+    suspend fun getRecordings(code: String): Result<RecordingsResponse>
 }

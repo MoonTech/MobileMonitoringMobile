@@ -59,7 +59,8 @@ fun WatchingScreen(
     exitFullScreen: () -> Unit,
     startRecording: (WatchedRoomCamera) -> Unit,
     stopRecording: (WatchedRoomCamera) -> Unit,
-    recordingCameras: Set<String>
+    recordingCameras: Set<String>,
+    navigateToRecordings: () -> Unit
 ) = CenterScreen(modifier) {
     // TODO: Make controls custom
     // TODO: Recording is now global, make it per room-camera
@@ -100,7 +101,8 @@ fun WatchingScreen(
             WatchingScreenInfoPanel(
                 watchedRoom = watchedRoom,
                 selectedCameraName = selectedCameraName,
-                onCameraClicked = { selectedCameraName = it.cameraName }
+                onCameraClicked = { selectedCameraName = it.cameraName },
+                onRecordingsClicked = navigateToRecordings
             )
         }
         Box(modifier = Modifier.fillMaxWidth()) {

@@ -14,6 +14,8 @@ import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
 import com.example.moontech.data.dataclasses.RecordRequest
+import com.example.moontech.data.dataclasses.Recording
+import com.example.moontech.data.dataclasses.Recordings
 import com.example.moontech.data.dataclasses.RoomCamera
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomData
@@ -120,6 +122,8 @@ class AppViewModel(
     val isRecording = _isRecording.asStateFlow()
     private val _lastQrCodeContent = MutableStateFlow<String?>(null)
     val lastQrCode = _lastQrCodeContent.asStateFlow()
+    private val _recordings = MutableStateFlow<Recordings?>(null)
+    val recordings = _recordings.asStateFlow()
     private var isRecordingJob: Job? = null
 
 
@@ -352,7 +356,24 @@ class AppViewModel(
                 request = RecordRequest(roomCamera.id),
                 filePrefix = "${roomCode}-${roomCamera.cameraName}"
             ).onSuccessWithErrorHandling {
-                _isRecording.update { recordedCameras -> recordedCameras-roomCamera.id }
+                _isRecording.update { recordedCameras -> recordedCameras - roomCamera.id }
+                _errorState.emit(AppState.Error("Video recorded."))
+            }
+        }
+    }
+
+    fun fetchRecordings(code: String) {
+        viewModelScope.launch {
+            roomApiService.getRecordings(code)
+                .onSuccessWithErrorHandling {
+                    _recordings.emit(Recordings(code = code, recordings = it.recordings))
+                }
+        }
+    }
+
+    fun downloadRecording(recording: Recording) {
+        viewModelScope.launch {
+            videoServerApiService.downloadRecording(recording).onSuccessWithErrorHandling {
                 _errorState.emit(AppState.Error("Video $it saved."))
             }
         }
@@ -365,9 +386,9 @@ class AppViewModel(
                 videoServerApiService.checkRecord(RecordRequest(cameraId))
                     .onSuccessWithErrorHandling {
                         if (it) {
-                            _isRecording.update { recordedCameras -> recordedCameras+cameraId }
+                            _isRecording.update { recordedCameras -> recordedCameras + cameraId }
                         } else {
-                            _isRecording.update { recordedCameras -> recordedCameras-cameraId }
+                            _isRecording.update { recordedCameras -> recordedCameras - cameraId }
                         }
                     }
                 delay(10000)

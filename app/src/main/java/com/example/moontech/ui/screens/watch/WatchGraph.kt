@@ -25,6 +25,7 @@ import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.components.hideSystemUi
 import com.example.moontech.ui.components.showSystemUi
 import com.example.moontech.ui.navigation.Screen
+import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.example.moontech.ui.viewmodel.ExoPlayerViewModel
 import com.example.moontech.ui.viewmodel.ExoPlayerViewModelFactoryProvider
@@ -83,9 +84,35 @@ fun NavGraphBuilder.watchGraph(
                         },
                         startRecording = { camera -> viewModel.startRecording(camera) },
                         stopRecording = { camera -> viewModel.stopRecording(roomCode, camera) },
-                        recordingCameras = recordingCameras
+                        recordingCameras = recordingCameras,
+                        navigateToRecordings = {
+                            viewModel.fetchRecordings(watchedRoom!!.code)
+                            navController.navigateToScreenWithCode(
+                                Screen.Watch.Recordings,
+                                watchedRoom!!.code
+                            )
+                        }
                     )
                 }
+            }
+        }
+        composable(Screen.Watch.Recordings.route, arguments = listOf(navArgument("code") {
+            type = NavType.StringType
+        })) {
+            val code = it.arguments?.getString("code")
+            val recordings by viewModel.recordings.collectAsState()
+            if (recordings == null || recordings!!.code != code) {
+                CenterScreen(modifier = modifier) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                RecordingsScreen(
+                    recordings = recordings!!,
+                    modifier = modifier,
+                    onRecordingClicked = {
+                        viewModel.downloadRecording(it)
+                    }
+                )
             }
         }
     }

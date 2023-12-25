@@ -1,5 +1,6 @@
 package com.example.moontech.services.web
 
+import com.example.moontech.data.dataclasses.RecordingsResponse
 import com.example.moontech.data.dataclasses.RoomCreationRequest
 import com.example.moontech.data.dataclasses.RoomCreationResponse
 import com.example.moontech.data.dataclasses.RoomTokenRequest
@@ -41,5 +42,9 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
         return httpClient.postResult("$endpoint/token") {
             setBody(request)
         }
+    }
+
+    override suspend fun getRecordings(code: String): Result<RecordingsResponse> {
+        return httpClient.getResult("$endpoint/recordings/$code")
     }
 }

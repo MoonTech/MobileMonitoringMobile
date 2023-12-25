@@ -4,12 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.MediaStore
 import com.example.moontech.data.dataclasses.RecordRequest
+import com.example.moontech.data.dataclasses.Recording
 import com.example.moontech.data.dataclasses.StreamRequest
 import com.example.moontech.data.dataclasses.StreamResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
@@ -18,7 +18,6 @@ import io.ktor.http.isSuccess
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
 
 class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val context: Context) :
     VideoServerApiService {
@@ -43,12 +42,16 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
         }
     }
 
-    override suspend fun stopRecord(request: RecordRequest, filePrefix: String): Result<String> {
-        val response = httpClient.put("$endpoint/record/stop") {
+    override suspend fun stopRecord(request: RecordRequest, filePrefix: String): Result<Boolean> {
+        return httpClient.putWithStatus("$endpoint/record/stop") {
             setBody(request)
         }
+    }
+
+    override suspend fun downloadRecording(recording: Recording): Result<String> {
+        val response = httpClient.get("$endpoint/record/${recording.name}")
         return try {
-            Result.success(downloadQ(response, filePrefix))
+            Result.success(downloadQ(response, recording.name))
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -65,10 +68,9 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
         }
     }
 
-    private suspend fun downloadQ(response: HttpResponse, filePrefix: String): String =
+    private suspend fun downloadQ(response: HttpResponse, fileName: String): String =
         withContext(Dispatchers.IO) {
             if (response.status.isSuccess()) {
-                val fileName = "$filePrefix-${LocalDateTime.now()}.flv"
                 val values = ContentValues().apply {
                     put(MediaStore.Video.Media.DISPLAY_NAME, response.headers["filename"])
                     put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/ConferenceVideos")

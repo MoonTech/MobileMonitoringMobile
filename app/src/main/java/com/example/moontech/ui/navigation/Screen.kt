@@ -16,6 +16,7 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
 
     object Watch : Screen("watch/{code}", R.string.watch) {
         object Watching : Screen("watch_watching/{code}", R.string.watch)
+        object Recordings : Screen("watch_recordings/{code}", R.string.watch)
     }
 
     object  Transmit : Screen("transmit", R.string.transmit) {

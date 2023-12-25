@@ -18,20 +18,22 @@ import androidx.compose.ui.unit.dp
 fun <T> MenuDrawer(
     modifier: Modifier = Modifier,
     items: List<T>,
-    header: @Composable () -> Unit,
+    header: @Composable (closeMenu: () -> Unit) -> Unit,
     itemContent: @Composable (closeMenu: () -> Unit, T) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    IconButton(
-        modifier = modifier,
-        onClick = {
-            showMenu = true
-        }) {
+    IconButton(modifier = modifier, onClick = {
+        showMenu = true
+    }) {
         Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
-        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }, modifier = Modifier.widthIn(min = 200.dp)) {
-            header()
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false },
+            modifier = Modifier.widthIn(min = 200.dp)
+        ) {
+            header { showMenu = false }
             for (item in items) {
-                itemContent({ showMenu = false },item)
+                itemContent({ showMenu = false }, item)
             }
         }
     }
