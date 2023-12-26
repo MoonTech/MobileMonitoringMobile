@@ -73,7 +73,7 @@ class RtmpStreamer(private val context: Context) : Streamer {
     }
 
     private fun StreamCommand.withOutputInfoToString(inpurUrl: String, outputUrl: String, textFile: String): String {
-        val additionalFilter = "[video_filtered]drawtext=textfile=$textFile:reload=1:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=10:x=10:y=1 [video_out]; anullsrc=cl=mono:r=44100[audio_out]\" -map [video_out] -map [audio_out] "
+        val additionalFilter = "drawtext=textfile=$textFile:reload=1:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=10:x=10:y=1 [video_out]; anullsrc=cl=mono:r=44100[audio_out]\" -map [video_out] -map [audio_out] "
         return "${this.copy(inputUrl = inpurUrl, filters = filters  + additionalFilter)} -f flv $outputUrl"
     }
 

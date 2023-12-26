@@ -51,12 +51,21 @@ class CameraXStreamingCamera(
         Log.i(TAG, "startStream: ")
         withImage { image ->
             Log.i(TAG, "startStream: ${image.width} ${image.height}")
+            Log.i(TAG, "startStream: ${image.imageInfo.rotationDegrees}")
             var width = image.width
             var height = image.height
             var streamCommand = streamingStrategy.supportedStreamCommand(width, height)
-            if (image.imageInfo.rotationDegrees == 90 || image.imageInfo.rotationDegrees == 270) {
-                    streamCommand = streamCommand.copy(filters = "[0:v]transpose = 1[video_filtered];")
-
+            if (image.imageInfo.rotationDegrees == 90) {
+                streamCommand =
+                    streamCommand.copy(filters = "[0:v]transpose = 1[video_filtered]; [video_filtered]")
+            } else if (image.imageInfo.rotationDegrees == 180) {
+                streamCommand =
+                    streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1[video_filtered]; [video_filtered]")
+            } else if (image.imageInfo.rotationDegrees == 270) {
+                streamCommand =
+                    streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1 [v2]; [v2] transpose = 1[video_filtered]; [video_filtered]")
+            } else {
+                streamCommand = streamCommand.copy(filters = "[0:v]")
             }
             Log.i(TAG, "startStream: $streamCommand")
 
@@ -148,18 +157,19 @@ class CameraXStreamingCamera(
 
     private fun withImage(block: (image: ImageProxy) -> Unit) {
         ImageCapture.Builder()
-            .setResolutionSelector(ResolutionSelector.Builder().setResolutionFilter(
-                ResolutionFilter { supportedSizes, rotationDegrees -> supportedSizes.filter { size -> size.height == 640 || size.width == 640 } })
-                .build()
+            .setResolutionSelector(
+                ResolutionSelector.Builder().setResolutionFilter(
+                    ResolutionFilter { supportedSizes, rotationDegrees -> supportedSizes.filter { size -> size.height == 640 || size.width == 640 } })
+                    .build()
             ).build().also {
-            cameraProvider.bindToLifecycle(it)
-            it.takePicture(
-                ContextCompat.getMainExecutor(context),
-                imageCaptor { image ->
-                    block(image)
-                    cameraProvider.unbind(it)
-                }
-            )
-        }
+                cameraProvider.bindToLifecycle(it)
+                it.takePicture(
+                    ContextCompat.getMainExecutor(context),
+                    imageCaptor { image ->
+                        block(image)
+                        cameraProvider.unbind(it)
+                    }
+                )
+            }
     }
 }
