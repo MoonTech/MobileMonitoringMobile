@@ -123,5 +123,6 @@ fun NavGraphBuilder.watchGraph(
                 )
             }
         }
+
     }
 }

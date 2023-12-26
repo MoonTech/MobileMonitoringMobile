@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.CameraRequest
 import com.example.moontech.data.dataclasses.ManagedRoom
+import com.example.moontech.data.dataclasses.QrCodeContent
 import com.example.moontech.data.dataclasses.RecordRequest
 import com.example.moontech.data.dataclasses.Recording
 import com.example.moontech.data.dataclasses.Recordings
@@ -53,6 +54,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 class AppViewModel(
     application: Application,
@@ -120,7 +122,7 @@ class AppViewModel(
     val transmittingRoomCode = _transmittingRoomCode.asStateFlow()
     private val _isRecording = MutableStateFlow<Set<String>>(setOf())
     val isRecording = _isRecording.asStateFlow()
-    private val _lastQrCodeContent = MutableStateFlow<String?>(null)
+    private val _lastQrCodeContent = MutableStateFlow<QrCodeContent?>(null)
     val lastQrCode = _lastQrCodeContent.asStateFlow()
     private val _recordings = MutableStateFlow<Recordings?>(null)
     val recordings = _recordings.asStateFlow()
@@ -140,7 +142,13 @@ class AppViewModel(
                     _isStreamingState.emit(cameraServiceState.isStreaming)
                     _errorState.emit(cameraServiceState.streamError)
                     _transmittingRoomCode.emit(cameraServiceState.streamName)
-                    _lastQrCodeContent.emit(cameraServiceState.lastQrCodeContent)
+                    cameraServiceState.lastQrCodeContent?.let {
+                        try {
+                            val qrCodeContent = Json.decodeFromString<QrCodeContent>(it)
+                            _lastQrCodeContent.emit(qrCodeContent)
+                        } catch (e: Exception) {
+                        }
+                    }
                 }
             }
         }
@@ -285,6 +293,18 @@ class AppViewModel(
                     )
                 )
             }
+        }
+    }
+
+    fun addExternalRoom(qrCodeContent: QrCodeContent) {
+        viewModelScope.launch {
+            roomDataStore.add(
+                RoomData(
+                    code = qrCodeContent.roomName,
+                    authToken = qrCodeContent.token
+                )
+            )
+            _errorState.emit(AppState.Error("Room ${qrCodeContent.roomName} added"))
         }
     }
 

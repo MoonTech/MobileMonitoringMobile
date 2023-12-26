@@ -1,4 +1,7 @@
 package com.example.moontech.data.dataclasses
 
-data class QrCodeContent(val roomCode: String) {
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class QrCodeContent(val roomName: String, val token: String) {
 }

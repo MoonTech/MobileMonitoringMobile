@@ -12,6 +12,7 @@ sealed class Screen(val route: String, @StringRes val label: Int) {
     object ExternalRooms : Screen("ext_rooms", R.string.external) {
         object Main : Screen("ext_rooms_main", R.string.external)
         object AddRoom : Screen("ext_rooms_add_room", R.string.external)
+        object AddRoomQrCode : Screen("ext_rooms_add_roomQrCode", R.string.external)
     }
 
     object Watch : Screen("watch/{code}", R.string.watch) {

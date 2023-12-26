@@ -31,7 +31,7 @@ fun ScanQRCodeScreen(
     stopPreview: () -> Unit,
     startScanning: () -> Unit,
     stopScanning: () -> Unit,
-    addCameraToRoom: (QrCodeContent) -> Unit,
+    addRoom: (QrCodeContent) -> Unit,
     qrCodeContent: QrCodeContent?
 ) = CenterScreen(modifier) {
     var scannedQrCodeContent by remember { mutableStateOf<QrCodeContent?>(null) }
@@ -75,11 +75,11 @@ fun ScanQRCodeScreen(
                 onDismissRequest = {
                     showQrCodeDialog = false
                 },
-                text = { Text(text = "Do you want to add camera to room ${scannedQrCodeContent?.roomCode}?") },
+                text = { Text(text = "Do you want to add camera to room ${scannedQrCodeContent?.roomName}?") },
                 confirmButton = {
                     TextButton(onClick = {
                         showQrCodeDialog = false
-                        scannedQrCodeContent?.let(addCameraToRoom)
+                        scannedQrCodeContent?.let(addRoom)
                     }) {
                         Text(text = "Add")
                     }

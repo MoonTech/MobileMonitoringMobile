@@ -18,6 +18,7 @@ import androidx.navigation.navigation
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.base.MainScreenBase
+import com.example.moontech.ui.screens.transmit.ScanQRCodeScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 fun NavGraphBuilder.externalRoomsGraph(
@@ -62,9 +63,30 @@ fun NavGraphBuilder.externalRoomsGraph(
                 emitError = {
                     viewModel.emitError(it)
                 },
-                modifier = modifier
+                modifier = modifier,
+                onAddWithQrCode = {
+                    navController.navigate(Screen.ExternalRooms.AddRoomQrCode.route)
+                }
             )
         }
 
+        composable(Screen.ExternalRooms.AddRoomQrCode.route) {
+            val qrCodeContent by viewModel.lastQrCode.collectAsState()
+            ScanQRCodeScreen(
+                modifier = modifier,
+                startPreview = {
+                    viewModel.startPreview(it)
+                    viewModel.startQrCodeScanner()
+                },
+                stopPreview = { viewModel.stopPreview() },
+                startScanning = { viewModel.startQrCodeScanner() },
+                stopScanning = { viewModel.stopQrCodeScanner() },
+                addRoom = {
+                    viewModel.addExternalRoom(it)
+                    navController.popBackStack(Screen.ExternalRooms.Main.route, false)
+                },
+                qrCodeContent = qrCodeContent
+            )
+        }
     }
 }

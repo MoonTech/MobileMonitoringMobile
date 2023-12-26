@@ -10,7 +10,8 @@ import com.example.moontech.ui.screens.base.AuthScreenBase
 fun ExternalRoomsAddRoomScreen(
     addRoom: (code: String, password: String) -> Unit,
     emitError: (error: AppState.Error) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddWithQrCode: () -> Unit
 ) = AuthScreenBase(
     modifier = modifier,
     firstButtonLabel = R.string.add,
@@ -18,5 +19,7 @@ fun ExternalRoomsAddRoomScreen(
     secondTextFieldLabel = R.string.password,
     screenLabel = R.string.add_room,
     firstButtonAction = addRoom,
-    emitError = emitError
+    emitError = emitError,
+    secondButtonLabel = R.string.add_qr_code,
+    secondButtonAction = onAddWithQrCode
 )

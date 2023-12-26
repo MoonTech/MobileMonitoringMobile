@@ -15,7 +15,6 @@ import androidx.navigation.navigation
 import com.example.moontech.R
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
-import com.example.moontech.data.dataclasses.QrCodeContent
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.navigation.navigateToScreenWithCode
@@ -54,6 +53,7 @@ fun NavGraphBuilder.transmitGraph(
                 if (roomCode != null && roomCamera == null) {
                     LaunchedEffect(true) {
                         viewModel.emitError(AppState.Error("Camera attached to a Room '$roomCode' doesn't exist"))
+                        navController.popBackStack(Screen.Transmit.route, false)
                     }
                 } else {
                     TransmittingScreen(
@@ -111,7 +111,6 @@ fun NavGraphBuilder.transmitGraph(
                 firstTextFieldLabel = R.string.room_name,
                 secondTextFieldLabel = R.string.password,
                 screenLabel = R.string.add_camera,
-                secondButtonLabel = R.string.add_qr_code,
                 emitError = {
                     viewModel.emitError(it)
                 },
@@ -121,26 +120,9 @@ fun NavGraphBuilder.transmitGraph(
                         mapOf(Pair("code", code), Pair("password", password))
                     )
                 },
-                secondButtonAction = {
-                    navController.navigate(Screen.Transmit.AddRoomQrCode.route)
-                }
             )
         }
 
-        composable(Screen.Transmit.AddRoomQrCode.route) {
-            ScanQRCodeScreen(
-                modifier = modifier,
-                startPreview = {
-                    viewModel.startPreview(it)
-                    viewModel.startQrCodeScanner()
-                },
-                stopPreview = { viewModel.stopPreview() },
-                startScanning = { viewModel.startQrCodeScanner() },
-                stopScanning = { viewModel.stopQrCodeScanner() },
-                addCameraToRoom = { },
-                qrCodeContent = QrCodeContent("Room 1")
-            )
-        }
 
         composable(Screen.Transmit.AddCamera.route, arguments = listOf(
             navArgument("code") { type = NavType.StringType },
