@@ -9,6 +9,6 @@ data class StreamCommand(
     val encoderSettings: String
 ) {
     override fun toString(): String {
-        return "-f $inputFormat $additionalInputParameters -i $inputUrl -c:v $encoder $encoderSettings -vf \"$filters\"".trimIndent()
+        return "-f $inputFormat $additionalInputParameters -i $inputUrl -c:v $encoder $encoderSettings -filter_complex \"$filters".trimIndent()
     }
 }

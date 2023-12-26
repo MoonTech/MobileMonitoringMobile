@@ -55,7 +55,8 @@ class CameraXStreamingCamera(
             var height = image.height
             var streamCommand = streamingStrategy.supportedStreamCommand(width, height)
             if (image.imageInfo.rotationDegrees == 90 || image.imageInfo.rotationDegrees == 270) {
-                    streamCommand = streamCommand.copy(filters = "transpose = 1,")
+                    streamCommand = streamCommand.copy(filters = "[0:v]transpose = 1[video_filtered];")
+
             }
             Log.i(TAG, "startStream: $streamCommand")
 
