@@ -134,7 +134,9 @@ class AppViewModel(
         val intent = Intent(context, CameraServiceImpl::class.java)
         context.startForegroundService(intent)
         context.bindService(intent, cameraServiceConnection, Context.BIND_AUTO_CREATE)
-        fetchMyRooms()
+        if (loggedInState.value == true) {
+            fetchMyRooms()
+        }
         Log.i(TAG, "service bind")
         viewModelScope.launch {
             cameraService.collect {

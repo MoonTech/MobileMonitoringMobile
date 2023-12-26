@@ -49,7 +49,9 @@ fun NavGraphBuilder.myRoomsGraph(
             NavigateToSplashScreenOnLoggedInStateChanged(loggedIn, navController)
             val rooms by viewModel.myRooms.collectAsState()
             LaunchedEffect(loggedIn) {
-                viewModel.fetchMyRooms()
+                if (loggedIn == true) {
+                    viewModel.fetchMyRooms()
+                }
             }
             var showLogOutDialog by remember { mutableStateOf(false) }
             MainScreenBase(rooms = rooms,
