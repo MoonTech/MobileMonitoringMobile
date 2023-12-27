@@ -16,7 +16,10 @@ fun <T : ObjectWithRoomCode> MainScreenBase(
     modifier: Modifier = Modifier,
     onSettings: (room: T) -> Unit,
     topBar: @Composable () -> Unit,
-    onClick: (room: T) -> Unit
+    onClick: (room: T) -> Unit,
+    rowTileContent: @Composable (room: T) -> Unit = {
+        Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Setting")
+    }
 ) {
     ListScreenBase(
         modifier = modifier,
@@ -27,8 +30,6 @@ fun <T : ObjectWithRoomCode> MainScreenBase(
     ) { room ->
         RoomCard(
             modifier = Modifier.clickable { onClick(room) },
-            room = room, rowTitleContent = {
-                Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Setting")
-            }) { }
+            room = room, rowTitleContent = { rowTileContent(room) }) { }
     }
 }

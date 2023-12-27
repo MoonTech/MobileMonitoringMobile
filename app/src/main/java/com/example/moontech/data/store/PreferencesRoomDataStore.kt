@@ -38,7 +38,7 @@ class PreferencesRoomDataStore(
         dataStore.editStringValues(ROOM_DATA_KEY) { rooms ->
             rooms.apply {
                 removeIf {
-                    Json.decodeFromString<RoomData>(code).code == code
+                    Json.decodeFromString<RoomData>(it).code == code
                 }
             }
         }
