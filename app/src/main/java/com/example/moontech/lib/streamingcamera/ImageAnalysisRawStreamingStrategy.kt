@@ -50,14 +50,14 @@ class ImageAnalysisRawStreamingStrategy() : StreamingStrategy {
     @OptIn(ExperimentalGetImage::class)
     override fun init(
         processCameraProvider: ProcessCameraProvider,
-        newFrameCallback: (byteBuffer: ByteBuffer) -> Unit
+        newFrameCallback: (byteBuffer: ByteBuffer, width: Int, height: Int, rotationDegrees: Int) -> Unit
     ): UseCase {
         imageAnalysis = ImageAnalysis.Builder().build()
         Log.i(TAG, "init: image analysis created")
         imageAnalysis.setAnalyzer(executor) {
             it.image?.let { image ->
                 val outputConvertedBuffer = ByteBuffer.wrap(YUV_420_888toNV21(image))
-                newFrameCallback.invoke(outputConvertedBuffer)
+                newFrameCallback.invoke(outputConvertedBuffer, it.width, it.height, it.imageInfo.rotationDegrees)
             }
             it.close()
         }

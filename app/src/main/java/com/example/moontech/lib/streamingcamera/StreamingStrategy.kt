@@ -6,7 +6,7 @@ import com.example.moontech.lib.streamer.rtmp.StreamCommand
 import java.nio.ByteBuffer
 
 interface StreamingStrategy {
-    fun init(processCameraProvider: ProcessCameraProvider, newFrameCallback: (byteBuffer: ByteBuffer) -> Unit): UseCase
+    fun init(processCameraProvider: ProcessCameraProvider, newFrameCallback: (byteBuffer: ByteBuffer, width: Int, height: Int, rotationDegrees: Int) -> Unit): UseCase
     fun supportedStreamCommand(width: Int, height: Int): StreamCommand
     fun close()
 }

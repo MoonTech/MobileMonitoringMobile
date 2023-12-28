@@ -38,6 +38,8 @@ class CameraXStreamingCamera(
     private val cameraProvider = ProcessCameraProvider.getInstance(context).get()
     private val qrCodeScanner: QrCodeScanner = CameraXQrCodeScanner(cameraProvider, lifecycleOwner)
     override var onQrCodeScanned: (String) -> Unit = {}
+    @Volatile
+    var firstFrame: Boolean = false
 
     companion object {
         private const val TAG = "CameraXStreamingCamera"
@@ -49,37 +51,43 @@ class CameraXStreamingCamera(
         onStreamFailed: () -> Unit
     ) {
         Log.i(TAG, "startStream: ")
-        withImage { image ->
-            Log.i(TAG, "startStream: ${image.width} ${image.height}")
-            Log.i(TAG, "startStream: ${image.imageInfo.rotationDegrees}")
-            var width = image.width
-            var height = image.height
-            var streamCommand = streamingStrategy.supportedStreamCommand(width, height)
-            if (image.imageInfo.rotationDegrees == 90) {
-                streamCommand =
-                    streamCommand.copy(filters = "[0:v]transpose = 1[video_filtered]; [video_filtered]")
-            } else if (image.imageInfo.rotationDegrees == 180) {
-                streamCommand =
-                    streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1[video_filtered]; [video_filtered]")
-            } else if (image.imageInfo.rotationDegrees == 270) {
-                streamCommand =
-                    streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1 [v2]; [v2] transpose = 1[video_filtered]; [video_filtered]")
-            } else {
-                streamCommand = streamCommand.copy(filters = "[0:v]")
-            }
-            Log.i(TAG, "startStream: $streamCommand")
+        withImage { _ ->
+            streamUseCase = streamingStrategy.init(cameraProvider) { buffer, width, height, rotationDegrees ->
+                if (!firstFrame) {
+                    firstFrame = true
+                    Log.i(TAG, "startStream: $width $height")
+                    Log.i(TAG, "startStream: $rotationDegrees")
+                    var streamCommand = streamingStrategy.supportedStreamCommand(width, height)
+                    when (rotationDegrees) {
+                        90 -> {
+                            streamCommand =
+                                streamCommand.copy(filters = "[0:v]transpose = 1[video_filtered]; [video_filtered]")
+                        }
+                        180 -> {
+                            streamCommand =
+                                streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1[video_filtered]; [video_filtered]")
+                        }
+                        270 -> {
+                            streamCommand =
+                                streamCommand.copy(filters = "[0:v]transpose = 1[v1]; [v1] transpose = 1 [v2]; [v2] transpose = 1[video_filtered]; [video_filtered]")
+                        }
+                        else -> {
+                            streamCommand = streamCommand.copy(filters = "[0:v]")
+                        }
+                    }
+                    Log.i(TAG, "startStream: $streamCommand")
 
-            val pipe = streamer.startStream(
-                url = rtmpUrl,
-                streamCommand = streamCommand
-            ) {
-                onStreamFailed()
-                GlobalScope.launch(Dispatchers.Main) {
-                    stopStream()
+                    val pipe = streamer.startStream(
+                        url = rtmpUrl,
+                        streamCommand = streamCommand
+                    ) {
+                        onStreamFailed()
+                        GlobalScope.launch(Dispatchers.Main) {
+                            stopStream()
+                        }
+                    }
+                    streamMediator = PipeFrameMediator(pipe)
                 }
-            }
-            streamMediator = PipeFrameMediator(pipe)
-            streamUseCase = streamingStrategy.init(cameraProvider) { buffer ->
                 streamMediator?.onFrameProduced(buffer)
             }.also {
                 cameraProvider.bindToLifecycle(it)
@@ -95,6 +103,7 @@ class CameraXStreamingCamera(
             streamMediator?.close()
             streamer.endAllStreams()
             streamingStrategy.close()
+            firstFrame = false
         }
     }
 
