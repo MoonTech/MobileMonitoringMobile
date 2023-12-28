@@ -40,7 +40,7 @@ fun TransmittingInfoPanel(
         }
         Spacer(modifier = Modifier.weight(1f))
         MenuDrawer(items = listOf("Select room"), header = { /*TODO*/ }) { closeMenu, _ ->
-            Text(text = if (roomCamera == null) "Select room" else "Switch room",
+            Text(text = if (roomCamera == null) "Select camera" else "Switch camera",
                 Modifier
                     .clickable(enabled = !isStreaming) {
                         closeMenu()

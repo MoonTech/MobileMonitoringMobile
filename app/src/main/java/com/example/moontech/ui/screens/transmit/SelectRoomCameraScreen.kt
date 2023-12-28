@@ -22,6 +22,7 @@ fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
     addRoom: () -> Unit,
     selectCamera: (T) -> Unit,
     modifier: Modifier = Modifier,
+    additionalContent: @Composable (room: T, type: RoomType) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(RoomType.EXTERNAL) }
     ListScreenBase(
@@ -42,7 +43,11 @@ fun <T : ObjectWithRoomCode> SelectRoomCameraScreen(
     ) { room ->
         RoomCard(
             room = room,
-            modifier = Modifier.clickable { selectCamera(room) }
+            modifier = Modifier.clickable { selectCamera(room) },
+            rowTitleContent = {
+                additionalContent(room, selectedTab)
+            }
+
         )
     }
 }

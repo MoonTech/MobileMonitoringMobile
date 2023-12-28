@@ -12,12 +12,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T> MenuDrawer(
     modifier: Modifier = Modifier,
     items: List<T>,
+    icon: ImageVector = Icons.Default.Menu,
     header: @Composable (closeMenu: () -> Unit) -> Unit,
     itemContent: @Composable (closeMenu: () -> Unit, T) -> Unit
 ) {
@@ -25,7 +27,7 @@ fun <T> MenuDrawer(
     IconButton(modifier = modifier, onClick = {
         showMenu = true
     }) {
-        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+        Icon(imageVector = icon, contentDescription = "Menu")
         DropdownMenu(
             expanded = showMenu,
             onDismissRequest = { showMenu = false },

@@ -319,6 +319,7 @@ class AppViewModel(
     override fun removeRoomCamera(roomCamera: RoomCamera) {
         viewModelScope.launch {
             roomCameraDataStore.delete(roomCamera)
+            cameraApiService.deleteCamera(roomCamera.id)
         }
     }
 

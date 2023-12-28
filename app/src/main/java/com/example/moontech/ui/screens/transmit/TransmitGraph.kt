@@ -2,10 +2,17 @@ package com.example.moontech.ui.screens.transmit
 
 import android.Manifest
 import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -15,6 +22,7 @@ import androidx.navigation.navigation
 import com.example.moontech.R
 import com.example.moontech.data.dataclasses.AppState
 import com.example.moontech.data.dataclasses.ObjectWithRoomCode
+import com.example.moontech.ui.components.DeleteDrawer
 import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.navigation.navigateToScreenWithCode
@@ -101,6 +109,32 @@ fun NavGraphBuilder.transmitGraph(
                         }
                     }
                 },
+                additionalContent = { room, type ->
+                    val roomCamera = when (type) {
+                        RoomType.MY_ROOMS ->
+                            myRoomCameras.firstOrNull { it.code == room.code }
+
+                        RoomType.EXTERNAL ->
+                            externalRooms.firstOrNull { it.code == room.code }
+                    }
+                    roomCamera?.let {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "-",
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = it.name,
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            DeleteDrawer {
+                                viewModel.removeRoomCamera(it)
+                            }
+                        }
+                    }
+                }
             )
         }
 
