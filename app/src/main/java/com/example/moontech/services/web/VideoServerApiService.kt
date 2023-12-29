@@ -17,4 +17,6 @@ interface VideoServerApiService {
     suspend fun checkRecord(request: RecordRequest): Result<Boolean>
 
     suspend fun downloadRecording(recording: Recording): Result<String>
+
+    suspend fun deleteRecording(recording: Recording): Result<Boolean>
 }

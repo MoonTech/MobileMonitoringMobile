@@ -20,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DeleteDrawer(onDelete: () -> Unit) {
+fun DeleteDrawer(modifier: Modifier = Modifier, onDelete: () -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
-    Column {
+    Column(modifier = modifier) {
         Icon(
             imageVector = Icons.Default.MoreHoriz,
             contentDescription = "Setting",

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,15 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.moontech.data.dataclasses.Recording
 import com.example.moontech.data.dataclasses.Recordings
 import com.example.moontech.ui.components.CenterScreen
+import com.example.moontech.ui.components.DeleteDrawer
 
 @Composable
 fun RecordingsScreen(
     recordings: Recordings,
     onRecordingClicked: (Recording) -> Unit,
+    deleteRecording: (Recording) -> Unit,
     modifier: Modifier = Modifier
 ) =
     CenterScreen(modifier) {
@@ -50,12 +54,14 @@ fun RecordingsScreen(
             LazyColumn(modifier = Modifier.padding(it)) {
                 items(recordings.recordings, key = { it.url }) {
                     ElevatedCard(
-                        modifier = modifier.padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 4.dp,
-                            end = 4.dp
-                        ).clickable { onRecordingClicked(it) }
+                        modifier = modifier
+                            .padding(
+                                top = 4.dp,
+                                bottom = 4.dp,
+                                start = 4.dp,
+                                end = 4.dp
+                            )
+                            .clickable { onRecordingClicked(it) }
                     ) {
                         Column(
                             modifier = modifier
@@ -65,10 +71,15 @@ fun RecordingsScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = it.name,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    textAlign = TextAlign.Center
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.width(250.dp)
                                 )
                                 Spacer(modifier = Modifier.weight(1f))
+                                DeleteDrawer(modifier = Modifier.wrapContentSize()) {
+                                    deleteRecording(it)
+                                }
                             }
                         }
                     }

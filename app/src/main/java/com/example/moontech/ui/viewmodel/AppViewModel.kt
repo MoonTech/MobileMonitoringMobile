@@ -323,6 +323,12 @@ class AppViewModel(
         }
     }
 
+    fun deleteRecording(recording: Recording) {
+        viewModelScope.launch {
+            videoServerApiService.deleteRecording(recording).onSuccessWithErrorHandling {
+            }
+        }
+    }
     fun showNavigation() {
         viewModelScope.launch {
             _navigationVisible.emit(true)

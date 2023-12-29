@@ -117,8 +117,10 @@ fun NavGraphBuilder.watchGraph(
                 RecordingsScreen(
                     recordings = recordings!!,
                     modifier = modifier,
-                    onRecordingClicked = {
-                        viewModel.downloadRecording(it)
+                    onRecordingClicked = viewModel::downloadRecording,
+                    deleteRecording = { recording ->
+                        viewModel.deleteRecording(recording)
+                        viewModel.fetchRecordings(code)
                     }
                 )
             }

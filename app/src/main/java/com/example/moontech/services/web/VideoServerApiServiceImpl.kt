@@ -68,6 +68,10 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
         }
     }
 
+    override suspend fun deleteRecording(recording: Recording): Result<Boolean> {
+        return httpClient.deleteWithStatus("$endpoint/record/${recording.name}")
+    }
+
     private suspend fun downloadQ(response: HttpResponse, fileName: String): String =
         withContext(Dispatchers.IO) {
             if (response.status.isSuccess()) {
