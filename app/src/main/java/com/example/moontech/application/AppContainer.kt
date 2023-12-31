@@ -18,6 +18,7 @@ import com.example.moontech.data.store.UserDataStore
 import com.example.moontech.services.web.CameraApiService
 import com.example.moontech.services.web.CameraApiServiceImpl
 import com.example.moontech.services.web.HttpClientFactory
+import com.example.moontech.services.web.PersistentCookieStorage
 import com.example.moontech.services.web.RoomApiService
 import com.example.moontech.services.web.RoomApiServiceImpl
 import com.example.moontech.services.web.TokenManager
@@ -39,6 +40,7 @@ interface AppContainer {
     val cameraApiService: CameraApiService
     val videoServerApiService: VideoServerApiService
     val tokenManager: TokenManager
+    val persistentCookieStorage: PersistentCookieStorage
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -61,9 +63,12 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val roomCameraDataStore: RoomCameraDataStore by lazy {
         PreferencesRoomCameraDataStore(context.dataStore)
     }
+    override val tokenManager: TokenManager by lazy {
+        TokenManager(userDataStore)
+    }
     override val httpClient: HttpClient by lazy {
         val baseUrl = context.getString(R.string.base_url)
-        HttpClientFactory.create(baseUrl, tokenManager)
+        HttpClientFactory.create(baseUrl, tokenManager, persistentCookieStorage)
     }
     override val userApiService: UserApiService by lazy {
         UserApiServiceImpl(httpClient)
@@ -74,8 +79,8 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val cameraApiService: CameraApiService by lazy {
         CameraApiServiceImpl(httpClient)
     }
-    override val tokenManager: TokenManager by lazy {
-        TokenManager(userDataStore)
+    override val persistentCookieStorage: PersistentCookieStorage by lazy {
+        PersistentCookieStorage(context.dataStore)
     }
     override val videoServerApiService: VideoServerApiService by lazy {
         VideoServerApiServiceImpl(httpClient, context)

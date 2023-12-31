@@ -9,6 +9,8 @@ import catching
 import com.example.moontech.data.dataclasses.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : UserDataStore {
     companion object {
@@ -20,12 +22,12 @@ class PreferencesUserDataStore(private val dataStore: DataStore<Preferences>) : 
         .catching()
         .map { preferences ->
             Log.i(TAG, "fetching ${preferences[USER_DATA_KEY]}")
-            preferences[USER_DATA_KEY]?.let { UserData(it) }
+            preferences[USER_DATA_KEY]?.let { Json.decodeFromString<UserData>(it) }
         }
 
     override suspend fun save(userData: UserData) {
         dataStore.edit { preferences ->
-            preferences[USER_DATA_KEY] = userData.accessToken
+            preferences[USER_DATA_KEY] = Json.encodeToString(userData)
         }
     }
 

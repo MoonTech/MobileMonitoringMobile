@@ -30,12 +30,21 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
     }
 
     override suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom> {
-        return httpClient.postResult("$endpoint/watch") {
-            setBody(request)
-            accessToken?.let {
-                this.headers.append("Authorization", "Bearer $accessToken")
+        if (accessToken == null) {
+            return httpClient.getResult("$endpoint/watch") {
+                setBody(request)
             }
         }
+        val tokenResponse = httpClient.postResult<RoomTokenResponse>("$endpoint/refreshToken/${request.roomName}") {
+            this.headers.append("Authorization", "Bearer $accessToken")
+        }
+        tokenResponse.onSuccess {
+            return httpClient.postResult("$endpoint/watch") {
+                setBody(request)
+                this.headers.append("Authorization", "Bearer ${it.accessToken}")
+            }
+        }
+        return Result.failure(Exception("Access denied: unauthorized"))
     }
 
     override suspend fun getRoomToken(request: RoomTokenRequest): Result<RoomTokenResponse> {
