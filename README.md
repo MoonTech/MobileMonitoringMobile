@@ -34,7 +34,7 @@ To build the Mobile Monitoring Android app using Android Studio, follow these st
 
 5. **Explore Mobile Monitoring:**
 - Once the app is installed on your device, open Mobile Monitoring.
-- Follow the on-screen instructions to set up the app and connect it to your CCTV monitoring system.
+- Follow the on-screen instructions to set up the app and connect it to Mobile Monitoring system.
 
 ## Contribution Guidelines
 
