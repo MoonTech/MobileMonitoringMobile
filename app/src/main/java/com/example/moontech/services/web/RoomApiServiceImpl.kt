@@ -31,7 +31,7 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
 
     override suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom> {
         if (accessToken == null) {
-            return httpClient.getResult("$endpoint/watch") {
+            return httpClient.postResult("$endpoint/watch") {
                 setBody(request)
             }
         }
