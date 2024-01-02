@@ -28,7 +28,11 @@ fun WatchingScreenInfoPanel(
     onRecordingsClicked: () -> Unit
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        RoomCameraHeader(roomCode = watchedRoom.code, cameraName = selectedCameraName)
+        RoomCameraHeader(
+            roomCode = watchedRoom.code,
+            cameraName = selectedCameraName,
+            modifier = Modifier.padding(start = 8.dp)
+        )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = onRecordingsClicked, modifier = Modifier.padding(end = 8.dp)) {
             Icon(imageVector = Icons.Default.Image, contentDescription = "recordings")

@@ -283,6 +283,10 @@ class AppViewModel(
     }
 
     override fun addExternalRoom(code: String, password: String) {
+        if (externalRooms.value.any { it.code == code }) {
+            emitError(AppState.Error("Room is already added"))
+            return
+        }
         viewModelScope.launch {
             val roomTokenResponse = roomApiService.getRoomToken(
                 RoomTokenRequest(code, password)
@@ -299,6 +303,10 @@ class AppViewModel(
     }
 
     fun addExternalRoom(qrCodeContent: QrCodeContent) {
+        if (externalRooms.value.any { it.code == qrCodeContent.roomName }) {
+            emitError(AppState.Error("Room is already added"))
+            return
+        }
         viewModelScope.launch {
             roomDataStore.add(
                 RoomData(

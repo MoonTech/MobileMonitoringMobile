@@ -48,7 +48,8 @@ object HttpClientFactory {
             install(Auth) {
                 bearer {
                     sendWithoutRequest {
-                        !it.url.pathSegments.contains("watch") &&
+                        (!it.url.pathSegments.contains("watch") ||
+                                it.url.pathSegments.contains("watch") &&  !it.headers.contains("Authorization")) &&
                                 !it.url.encodedPath.startsWith("/room/refreshToken")
                     }
                     loadTokens {

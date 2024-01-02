@@ -27,7 +27,7 @@ fun TransmittingInfoPanel(
                 roomCode = roomCamera.code,
                 cameraName = roomCamera.name,
                 modifier = Modifier
-                    .padding(end = 10.dp)
+                    .padding(end = 10.dp, start = 8.dp)
                     .fillMaxWidth(0.75f)
             )
         } else {
@@ -35,7 +35,8 @@ fun TransmittingInfoPanel(
                 text = "Select a room",
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall,
-                maxLines = 1
+                maxLines = 1,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
         Spacer(modifier = Modifier.weight(1f))
