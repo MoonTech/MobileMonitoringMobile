@@ -1,12 +1,12 @@
 # Mobile Monitoring Android App by MoonTech
 
-Welcome to Mobile Monitoring, a state-of-the-art Android application developed by MoonTech. This app is designed to seamlessly integrate your smartphone with a CCTV monitoring system, transforming your device into a powerful camera for remote surveillance.
+Welcome to Mobile Monitoring, a state-of-the-art Android application developed by MoonTech. This app is designed to seamlessly integrate your smartphone with a Mobile Monitoring system, transforming your device into a powerful camera for remote surveillance.
 
 ## Features
 
 - **Mobile Camera Integration:** Utilize your smartphone as a surveillance camera, providing real-time footage to your CCTV monitoring system.
   
-- **CCTV System Compatibility:** Compatible with a wide range of CCTV systems, ensuring flexibility and ease of integration.
+- **CCTV System Compatibility:** Compatible with Moontech systems, ensuring flexibility and ease of integration.
   
 - **Remote Monitoring:** Access live camera feeds from your smartphone, providing on-the-go surveillance capabilities.
   
