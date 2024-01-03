@@ -17,6 +17,7 @@ fun <T : ObjectWithRoomCode> MainScreenBase(
     onSettings: (room: T) -> Unit,
     topBar: @Composable () -> Unit,
     onClick: (room: T) -> Unit,
+    floatingActionButtonVisible: Boolean = true,
     rowTileContent: @Composable (room: T) -> Unit = {
         Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Setting")
     }
@@ -25,8 +26,8 @@ fun <T : ObjectWithRoomCode> MainScreenBase(
         modifier = modifier,
         addRoom = addRoom,
         rooms = rooms,
-        floatingActionButtonVisible = true,
-        topBar = topBar
+        floatingActionButtonVisible = floatingActionButtonVisible,
+        topBar = topBar,
     ) { room ->
         RoomCard(
             modifier = Modifier.clickable { onClick(room) },
