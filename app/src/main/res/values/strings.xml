@@ -25,5 +25,5 @@
     <string name="add_camera">Add camera to Room</string>
     <string name="base_url">http://161.35.206.64:5000</string>
 
-    <string name="external">External rooms</string>
+    <string name="external">External Rooms</string>
 </resources>
