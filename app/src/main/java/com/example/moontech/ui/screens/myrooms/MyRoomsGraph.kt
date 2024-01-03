@@ -55,6 +55,7 @@ fun NavGraphBuilder.myRoomsGraph(
             }
             var showLogOutDialog by remember { mutableStateOf(false) }
             MainScreenBase(rooms = rooms,
+                floatingActionButtonVisible = false,
                 modifier = modifier,
                 addRoom = {
                     navController.navigate(Screen.MyRooms.AddRoom.route)
