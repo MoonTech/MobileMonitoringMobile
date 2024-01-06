@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RoomData(
     override val code: String,
-    val authToken:String = ""
+    val authToken:String = "",
+    val refreshToken: String? = null
 ): ObjectWithRoomCode

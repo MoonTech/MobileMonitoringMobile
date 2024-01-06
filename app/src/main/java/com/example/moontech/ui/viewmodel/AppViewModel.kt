@@ -127,6 +127,7 @@ class AppViewModel(
     private val _recordings = MutableStateFlow<Recordings?>(null)
     val recordings = _recordings.asStateFlow()
     private var isRecordingJob: Job? = null
+    private final val json: Json = Json { ignoreUnknownKeys = true }
 
 
     init {
@@ -146,7 +147,7 @@ class AppViewModel(
                     _transmittingRoomCode.emit(cameraServiceState.streamName)
                     cameraServiceState.lastQrCodeContent?.let {
                         try {
-                            val qrCodeContent = Json.decodeFromString<QrCodeContent>(it)
+                            val qrCodeContent = json.decodeFromString<QrCodeContent>(it)
                             _lastQrCodeContent.emit(qrCodeContent)
                         } catch (e: Exception) {
                         }
@@ -166,7 +167,8 @@ class AppViewModel(
             val room = getRoom(code)
             roomApiService.watchRoom(
                 request = WatchRequest(code),
-                accessToken = room?.authToken
+                accessToken = room?.authToken,
+                refreshToken = room?.refreshToken
             ).onSuccessWithErrorHandling {
                 _watchedRoom.emit(it)
             }
@@ -311,7 +313,8 @@ class AppViewModel(
             roomDataStore.add(
                 RoomData(
                     code = qrCodeContent.roomName,
-                    authToken = qrCodeContent.token
+                    authToken = qrCodeContent.token,
+                    refreshToken = qrCodeContent.refreshToken.token
                 )
             )
             _errorState.emit(AppState.Error("Room ${qrCodeContent.roomName} added"))

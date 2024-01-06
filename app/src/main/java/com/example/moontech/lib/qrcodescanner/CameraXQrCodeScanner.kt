@@ -46,9 +46,6 @@ class CameraXQrCodeScanner(
             var inputImage = InputImage.fromMediaImage(it, imageProxy.imageInfo.rotationDegrees)
             barcodeScanner.process(inputImage)
                 .addOnSuccessListener { qrCodes ->
-                    if (qrCodes.isEmpty()) {
-                        Log.i(TAG, "No qr codes found")
-                    }
                     qrCodes.forEach { qrCode ->
                         qrCode.rawValue?.let { codeString ->
                             onCodeScanned(codeString)

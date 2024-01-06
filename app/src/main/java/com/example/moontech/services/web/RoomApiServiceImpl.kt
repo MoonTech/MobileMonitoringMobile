@@ -9,12 +9,14 @@ import com.example.moontech.data.dataclasses.UserRoomsResponse
 import com.example.moontech.data.dataclasses.WatchRequest
 import com.example.moontech.data.dataclasses.WatchedRoom
 import io.ktor.client.HttpClient
+import io.ktor.client.request.cookie
 import io.ktor.client.request.setBody
 
-class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
+class RoomApiServiceImpl(private val httpClient: HttpClient) : RoomApiService {
     companion object {
         private const val endpoint = "/room"
     }
+
     override suspend fun createRoom(roomRequest: RoomCreationRequest): Result<RoomCreationResponse> {
         return httpClient.postResult(endpoint) {
             setBody(roomRequest)
@@ -29,15 +31,21 @@ class RoomApiServiceImpl(private val httpClient: HttpClient): RoomApiService {
         return httpClient.deleteWithStatus("$endpoint/$code")
     }
 
-    override suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom> {
+    override suspend fun watchRoom(
+        request: WatchRequest,
+        accessToken: String?,
+        refreshToken: String?
+    ): Result<WatchedRoom> {
         if (accessToken == null) {
             return httpClient.postResult("$endpoint/watch") {
                 setBody(request)
             }
         }
-        val tokenResponse = httpClient.postResult<RoomTokenResponse>("$endpoint/refreshToken/${request.roomName}") {
-            this.headers.append("Authorization", "Bearer $accessToken")
-        }
+        val tokenResponse =
+            httpClient.postResult<RoomTokenResponse>("$endpoint/refreshToken/${request.roomName}") {
+                this.headers.append("Authorization", "Bearer $accessToken")
+                this.cookie("refreshToken", refreshToken ?: "")
+            }
         tokenResponse.onSuccess {
             return httpClient.postResult("$endpoint/watch") {
                 setBody(request)
