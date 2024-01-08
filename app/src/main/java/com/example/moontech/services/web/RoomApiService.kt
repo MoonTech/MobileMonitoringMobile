@@ -16,7 +16,9 @@ interface RoomApiService {
 
     suspend fun deleteRoom(code: String): Result<Boolean>
 
-    suspend fun watchRoom(request: WatchRequest, accessToken: String?, refreshToken: String? = null): Result<WatchedRoom>
+    suspend fun watchRoom(request: WatchRequest, accessToken: String?): Result<WatchedRoom>
+
+    suspend fun refreshWatchCookie(code: String, accessToken: String, refreshToken: String): Result<RoomTokenResponse>
 
     suspend fun getRoomToken(request: RoomTokenRequest): Result<RoomTokenResponse>
 

@@ -37,6 +37,15 @@ suspend inline fun HttpClient.deleteWithStatus(
     }
 }
 
+suspend inline fun HttpClient.postWithStatus(
+    urlString: String,
+    builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Boolean> {
+    return withErrorHandling {
+        post(urlString, builder).status.value in 200..299
+    }
+}
+
 suspend inline fun HttpClient.putWithStatus(
     urlString: String,
     builder: HttpRequestBuilder.() -> Unit = {}

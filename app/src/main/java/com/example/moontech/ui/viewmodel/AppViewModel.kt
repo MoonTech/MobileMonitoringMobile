@@ -168,7 +168,6 @@ class AppViewModel(
             roomApiService.watchRoom(
                 request = WatchRequest(code),
                 accessToken = room?.authToken,
-                refreshToken = room?.refreshToken
             ).onSuccessWithErrorHandling {
                 _watchedRoom.emit(it)
             }
@@ -310,14 +309,19 @@ class AppViewModel(
             return
         }
         viewModelScope.launch {
-            roomDataStore.add(
-                RoomData(
-                    code = qrCodeContent.roomName,
-                    authToken = qrCodeContent.token,
-                    refreshToken = qrCodeContent.refreshToken.token
+            roomApiService.refreshWatchCookie(
+                code = qrCodeContent.roomName,
+                accessToken = qrCodeContent.token,
+                refreshToken = qrCodeContent.refreshToken.token
+            ).onSuccessWithErrorHandling {
+                roomDataStore.add(
+                    RoomData(
+                        code = qrCodeContent.roomName,
+                        authToken = it.accessToken,
+                    )
                 )
-            )
-            _errorState.emit(AppState.Error("Room ${qrCodeContent.roomName} added"))
+                _errorState.emit(AppState.Error("Room ${qrCodeContent.roomName} added"))
+            }
         }
     }
 
