@@ -69,6 +69,8 @@ fun NavGraphBuilder.watchGraph(
                     permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     apply = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU
                 ) {
+                    val rooms = viewModel.myRooms.collectAsState()
+                    val isOwner = rooms.value.any { room -> room.code == roomCode }
                     WatchingScreen(
                         modifier = modifier,
                         watchedRoom = watchedRoom!!,
@@ -94,6 +96,7 @@ fun NavGraphBuilder.watchGraph(
                                 watchedRoom!!.code
                             )
                         },
+                        isOwner = isOwner,
                         exit = { navController.popBackStack() }
                     )
                 }
@@ -104,6 +107,8 @@ fun NavGraphBuilder.watchGraph(
         })) {
             val code = it.arguments?.getString("code")
             val recordings by viewModel.recordings.collectAsState()
+            val rooms = viewModel.myRooms.collectAsState()
+            val isOwner = rooms.value.any { room -> room.code == code }
             BackHandler {
                 navController.popBackStack()
                 viewModel.showNavigation()
@@ -123,6 +128,7 @@ fun NavGraphBuilder.watchGraph(
                             code
                         )
                     },
+                    isOwner = isOwner,
                     deleteRecording = { recording ->
                         viewModel.deleteRecording(recording)
                         viewModel.fetchRecordings(code)

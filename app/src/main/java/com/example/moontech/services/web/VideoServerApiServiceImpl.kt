@@ -51,14 +51,14 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
 
     override suspend fun downloadRecording(
         recording: Recording,
-        roomName: String,
+        roomCode: String,
         accessToken: String?
     ): Result<String> {
         val response: HttpResponse = when (accessToken) {
             null -> httpClient.get("$endpoint/record/${recording.name}")
             else -> {
                 val tokenResponse =
-                    httpClient.postResult<RoomTokenResponse>("/room/refreshToken/$roomName") {
+                    httpClient.postResult<RoomTokenResponse>("/room/refreshToken/$roomCode") {
                         this.headers.append("Authorization", "Bearer $accessToken")
                     }
                 if (tokenResponse.isFailure) {

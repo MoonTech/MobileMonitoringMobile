@@ -1,5 +1,6 @@
 package com.example.moontech.ui.screens.external
 
+import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.moontech.ui.components.DeleteDrawer
+import com.example.moontech.ui.components.PermissionWrapper
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.base.MainScreenBase
@@ -55,7 +57,7 @@ fun NavGraphBuilder.externalRoomsGraph(
                 },
                 rowTileContent = {
                     DeleteDrawer {
-                       viewModel.removeExternalRoom(it.code)
+                        viewModel.removeExternalRoom(it.code)
                     }
                 })
         }
@@ -78,21 +80,23 @@ fun NavGraphBuilder.externalRoomsGraph(
 
         composable(Screen.ExternalRooms.AddRoomQrCode.route) {
             val qrCodeContent by viewModel.lastQrCode.collectAsState()
-            ScanQRCodeScreen(
-                modifier = modifier,
-                startPreview = {
-                    viewModel.startPreview(it)
-                    viewModel.startQrCodeScanner()
-                },
-                stopPreview = { viewModel.stopPreview() },
-                startScanning = { viewModel.startQrCodeScanner() },
-                stopScanning = { viewModel.stopQrCodeScanner() },
-                addRoom = {
-                    viewModel.addExternalRoom(it)
-                    navController.popBackStack(Screen.ExternalRooms.Main.route, false)
-                },
-                qrCodeContent = qrCodeContent
-            )
+            PermissionWrapper(permission = Manifest.permission.CAMERA, modifier = modifier) {
+                ScanQRCodeScreen(
+                    modifier = modifier,
+                    startPreview = {
+                        viewModel.startPreview(it)
+                        viewModel.startQrCodeScanner()
+                    },
+                    stopPreview = { viewModel.stopPreview() },
+                    startScanning = { viewModel.startQrCodeScanner() },
+                    stopScanning = { viewModel.stopQrCodeScanner() },
+                    addRoom = {
+                        viewModel.addExternalRoom(it)
+                        navController.popBackStack(Screen.ExternalRooms.Main.route, false)
+                    },
+                    qrCodeContent = qrCodeContent
+                )
+            }
         }
     }
 }

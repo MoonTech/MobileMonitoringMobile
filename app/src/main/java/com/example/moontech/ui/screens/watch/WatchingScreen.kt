@@ -61,6 +61,7 @@ fun WatchingScreen(
     startRecording: (WatchedRoomCamera) -> Unit,
     stopRecording: (WatchedRoomCamera) -> Unit,
     recordingCameras: Set<String>,
+    isOwner: Boolean,
     navigateToRecordings: () -> Unit,
     exit: () -> Unit
 ) = CenterScreen(modifier) {
@@ -133,35 +134,37 @@ fun WatchingScreen(
                     }
                 }
             })
-            androidx.compose.animation.AnimatedVisibility(
-                visible = showControls,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 100.dp, bottom = 7.dp)
-            ) {
-                TextButton(
+            if (isOwner) {
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = showControls,
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .animateEnterExit(enter = fadeIn(), exit = fadeOut()),
-                    onClick = {
-                        if (recordingCameras.contains(selectedCamera?.id)) {
-                            selectedCamera?.let {
-                                stopRecording(it)
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 100.dp, bottom = 7.dp)
+                ) {
+                    TextButton(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .animateEnterExit(enter = fadeIn(), exit = fadeOut()),
+                        onClick = {
+                            if (recordingCameras.contains(selectedCamera?.id)) {
+                                selectedCamera?.let {
+                                    stopRecording(it)
+                                }
+                            } else {
+                                selectedCamera?.let {
+                                    startRecording(it)
+                                }
                             }
-                        } else {
-                            selectedCamera?.let {
-                                startRecording(it)
-                            }
-                        }
-                    }) {
-                    Text(
-                        text = if (recordingCameras.contains(selectedCamera?.id)) {
-                            "Stop recording"
-                        } else {
-                            "Start recording"
-                        },
-                        color = Color.White
-                    )
+                        }) {
+                        Text(
+                            text = if (recordingCameras.contains(selectedCamera?.id)) {
+                                "Stop recording"
+                            } else {
+                                "Start recording"
+                            },
+                            color = Color.White
+                        )
+                    }
                 }
             }
             androidx.compose.animation.AnimatedVisibility(

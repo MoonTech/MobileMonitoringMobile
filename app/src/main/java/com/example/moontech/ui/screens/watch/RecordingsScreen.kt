@@ -32,6 +32,7 @@ fun RecordingsScreen(
     recordings: Recordings,
     onRecordingClicked: (Recording) -> Unit,
     deleteRecording: (Recording) -> Unit,
+    isOwner: Boolean,
     modifier: Modifier = Modifier
 ) =
     CenterScreen(modifier) {
@@ -77,8 +78,10 @@ fun RecordingsScreen(
                                     modifier = Modifier.width(250.dp)
                                 )
                                 Spacer(modifier = Modifier.weight(1f))
-                                DeleteDrawer(modifier = Modifier.wrapContentSize()) {
-                                    deleteRecording(it)
+                                if (isOwner) {
+                                    DeleteDrawer(modifier = Modifier.wrapContentSize()) {
+                                        deleteRecording(it)
+                                    }
                                 }
                             }
                         }
