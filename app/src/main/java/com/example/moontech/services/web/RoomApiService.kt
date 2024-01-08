@@ -22,5 +22,5 @@ interface RoomApiService {
 
     suspend fun getRoomToken(request: RoomTokenRequest): Result<RoomTokenResponse>
 
-    suspend fun getRecordings(code: String): Result<RecordingsResponse>
+    suspend fun getRecordings(code: String, accessToken: String?): Result<RecordingsResponse>
 }

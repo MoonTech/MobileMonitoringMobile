@@ -10,7 +10,6 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
 import java.time.Duration
@@ -48,9 +47,7 @@ object HttpClientFactory {
             install(Auth) {
                 bearer {
                     sendWithoutRequest {
-                        (!it.url.pathSegments.contains("watch") ||
-                                it.url.pathSegments.contains("watch") &&  !it.headers.contains("Authorization")) &&
-                                !it.url.encodedPath.startsWith("/room/refreshToken")
+                        !it.headers.contains("Authorization")
                     }
                     loadTokens {
                         tokenManager.loadTokens()

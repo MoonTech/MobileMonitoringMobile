@@ -157,14 +157,14 @@ class AppViewModel(
         }
     }
 
-    private fun getRoom(code: String): RoomData? {
+    private fun getExternalRoom(code: String): RoomData? {
         return externalRooms.value.firstOrNull { it.code == code }
     }
 
     fun watch(code: String) {
         Log.i(TAG, "watch: watch 1")
         viewModelScope.launch {
-            val room = getRoom(code)
+            val room = getExternalRoom(code)
             roomApiService.watchRoom(
                 request = WatchRequest(code),
                 accessToken = room?.authToken,
@@ -408,16 +408,18 @@ class AppViewModel(
 
     fun fetchRecordings(code: String) {
         viewModelScope.launch {
-            roomApiService.getRecordings(code)
+            val room = getExternalRoom(code)
+            roomApiService.getRecordings(code, room?.authToken)
                 .onSuccessWithErrorHandling {
                     _recordings.emit(Recordings(code = code, recordings = it.recordings))
                 }
         }
     }
 
-    fun downloadRecording(recording: Recording) {
+    fun downloadRecording(recording: Recording, roomCode: String) {
         viewModelScope.launch {
-            videoServerApiService.downloadRecording(recording).onSuccessWithErrorHandling {
+            val room = getExternalRoom(roomCode)
+            videoServerApiService.downloadRecording(recording, roomCode, room?.authToken).onSuccessWithErrorHandling {
                 _errorState.emit(AppState.Error("Video $it saved."))
             }
         }

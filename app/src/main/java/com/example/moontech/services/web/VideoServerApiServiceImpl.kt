@@ -5,6 +5,7 @@ import android.content.Context
 import android.provider.MediaStore
 import com.example.moontech.data.dataclasses.RecordRequest
 import com.example.moontech.data.dataclasses.Recording
+import com.example.moontech.data.dataclasses.RoomTokenResponse
 import com.example.moontech.data.dataclasses.StreamRequest
 import com.example.moontech.data.dataclasses.StreamResponse
 import io.ktor.client.HttpClient
@@ -48,8 +49,26 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
         }
     }
 
-    override suspend fun downloadRecording(recording: Recording): Result<String> {
-        val response = httpClient.get("$endpoint/record/${recording.name}")
+    override suspend fun downloadRecording(
+        recording: Recording,
+        roomName: String,
+        accessToken: String?
+    ): Result<String> {
+        val response: HttpResponse = when (accessToken) {
+            null -> httpClient.get("$endpoint/record/${recording.name}")
+            else -> {
+                val tokenResponse =
+                    httpClient.postResult<RoomTokenResponse>("/room/refreshToken/$roomName") {
+                        this.headers.append("Authorization", "Bearer $accessToken")
+                    }
+                if (tokenResponse.isFailure) {
+                   return Result.failure(Exception("Auth failure"))
+                }
+                httpClient.get("$endpoint/record/${recording.name}") {
+                    this.headers.append("Authorization", "Bearer ${tokenResponse.getOrNull()?.accessToken}")
+                }
+            }
+        }
         return try {
             Result.success(downloadQ(response, recording.name))
         } catch (e: Exception) {

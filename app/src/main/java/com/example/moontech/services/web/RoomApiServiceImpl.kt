@@ -68,7 +68,20 @@ class RoomApiServiceImpl(private val httpClient: HttpClient) : RoomApiService {
         }
     }
 
-    override suspend fun getRecordings(code: String): Result<RecordingsResponse> {
-        return httpClient.getResult("$endpoint/recordings/$code")
+    override suspend fun getRecordings(
+        code: String,
+        accessToken: String?
+    ): Result<RecordingsResponse> {
+        if (accessToken == null) {
+            return httpClient.getResult("$endpoint/recordings/$code")
+        }
+        httpClient.postResult<RoomTokenResponse>("$endpoint/refreshToken/$code") {
+            this.headers.append("Authorization", "Bearer $accessToken")
+        }.onSuccess {
+            return httpClient.getResult("$endpoint/recordings/$code") {
+                this.headers.append("Authorization", "Bearer ${it.accessToken}")
+            }
+        }
+        return Result.failure(Exception("Not authorized"))
     }
 }
