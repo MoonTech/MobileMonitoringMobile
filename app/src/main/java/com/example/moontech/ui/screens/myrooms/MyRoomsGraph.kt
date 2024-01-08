@@ -1,4 +1,4 @@
-package com.example.moontech.ui.screens.watch
+package com.example.moontech.ui.screens.myrooms
 
 import android.util.Log
 import androidx.compose.foundation.layout.Row
@@ -32,8 +32,6 @@ import com.example.moontech.ui.components.LogOutDialog
 import com.example.moontech.ui.navigation.Screen
 import com.example.moontech.ui.navigation.navigateToScreenWithCode
 import com.example.moontech.ui.screens.base.MainScreenBase
-import com.example.moontech.ui.screens.myrooms.MyRoomsAddRoomScreen
-import com.example.moontech.ui.screens.myrooms.SplashScreen
 import com.example.moontech.ui.viewmodel.AppViewModel
 
 private const val TAG = "MyRoomsGraph"

@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import com.example.moontech.ui.screens.external.externalRoomsGraph
 import com.example.moontech.ui.screens.transmit.transmitGraph
 import com.example.moontech.ui.screens.userauth.userAuthorizationGraph
-import com.example.moontech.ui.screens.watch.myRoomsGraph
+import com.example.moontech.ui.screens.myrooms.myRoomsGraph
 import com.example.moontech.ui.screens.watch.watchGraph
 import com.example.moontech.ui.viewmodel.AppViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

@@ -15,7 +15,7 @@ fun LandscapeNavigation(
     navigateTo: (screen: Screen) -> Unit,
 ) {
 
-    NavigationRail {
+    NavigationRail(modifier = Modifier) {
         navigationItems.forEachIndexed { i, item ->
             val selected = backStackEntries.map { it.destination.route }.any { route ->
                 route == item.screen.route || item.acceptedScreens.any { it.route == route }

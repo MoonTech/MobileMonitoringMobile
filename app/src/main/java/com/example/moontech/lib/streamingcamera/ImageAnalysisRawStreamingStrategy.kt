@@ -110,8 +110,8 @@ class ImageAnalysisRawStreamingStrategy() : StreamingStrategy {
             // maybe V an U planes overlap as per NV21, which means vBuffer[1] is alias of uBuffer[0]
             val savePixel = vBuffer[1]
             try {
-                vBuffer.put(1, savePixel.inv() as Byte)
-                if (uBuffer[0] == savePixel.inv() as Byte) {
+                vBuffer.put(1, savePixel.inv())
+                if (uBuffer[0] == savePixel.inv()) {
                     vBuffer.put(1, savePixel)
                     vBuffer.position(0)
                     uBuffer.position(0)

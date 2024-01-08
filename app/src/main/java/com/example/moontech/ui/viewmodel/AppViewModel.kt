@@ -397,8 +397,7 @@ class AppViewModel(
     fun stopRecording(roomCode: String, roomCamera: WatchedRoomCamera) {
         viewModelScope.launch {
             videoServerApiService.stopRecord(
-                request = RecordRequest(roomCamera.id),
-                filePrefix = "${roomCode}-${roomCamera.cameraName}"
+                request = RecordRequest(roomCamera.id)
             ).onSuccessWithErrorHandling {
                 _isRecording.update { recordedCameras -> recordedCameras - roomCamera.id }
                 _errorState.emit(AppState.Error("Video recorded."))

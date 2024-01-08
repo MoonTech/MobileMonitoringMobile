@@ -43,7 +43,7 @@ class VideoServerApiServiceImpl(private val httpClient: HttpClient, private val 
         }
     }
 
-    override suspend fun stopRecord(request: RecordRequest, filePrefix: String): Result<Boolean> {
+    override suspend fun stopRecord(request: RecordRequest): Result<Boolean> {
         return httpClient.putWithStatus("$endpoint/record/stop") {
             setBody(request)
         }

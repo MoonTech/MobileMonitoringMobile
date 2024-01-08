@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -93,12 +94,13 @@ fun ScreenScaffold(modifier: Modifier = Modifier) {
             val isStreaming by viewModel.isStreamingState.collectAsState()
             val items = if (isStreaming) streamingNavigationItems else defaultNavigationItems
             val navigationVisible by viewModel.navigationVisible.collectAsState()
+            val shouldShowNavigation = rememberUpdatedState(newValue = navigationVisible)
             if (configuration.orientation == ORIENTATION_LANDSCAPE && navigationVisible) {
                 val context = LocalContext.current
                 DisposableEffect(true) {
                     context.hideSystemUi()
                     onDispose {
-                        if (navigationVisible) {
+                        if (shouldShowNavigation.value) {
                             context.showSystemUi()
                         }
                     }

@@ -5,10 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.moontech.R
-import com.example.moontech.data.repository.InMemoryRoomRepository
-import com.example.moontech.data.repository.InMemoryUserRepository
-import com.example.moontech.data.repository.RoomRepository
-import com.example.moontech.data.repository.UserRepository
 import com.example.moontech.data.store.PreferencesRoomCameraDataStore
 import com.example.moontech.data.store.PreferencesRoomDataStore
 import com.example.moontech.data.store.PreferencesUserDataStore
@@ -29,9 +25,7 @@ import com.example.moontech.services.web.VideoServerApiServiceImpl
 import io.ktor.client.HttpClient
 
 interface AppContainer {
-    val userRepository: UserRepository
     val userDataStore: UserDataStore
-    val roomRepository: RoomRepository
     val roomDataStore: RoomDataStore
     val roomCameraDataStore: RoomCameraDataStore
     val httpClient: HttpClient
@@ -48,14 +42,8 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class DefaultAppContainer(context: Context) : AppContainer {
-    override val userRepository: UserRepository by lazy {
-        InMemoryUserRepository()
-    }
     override val userDataStore: UserDataStore by lazy {
         PreferencesUserDataStore(context.dataStore)
-    }
-    override val roomRepository: RoomRepository by lazy {
-        InMemoryRoomRepository()
     }
     override val roomDataStore: RoomDataStore by lazy {
         PreferencesRoomDataStore(context.dataStore)
