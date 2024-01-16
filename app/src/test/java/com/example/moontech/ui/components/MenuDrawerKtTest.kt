@@ -15,7 +15,7 @@ class MenuDrawerKtTest : GenericUiTest() {
     @Test
     fun menuDrawer_ShowMenuAndClickItems() {
         // Mock functions
-        val headerMock = @Composable { Box(modifier = Modifier.testTag("Mocked header")) }
+        val headerMock = @Composable { closeMenu: () -> Unit -> Box(modifier = Modifier.testTag("Mocked header")) }
         val itemContentMock =
             @Composable { closeMenu: () -> Unit, item: String -> Box(modifier = Modifier.testTag(item)) }
 
