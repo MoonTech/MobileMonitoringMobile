@@ -50,6 +50,9 @@ class RoomApiServiceImpl(private val httpClient: HttpClient) : RoomApiService {
                 this.headers.append("Authorization", "Bearer ${it.accessToken}")
             }
         }
+        if (tokenResponse.isFailure) {
+            return Result.failure(tokenResponse.exceptionOrNull()!!)
+        }
         return Result.failure(Exception("Access denied: unauthorized"))
     }
 

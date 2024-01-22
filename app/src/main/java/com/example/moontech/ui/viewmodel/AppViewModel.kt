@@ -37,6 +37,7 @@ import com.example.moontech.services.web.UserApiService
 import com.example.moontech.services.web.VideoServerApiService
 import com.example.moontech.ui.screens.common.RoomType
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
@@ -162,7 +163,6 @@ class AppViewModel(
     }
 
     fun watch(code: String) {
-        Log.i(TAG, "watch: watch 1")
         viewModelScope.launch {
             val room = getExternalRoom(code)
             roomApiService.watchRoom(
@@ -170,6 +170,10 @@ class AppViewModel(
                 accessToken = room?.authToken,
             ).onSuccessWithErrorHandling {
                 _watchedRoom.emit(it)
+            }.onFailure {
+                if (room != null && it is ClientRequestException) {
+                    roomDataStore.delete(code)
+            }
             }
         }
     }
@@ -208,6 +212,11 @@ class AppViewModel(
     fun startStream(roomCamera: RoomCamera) {
         withCameraService { cameraService ->
             val streamResponse = videoServerApiService.stream(StreamRequest(roomCamera.id))
+            streamResponse.onFailure {
+                if (it is ClientRequestException) {
+                    roomCameraDataStore.delete(roomCamera)
+                }
+            }
             streamResponse.onSuccessWithErrorHandling {
                 cameraService.startStream(
                     url = it.streamUrl,
@@ -447,7 +456,7 @@ class AppViewModel(
         }
     }
 
-    private suspend inline fun <T> Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}) {
+    private suspend inline fun <T> Result<T>.onSuccessWithErrorHandling(block: (T) -> Unit = {}): Result<T> {
         onSuccess {
             block(it)
         }
@@ -455,6 +464,7 @@ class AppViewModel(
             Log.i(TAG, "onSuccessWithErrorHandling: handling failure")
             _errorState.emit(AppState.Error("Something went wrong"))
         }
+        return this
     }
 
 }
