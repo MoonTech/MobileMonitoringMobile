@@ -1,6 +1,6 @@
 # Mobile Monitoring Android App by MoonTech
 
-Welcome to Mobile Monitoring, a state-of-the-art Android application developed by MoonTech. This app is designed to seamlessly integrate your smartphone with a Mobile Monitoring system, transforming your device into a powerful camera for remote surveillance.
+Mobile Monitoring, is a mobile app for my Engineering Thesis on CCTV system with use of android devices as CCTV cameras.
 
 ## Features
 
@@ -31,19 +31,3 @@ To build the Mobile Monitoring Android app using Android Studio, follow these st
 4. **Run the App:**
 - Connect your Android device to your computer or use an emulator.
 - Click on the "Run" menu and select "Run 'app'" to deploy the app on your device or emulator.
-
-5. **Explore Mobile Monitoring:**
-- Once the app is installed on your device, open Mobile Monitoring.
-- Follow the on-screen instructions to set up the app and connect it to Mobile Monitoring system.
-
-## Contribution Guidelines
-
-We welcome contributions from the community. If you'd like to contribute to the development of Mobile Monitoring, please follow our [Contribution Guidelines](CONTRIBUTING.md).
-
-## License
-
-Mobile Monitoring by MoonTech is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the app in accordance with the terms of the license.
-
-For more information, please refer to the [License File](LICENSE).
-
-Thank you for choosing Mobile Monitoring by MoonTech! If you have any questions or feedback, feel free to reach out to us.
